@@ -19,10 +19,129 @@ class Review extends \HivePress\Component {
 	public function __construct( $settings ) {
 		parent::__construct( $settings );
 
+		// todo
+		add_filter( 'hivepress/form/form_values/review__submit', [ $this, 'set_form_values' ] );
+		add_action( 'hivepress/form/submit_form/review__submit', [ $this, 'submit' ] );
+
+		add_filter( 'hivepress/form/field_value/rating', [ $this, 'sanitize_rating_field' ], 10, 2 );
+		add_filter( 'hivepress/form/field_html/rating', [ $this, 'render_rating_field' ], 10, 4 );
+
 		// Update rating.
 		add_action( 'comment_post', [ $this, 'update_rating' ] );
 		add_action( 'wp_set_comment_status', [ $this, 'update_rating' ] );
 		add_action( 'delete_comment', [ $this, 'update_rating' ] );
+	}
+
+	/**
+	 * Sanitizes rating field.
+	 *
+	 * @param mixed $value
+	 * @param array $args
+	 * @return mixed
+	 */
+	public function sanitize_rating_field( $value ) {
+		if ( '' !== $value ) {
+			$value = absint( $value );
+
+			if ( $value < 1 ) {
+				$value = 1;
+			} elseif ( $value > 5 ) {
+				$value = 5;
+			}
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Renders rating field.
+	 *
+	 * @param string $output
+	 * @param string $id
+	 * @param array  $args
+	 * @param mixed  $value
+	 * @return string
+	 */
+	public function render_rating_field( $output, $id, $args, $value ) {
+
+		// Set field arguments.
+		$args = hp_merge_arrays(
+			$args,
+			[
+				'type'       => 'hidden',
+				'attributes' => [
+					'class' => 'hp-js-rating',
+				],
+			]
+		);
+
+		// Render field.
+		$output .= hivepress()->form->render_field( $id, $args, $value );
+
+		return $output;
+	}
+
+	/**
+	 * Sets form values.
+	 *
+	 * @param array $values
+	 * @return array
+	 */
+	public function set_form_values( $values ) {
+		$values['post_id'] = get_the_ID();
+
+		return $values;
+	}
+
+	/**
+	 * Submits review.
+	 *
+	 * @param array $values
+	 */
+	public function submit( $values ) {
+
+		// Get post ID.
+		$post_id = hp_get_post_id(
+			[
+				'post__in'    => [ absint( $values['post_id'] ) ],
+				'post_type'   => 'hp_listing',
+				'post_status' => 'publish',
+			]
+		);
+
+		if ( 0 !== $post_id ) {
+
+			// Get review IDs.
+			$review_ids = get_comments(
+				[
+					'type'    => 'comment',
+					'user_id' => get_current_user_id(),
+					'post_id' => $post_id,
+					'fields'  => 'ids',
+				]
+			);
+
+			if ( empty( $review_ids ) ) {
+
+				// Add review.
+				$review_id = wp_insert_comment(
+					[
+						'user_id'              => get_current_user_id(),
+						'comment_author'       => hivepress()->user->get_name(),
+						'comment_author_email' => hivepress()->user->get_email(),
+						'comment_post_ID'      => $post_id,
+						'comment_content'      => $values['review'],
+						'comment_approved'     => 0,
+					]
+				);
+
+				if ( false !== $review_id ) {
+
+					// Set rating.
+					update_comment_meta( $review_id, 'hp_rating', $values['rating'] );
+				}
+			}
+		}
 	}
 
 	/**
