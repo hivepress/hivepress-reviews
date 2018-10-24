@@ -30,6 +30,35 @@ class Review extends \HivePress\Component {
 		add_action( 'comment_post', [ $this, 'update_rating' ] );
 		add_action( 'wp_set_comment_status', [ $this, 'update_rating' ] );
 		add_action( 'delete_comment', [ $this, 'update_rating' ] );
+
+		add_filter( 'hivepress/template/template_context/single_listing', [ $this, 'todo' ] );
+	}
+
+	public function todo( $context ) {
+		$context['reviews'] = get_comments(
+			[
+				'type'    => 'comment',
+				'status'  => 'approve',
+				'post_id' => get_the_ID(),
+			]
+		);
+
+		if ( is_user_logged_in() ) {
+			$reviews = get_comments(
+				[
+					'type'    => 'comment',
+					'user_id' => get_current_user_id(),
+					'post_id' => get_the_ID(),
+					'number'  => 1,
+				]
+			);
+
+			if ( ! empty( $reviews ) ) {
+				$context['review'] = reset( $reviews );
+			}
+		}
+
+		return $context;
 	}
 
 	/**
@@ -64,19 +93,8 @@ class Review extends \HivePress\Component {
 	 */
 	public function render_rating_field( $output, $id, $args, $value ) {
 
-		// Set field arguments.
-		$args = hp_merge_arrays(
-			$args,
-			[
-				'type'       => 'hidden',
-				'attributes' => [
-					'class' => 'hp-js-rating',
-				],
-			]
-		);
-
 		// Render field.
-		$output .= hivepress()->form->render_field( $id, $args, $value );
+		$output .= '<div class="hp-rating hp-js-rating" data-id="' . esc_attr( $id ) . '" data-value="' . esc_attr( $value ) . '"></div>';
 
 		return $output;
 	}
@@ -140,6 +158,8 @@ class Review extends \HivePress\Component {
 					// Set rating.
 					update_comment_meta( $review_id, 'hp_rating', $values['rating'] );
 				}
+			} else {
+				hivepress()->form->add_error( esc_html__( 'Review is already submitted.', 'hivepress-reviews' ) );
 			}
 		}
 	}
@@ -183,11 +203,16 @@ class Review extends \HivePress\Component {
 
 			if ( $rating_count > 0 ) {
 				$rating_value = round( $rating_value / $rating_count, 1 );
-			}
 
-			// Update rating.
-			update_post_meta( $current_review->comment_post_ID, 'hp_rating_count', $rating_count );
-			update_post_meta( $current_review->comment_post_ID, 'hp_rating_value', $rating_value );
+				// Update rating.
+				update_post_meta( $current_review->comment_post_ID, 'hp_rating_count', $rating_count );
+				update_post_meta( $current_review->comment_post_ID, 'hp_rating_value', $rating_value );
+			} else {
+
+				// Delete rating.
+				delete_post_meta( $current_review->comment_post_ID, 'hp_rating_count' );
+				delete_post_meta( $current_review->comment_post_ID, 'hp_rating_value' );
+			}
 		}
 	}
 }

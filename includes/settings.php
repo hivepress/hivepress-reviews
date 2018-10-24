@@ -11,22 +11,23 @@ defined( 'ABSPATH' ) || exit;
 $settings = [
 
 	// Listing component.
-	// 'listing' => [
-	//
-	// Post types.
-	// 'post_types' => [
-	// 'listing' => [
-	// 'supports' => ['comments'],
-	// ],
-	// ],
-	// ],
+	'listing' => [
+
+		// Post types.
+		'post_types' => [
+			'listing' => [
+				'supports' => [ 'comments' ],
+			],
+		],
+	],
+
 	// Review component.
-	'review' => [
+	'review'  => [
 
 		// Forms.
 		'forms'     => [
 			'submit' => [
-				'name'            => esc_html__( 'Submit Review', 'hivepress-reviews' ),
+				'name'            => esc_html__( 'Write a Review', 'hivepress-reviews' ),
 				'capability'      => 'read',
 				'captcha'         => false,
 				'success_message' => esc_html__( 'Review has been submitted.', 'hivepress-reviews' ),
@@ -61,17 +62,37 @@ $settings = [
 
 		// Templates.
 		'templates' => [
-			'single_listing' => [
+			'archive_listing' => [
 				'areas' => [
+					'summary' => [
+						'rating' => [
+							'path'  => 'rating',
+							'order' => 15,
+						],
+					],
+				],
+			],
+
+			'single_listing'  => [
+				'areas' => [
+					'summary' => [
+						'rating' => [
+							'path'  => 'rating',
+							'order' => 15,
+						],
+					],
+
+					'actions' => [
+						'review' => [
+							'path'  => 'review/parts/submit-button',
+							'order' => 30,
+						],
+					],
+
 					'content' => [
 						'todo2' => [
 							'path'  => 'todo2',
 							'order' => 200,
-						],
-
-						'todo'  => [
-							'path'  => 'todo',
-							'order' => 100,
 						],
 					],
 				],
