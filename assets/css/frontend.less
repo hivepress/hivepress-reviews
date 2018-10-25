@@ -4,13 +4,20 @@
 	--------------------------------------------------------------*/
 	&-listing {
 		&__rating {
-			display:flex;
+			display: flex;
 			align-items: center;
-			margin-bottom: 0.5rem;
 
 			span {
-				font-size:80%;
-				margin-left:0.5rem;
+				margin-left: 0.25rem;
+				white-space: nowrap;
+			}
+		}
+
+		&--single &__rating {
+			justify-content: center;
+
+			&:not(:last-child) {
+				margin-bottom: 1rem;
 			}
 		}
 	}
@@ -19,11 +26,17 @@
 	--------------------------------------------------------------*/
 	&-rating {
 		display: flex;
-		font-size: 12px;
-		line-height: 1;
+		font-size: 0;
+		white-space: nowrap;
 
 		i {
+			font-size: 12px;
+			line-height: 1;
 			color: rgba(0,0,0,0.25);
+
+			&:not(:first-child) {
+				margin-left: 2px;
+			}
 
 			&.active {
 				color: #ffc107;
@@ -41,6 +54,7 @@
 
 	&-review {
 		display: flex;
+		align-items: flex-start;
 
 		&:not(:last-child) {
 			margin-bottom: 1.5rem;

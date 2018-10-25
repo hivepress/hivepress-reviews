@@ -27,10 +27,10 @@ $settings = [
 		// Forms.
 		'forms'     => [
 			'submit' => [
-				'name'            => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+				'name'            => esc_html__( 'Submit Review', 'hivepress-reviews' ),
 				'capability'      => 'read',
 				'captcha'         => false,
-				'success_message' => esc_html__( 'Review has been submitted.', 'hivepress-reviews' ),
+				'success_message' => esc_html__( 'Your review has been submitted.', 'hivepress-reviews' ),
 
 				'fields'          => [
 					'rating'  => [
@@ -64,10 +64,10 @@ $settings = [
 		'templates' => [
 			'archive_listing' => [
 				'areas' => [
-					'summary' => [
+					'properties' => [
 						'rating' => [
-							'path'  => 'rating',
-							'order' => 15,
+							'path'  => 'listing/parts/rating',
+							'order' => 20,
 						],
 					],
 				],
@@ -75,24 +75,24 @@ $settings = [
 
 			'single_listing'  => [
 				'areas' => [
-					'summary' => [
+					'properties' => [
 						'rating' => [
-							'path'  => 'rating',
+							'path'  => 'listing/parts/rating',
+							'order' => 20,
+						],
+					],
+
+					'actions'    => [
+						'review' => [
+							'path'  => 'review/parts/submit-button',
 							'order' => 15,
 						],
 					],
 
-					'actions' => [
-						'review' => [
-							'path'  => 'review/parts/submit-button',
-							'order' => 30,
-						],
-					],
-
-					'content' => [
-						'todo2' => [
-							'path'  => 'todo2',
-							'order' => 200,
+					'content'    => [
+						'loop' => [
+							'path'  => 'review/parts/loop',
+							'order' => 40,
 						],
 					],
 				],

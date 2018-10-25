@@ -19,53 +19,39 @@ class Review extends \HivePress\Component {
 	public function __construct( $settings ) {
 		parent::__construct( $settings );
 
-		// todo
+		// Manage rating field.
+		add_filter( 'hivepress/form/field_value/rating', [ $this, 'sanitize_rating_field' ] );
+		add_filter( 'hivepress/form/field_html/rating', [ $this, 'render_rating_field' ], 10, 4 );
+
+		// Submit review.
 		add_filter( 'hivepress/form/form_values/review__submit', [ $this, 'set_form_values' ] );
 		add_action( 'hivepress/form/submit_form/review__submit', [ $this, 'submit' ] );
 
-		add_filter( 'hivepress/form/field_value/rating', [ $this, 'sanitize_rating_field' ], 10, 2 );
-		add_filter( 'hivepress/form/field_html/rating', [ $this, 'render_rating_field' ], 10, 4 );
+		// Set rating.
+		add_action( 'wp_insert_post', [ $this, 'set_rating' ], 10, 3 );
 
 		// Update rating.
 		add_action( 'comment_post', [ $this, 'update_rating' ] );
 		add_action( 'wp_set_comment_status', [ $this, 'update_rating' ] );
 		add_action( 'delete_comment', [ $this, 'update_rating' ] );
 
-		add_filter( 'hivepress/template/template_context/single_listing', [ $this, 'todo' ] );
-	}
+		if ( ! is_admin() ) {
 
-	public function todo( $context ) {
-		$context['reviews'] = get_comments(
-			[
-				'type'    => 'comment',
-				'status'  => 'approve',
-				'post_id' => get_the_ID(),
-			]
-		);
+			// Add sorting options.
+			add_filter( 'hivepress/form/form_fields/listing__sort', [ $this, 'add_sorting_options' ], 20 );
 
-		if ( is_user_logged_in() ) {
-			$reviews = get_comments(
-				[
-					'type'    => 'comment',
-					'user_id' => get_current_user_id(),
-					'post_id' => get_the_ID(),
-					'number'  => 1,
-				]
-			);
+			// Set sorting query.
+			add_action( 'pre_get_posts', [ $this, 'set_sorting_query' ] );
 
-			if ( ! empty( $reviews ) ) {
-				$context['review'] = reset( $reviews );
-			}
+			// Set template context.
+			add_filter( 'hivepress/template/template_context/single_listing', [ $this, 'set_template_context' ] );
 		}
-
-		return $context;
 	}
 
 	/**
 	 * Sanitizes rating field.
 	 *
 	 * @param mixed $value
-	 * @param array $args
 	 * @return mixed
 	 */
 	public function sanitize_rating_field( $value ) {
@@ -94,7 +80,7 @@ class Review extends \HivePress\Component {
 	public function render_rating_field( $output, $id, $args, $value ) {
 
 		// Render field.
-		$output .= '<div class="hp-rating hp-js-rating" data-id="' . esc_attr( $id ) . '" data-value="' . esc_attr( $value ) . '"></div>';
+		$output = '<div class="hp-rating hp-js-rating" data-id="' . esc_attr( $id ) . '" data-value="' . esc_attr( $value ) . '"></div>';
 
 		return $output;
 	}
@@ -159,8 +145,21 @@ class Review extends \HivePress\Component {
 					update_comment_meta( $review_id, 'hp_rating', $values['rating'] );
 				}
 			} else {
-				hivepress()->form->add_error( esc_html__( 'Review is already submitted.', 'hivepress-reviews' ) );
+				hivepress()->form->add_error( esc_html__( 'Your review is already submitted.', 'hivepress-reviews' ) );
 			}
+		}
+	}
+
+	/**
+	 * Sets rating.
+	 *
+	 * @param int     $post_id
+	 * @param WP_Post $post
+	 * @param bool    $update
+	 */
+	public function set_rating( $post_id, $post, $update ) {
+		if ( 'hp_listing' === $post->post_type && ! $update ) {
+			add_post_meta( $post_id, 'hp_rating', '', true );
 		}
 	}
 
@@ -206,13 +205,81 @@ class Review extends \HivePress\Component {
 
 				// Update rating.
 				update_post_meta( $current_review->comment_post_ID, 'hp_rating_count', $rating_count );
-				update_post_meta( $current_review->comment_post_ID, 'hp_rating_value', $rating_value );
+				update_post_meta( $current_review->comment_post_ID, 'hp_rating', $rating_value );
 			} else {
 
 				// Delete rating.
 				delete_post_meta( $current_review->comment_post_ID, 'hp_rating_count' );
-				delete_post_meta( $current_review->comment_post_ID, 'hp_rating_value' );
+				update_post_meta( $current_review->comment_post_ID, 'hp_rating', '' );
 			}
 		}
+	}
+
+	/**
+	 * Adds sorting options.
+	 *
+	 * @param array $fields
+	 * @return array
+	 */
+	public function add_sorting_options( $fields ) {
+		$fields['sort']['options']['rating'] = esc_html__( 'Rating', 'hivepress-reviews' );
+
+		return $fields;
+	}
+
+	/**
+	 * Sets sorting query.
+	 *
+	 * @param WP_Query $query
+	 */
+	public function set_sorting_query( $query ) {
+		if ( $query->is_main_query() && is_post_type_archive( 'hp_listing' ) ) {
+
+			// Sort results.
+			$sort_filters = hivepress()->form->validate_form( 'listing__sort' );
+
+			if ( false !== $sort_filters && 'rating' === $sort_filters['sort'] ) {
+				$query->set( 'meta_key', 'hp_rating' );
+				$query->set( 'orderby', 'meta_value_num' );
+				$query->set( 'order', 'DESC' );
+			}
+		}
+	}
+
+	/**
+	 * Sets template context.
+	 *
+	 * @param array $context
+	 * @return array
+	 */
+	public function set_template_context( $context ) {
+
+		// Get reviews.
+		$context['reviews'] = get_comments(
+			[
+				'type'    => 'comment',
+				'status'  => 'approve',
+				'post_id' => get_the_ID(),
+			]
+		);
+
+		if ( is_user_logged_in() ) {
+
+			// Get review.
+			$reviews = get_comments(
+				[
+					'type'    => 'comment',
+					'user_id' => get_current_user_id(),
+					'post_id' => get_the_ID(),
+					'number'  => 1,
+				]
+			);
+
+			if ( ! empty( $reviews ) ) {
+				$context['review'] = reset( $reviews );
+			}
+		}
+
+		return $context;
 	}
 }

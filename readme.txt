@@ -12,7 +12,7 @@ Reviews add-on for HivePress plugin.
 
 == Description ==
 
-HivePress Reviews is an add-on for [HivePress](https://wordpress.org/plugins/hivepress/), a multipurpose listing & directory plugin. It allows users to add listing reviews.
+HivePress Reviews is an add-on for [HivePress](https://wordpress.org/plugins/hivepress/), a multipurpose listing & directory plugin. It allows users to rate listings, write reviews and sort listings by rating.
 
 [Demo](https://demo.hivepress.co/) | [Documentation](https://docs.hivepress.co/article/hivepress-reviews/) | [Support](https://github.com/hivepress/hivepress-reviews/issues)
 
