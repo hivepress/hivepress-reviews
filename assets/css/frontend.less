@@ -1,0 +1,96 @@
+.hp {
+	/*--------------------------------------------------------------
+	Listings
+	--------------------------------------------------------------*/
+	&-listing {
+		&__rating {
+			display: flex;
+			align-items: center;
+
+			span {
+				margin-left: 0.25rem;
+				white-space: nowrap;
+			}
+		}
+
+		&--single &__rating {
+			justify-content: center;
+
+			&:not(:last-child) {
+				margin-bottom: 1rem;
+			}
+		}
+	}
+	/*--------------------------------------------------------------
+	Ratings
+	--------------------------------------------------------------*/
+	&-rating {
+		display: flex;
+		font-size: 0;
+		white-space: nowrap;
+
+		i {
+			font-size: 12px;
+			line-height: 1;
+			color: rgba(0,0,0,0.25);
+
+			&:not(:first-child) {
+				margin-left: 2px;
+			}
+
+			&.active {
+				color: #ffc107;
+			}
+		}
+	}
+	/*--------------------------------------------------------------
+	Reviews
+	--------------------------------------------------------------*/
+	&-reviews {
+		&:not(:last-child) {
+			margin-bottom: 2rem;
+		}
+	}
+
+	&-review {
+		display: flex;
+		align-items: flex-start;
+
+		&:not(:last-child) {
+			margin-bottom: 1.5rem;
+		}
+
+		&__sidebar {
+			flex: 0 0 3rem;
+			margin-right: 1.5rem;
+		}
+
+		&__header {
+			display: flex;
+			align-items: center;
+			margin-bottom: 0.5rem;
+		}
+
+		&__author {
+			margin-right: 0.5rem;
+		}
+
+		&__date {
+			font-size: 80%;
+		}
+
+		&__rating {
+			margin-bottom: 0.5rem;
+		}
+
+		&__text {
+			p {
+				margin-bottom: 0.5rem;
+
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+		}
+	}
+}
