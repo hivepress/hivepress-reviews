@@ -7,8 +7,8 @@
 
     field.raty({
       starType: 'i',
-      starHalf: 'fas fa-star-half active',
       starOff: 'fas fa-star',
+      starHalf: 'fas fa-star active',
       starOn: 'fas fa-star active',
       hints: ['', '', '', '', ''],
       noRatedMsg: '',
