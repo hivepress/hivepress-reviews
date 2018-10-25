@@ -170,25 +170,26 @@ class Review extends \HivePress\Component {
 	 */
 	public function update_rating( $review_id ) {
 
-		// Get current review.
-		$current_review = get_comment( $review_id );
+		// Get review.
+		$review = get_comment( $review_id );
 
-		if ( ! is_null( $current_review ) && 'comment' === $current_review->comment_type && 'hp_listing' === $current_review->post_type ) {
+		if ( ! is_null( $review ) && '' === $review->comment_type && 'hp_listing' === $review->post_type ) {
 			$rating_count = 0;
 			$rating_value = 0;
 
 			// Get all reviews.
-			$reviews = get_comments(
+			$review_ids = get_comments(
 				[
 					'type'    => 'comment',
 					'status'  => 'approve',
-					'post_id' => $current_review->comment_post_ID,
+					'post_id' => $review->comment_post_ID,
+					'fields'  => 'ids',
 				]
 			);
 
 			// Calculate rating.
-			foreach ( $reviews as $review ) {
-				$rating = absint( get_comment_meta( $review->comment_ID, 'hp_rating', true ) );
+			foreach ( $review_ids as $review_id ) {
+				$rating = absint( get_comment_meta( $review_id, 'hp_rating', true ) );
 
 				if ( $rating < 1 ) {
 					$rating = 1;
@@ -204,13 +205,13 @@ class Review extends \HivePress\Component {
 				$rating_value = round( $rating_value / $rating_count, 1 );
 
 				// Update rating.
-				update_post_meta( $current_review->comment_post_ID, 'hp_rating_count', $rating_count );
-				update_post_meta( $current_review->comment_post_ID, 'hp_rating', $rating_value );
+				update_post_meta( $review->comment_post_ID, 'hp_rating_count', $rating_count );
+				update_post_meta( $review->comment_post_ID, 'hp_rating', $rating_value );
 			} else {
 
 				// Delete rating.
-				delete_post_meta( $current_review->comment_post_ID, 'hp_rating_count' );
-				update_post_meta( $current_review->comment_post_ID, 'hp_rating', '' );
+				delete_post_meta( $review->comment_post_ID, 'hp_rating_count' );
+				update_post_meta( $review->comment_post_ID, 'hp_rating', '' );
 			}
 		}
 	}
