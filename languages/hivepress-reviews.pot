@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: HivePress Reviews\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-17 14:15+0000\n"
+"POT-Creation-Date: 2018-10-25 17:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -14,18 +14,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/"
 
-#. Author of the plugin
-msgid "HivePress"
+#: includes/settings.php:30 includes/settings.php:58
+msgid "Submit Review"
+msgstr ""
+
+#: includes/settings.php:33
+msgid "Your review has been submitted."
+msgstr ""
+
+#: includes/settings.php:37 includes/components/class-review.php:226
+msgid "Rating"
+msgstr ""
+
+#: includes/settings.php:44
+msgid "Review"
+msgstr ""
+
+#: includes/components/class-review.php:148
+msgid "Your review is already submitted."
+msgstr ""
+
+#: templates/review/parts/loop.php:8
+msgid "Reviews"
+msgstr ""
+
+#: templates/review/parts/submit-button.php:7
+#: templates/review/parts/submit-popup.php:8
+msgid "Write a Review"
 msgstr ""
 
 #. Name of the plugin
 msgid "HivePress Reviews"
 msgstr ""
 
-#. Author URI of the plugin
-msgid "https://hivepress.co/"
-msgstr ""
-
 #. Description of the plugin
 msgid "Reviews add-on for HivePress plugin."
+msgstr ""
+
+#. Author of the plugin
+msgid "HivePress"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://hivepress.co/"
 msgstr ""
