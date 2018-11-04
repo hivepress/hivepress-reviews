@@ -51,6 +51,10 @@ class Review_Test extends \WP_UnitTestCase {
 		$this->assertCount( 1, get_comments() );
 
 		// Test if rating is set.
+		foreach ( get_comments() as $review ) {
+			hivepress()->review->update_rating( $review->comment_ID );
+		}
+
 		$this->assertEquals( '', get_post_meta( $this->post_id, 'hp_rating', true ) );
 
 		foreach ( get_comments() as $review ) {
