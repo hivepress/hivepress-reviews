@@ -25,7 +25,7 @@ $settings = [
 	'review'  => [
 
 		// Forms.
-		'forms'     => [
+		'forms'      => [
 			'submit' => [
 				'name'            => esc_html__( 'Submit Review', 'hivepress-reviews' ),
 				'capability'      => 'read',
@@ -61,7 +61,7 @@ $settings = [
 		],
 
 		// Templates.
-		'templates' => [
+		'templates'  => [
 			'archive_listing' => [
 				'areas' => [
 					'properties' => [
@@ -100,7 +100,7 @@ $settings = [
 		],
 
 		// Styles.
-		'styles'    => [
+		'styles'     => [
 			'frontend' => [
 				'handle'  => 'hp-reviews',
 				'src'     => HP_REVIEWS_URL . '/assets/css/frontend.min.css',
@@ -109,7 +109,7 @@ $settings = [
 		],
 
 		// Scripts.
-		'scripts'   => [
+		'scripts'    => [
 			'raty'     => [
 				'handle'  => 'raty',
 				'src'     => HP_REVIEWS_URL . '/assets/js/jquery.raty.min.js',
@@ -122,6 +122,11 @@ $settings = [
 				'deps'    => [ 'hp-core', 'raty' ],
 				'version' => HP_REVIEWS_VERSION,
 			],
+		],
+
+		// Shortcodes.
+		'shortcodes' => [
+			'listing_reviews' => [],
 		],
 	],
 ];
