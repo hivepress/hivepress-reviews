@@ -113,7 +113,7 @@ class Review extends \HivePress\Component {
 			]
 		);
 
-		if ( 0 !== $post_id ) {
+		if ( 0 !== $post_id && count( hivepress()->form->get_messages() ) === 0 ) {
 
 			// Get review IDs.
 			$review_ids = get_comments(
@@ -151,6 +151,54 @@ class Review extends \HivePress\Component {
 	}
 
 	/**
+	 * Gets rating.
+	 *
+	 * @param array $args
+	 * @return array
+	 */
+	private function get_rating( $args ) {
+
+		// Get review IDs.
+		$review_ids = get_comments(
+			array_merge(
+				[
+					'post_type' => 'hp_listing',
+					'type'      => 'comment',
+					'status'    => 'approve',
+					'fields'    => 'ids',
+				],
+				$args
+			)
+		);
+
+		// Set defaults.
+		$rating_count = count( $review_ids );
+		$rating_value = 0;
+
+		// Calculate rating.
+		foreach ( $review_ids as $review_id ) {
+			$rating = absint( get_comment_meta( $review_id, 'hp_rating', true ) );
+
+			if ( $rating < 1 ) {
+				$rating = 1;
+			} elseif ( $rating > 5 ) {
+				$rating = 5;
+			}
+
+			$rating_value += $rating;
+		}
+
+		if ( $rating_count > 0 ) {
+			$rating_value = round( $rating_value / $rating_count, 1 );
+		}
+
+		return [
+			'value' => $rating_value,
+			'count' => $rating_count,
+		];
+	}
+
+	/**
 	 * Sets rating.
 	 *
 	 * @param int     $post_id
@@ -174,44 +222,28 @@ class Review extends \HivePress\Component {
 		$review = get_comment( $review_id );
 
 		if ( ! is_null( $review ) && '' === $review->comment_type && 'hp_listing' === $review->post_type ) {
-			$rating_count = 0;
-			$rating_value = 0;
 
-			// Get all reviews.
-			$review_ids = get_comments(
-				[
-					'type'    => 'comment',
-					'status'  => 'approve',
-					'post_id' => $review->comment_post_ID,
-					'fields'  => 'ids',
-				]
-			);
+			// Update post rating.
+			$post_rating = $this->get_rating( [ 'post_id' => $review->comment_post_ID ] );
 
-			// Calculate rating.
-			foreach ( $review_ids as $review_id ) {
-				$rating = absint( get_comment_meta( $review_id, 'hp_rating', true ) );
-
-				if ( $rating < 1 ) {
-					$rating = 1;
-				} elseif ( $rating > 5 ) {
-					$rating = 5;
-				}
-
-				$rating_count++;
-				$rating_value += $rating;
-			}
-
-			if ( $rating_count > 0 ) {
-				$rating_value = round( $rating_value / $rating_count, 1 );
-
-				// Update rating.
-				update_post_meta( $review->comment_post_ID, 'hp_rating_count', $rating_count );
-				update_post_meta( $review->comment_post_ID, 'hp_rating', $rating_value );
+			if ( $post_rating['count'] > 0 ) {
+				update_post_meta( $review->comment_post_ID, 'hp_rating_count', $post_rating['count'] );
+				update_post_meta( $review->comment_post_ID, 'hp_rating', $post_rating['value'] );
 			} else {
-
-				// Delete rating.
 				delete_post_meta( $review->comment_post_ID, 'hp_rating_count' );
 				update_post_meta( $review->comment_post_ID, 'hp_rating', '' );
+			}
+
+			// Update vendor rating.
+			$vendor_id     = get_post_field( 'post_author', $review->comment_post_ID );
+			$vendor_rating = $this->get_rating( [ 'post_author' => $vendor_id ] );
+
+			if ( $vendor_rating['count'] > 0 ) {
+				update_user_meta( $vendor_id, 'hp_rating_count', $vendor_rating['count'] );
+				update_user_meta( $vendor_id, 'hp_rating', $vendor_rating['value'] );
+			} else {
+				delete_user_meta( $vendor_id, 'hp_rating_count' );
+				delete_user_meta( $vendor_id, 'hp_rating' );
 			}
 		}
 	}
@@ -255,6 +287,9 @@ class Review extends \HivePress\Component {
 	 */
 	public function set_template_context( $context ) {
 
+		// Set defaults.
+		$context['review_allowed'] = true;
+
 		// Get reviews.
 		$context['reviews'] = get_comments(
 			[
@@ -266,19 +301,22 @@ class Review extends \HivePress\Component {
 
 		if ( is_user_logged_in() ) {
 
-			// Get review.
+			// Get reviews.
 			$reviews = get_comments(
 				[
 					'type'    => 'comment',
 					'user_id' => get_current_user_id(),
 					'post_id' => get_the_ID(),
 					'number'  => 1,
+					'fields'  => 'ids',
 				]
 			);
 
 			if ( ! empty( $reviews ) ) {
-				$context['review'] = reset( $reviews );
+				$context['review_allowed'] = false;
 			}
+		} else {
+			$context['review_allowed'] = false;
 		}
 
 		return $context;

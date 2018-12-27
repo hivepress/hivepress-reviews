@@ -25,7 +25,7 @@ $settings = [
 	'review'  => [
 
 		// Forms.
-		'forms'      => [
+		'forms'         => [
 			'submit' => [
 				'name'            => esc_html__( 'Submit Review', 'hivepress-reviews' ),
 				'capability'      => 'read',
@@ -61,7 +61,49 @@ $settings = [
 		],
 
 		// Templates.
-		'templates'  => [
+		'templates'     => [
+			'archive_review'  => [
+				'path'  => 'review/content-archive',
+
+				'areas' => [
+					'summary' => [
+						'rating' => [
+							'path'  => 'review/parts/rating',
+							'order' => 10,
+						],
+
+						'date'   => [
+							'path'  => 'review/parts/date',
+							'order' => 20,
+						],
+					],
+
+					'sidebar' => [
+						'image' => [
+							'path'  => 'review/parts/image',
+							'order' => 10,
+						],
+					],
+
+					'content' => [
+						'author'  => [
+							'path'  => 'review/parts/author',
+							'order' => 10,
+						],
+
+						'summary' => [
+							'path'  => 'review/content-archive/summary',
+							'order' => 20,
+						],
+
+						'text'    => [
+							'path'  => 'review/parts/text',
+							'order' => 30,
+						],
+					],
+				],
+			],
+
 			'archive_listing' => [
 				'areas' => [
 					'properties' => [
@@ -89,9 +131,21 @@ $settings = [
 						],
 					],
 
-					'content'    => [
-						'loop' => [
+					'reviews'    => [
+						'title' => [
+							'path'  => 'listing/content-single/parts/reviews-title',
+							'order' => 10,
+						],
+
+						'loop'  => [
 							'path'  => 'review/parts/loop',
+							'order' => 20,
+						],
+					],
+
+					'content'    => [
+						'reviews' => [
+							'path'  => 'listing/content-single/reviews',
 							'order' => 40,
 						],
 					],
@@ -100,16 +154,17 @@ $settings = [
 		],
 
 		// Styles.
-		'styles'     => [
+		'styles'        => [
 			'frontend' => [
 				'handle'  => 'hp-reviews',
 				'src'     => HP_REVIEWS_URL . '/assets/css/frontend.min.css',
 				'version' => HP_REVIEWS_VERSION,
+				'editor'  => true,
 			],
 		],
 
 		// Scripts.
-		'scripts'    => [
+		'scripts'       => [
 			'raty'     => [
 				'handle'  => 'raty',
 				'src'     => HP_REVIEWS_URL . '/assets/js/jquery.raty.min.js',
@@ -124,9 +179,33 @@ $settings = [
 			],
 		],
 
-		// Shortcodes.
-		'shortcodes' => [
-			'listing_reviews' => [],
+		// Editor blocks.
+		'editor_blocks' => [
+			'listing_reviews' => [
+				'title'    => esc_html__( 'Reviews', 'hivepress-reviews' ),
+				'category' => 'widgets',
+				'fields'   => [
+					'number' => [
+						'name'    => esc_html__( 'Number', 'hivepress-reviews' ),
+						'type'    => 'number',
+						'default' => 3,
+						'order'   => 10,
+					],
+
+					'rating' => [
+						'name'    => esc_html__( 'Rating', 'hivepress-reviews' ),
+						'type'    => 'select',
+						'options' => [
+							'' => '—',
+							1  => '1+',
+							2  => '2+',
+							3  => '3+',
+							4  => '4+',
+						],
+						'order'   => 20,
+					],
+				],
+			],
 		],
 	],
 ];
