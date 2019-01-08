@@ -34,6 +34,7 @@ class Review extends \HivePress\Component {
 		add_action( 'comment_post', [ $this, 'update_rating' ] );
 		add_action( 'wp_set_comment_status', [ $this, 'update_rating' ] );
 		add_action( 'delete_comment', [ $this, 'update_rating' ] );
+		add_filter( 'wxr_importer.pre_process.post_meta', [ $this, 'import_rating' ], 10, 2 );
 
 		if ( ! is_admin() ) {
 
@@ -246,6 +247,21 @@ class Review extends \HivePress\Component {
 				delete_user_meta( $vendor_id, 'hp_rating' );
 			}
 		}
+	}
+
+	/**
+	 * Imports rating.
+	 *
+	 * @param array $meta
+	 * @param int   $post_id
+	 * @return array
+	 */
+	public function import_rating( $meta, $post_id ) {
+		if ( 'hp_rating' === $meta['key'] ) {
+			delete_post_meta( $post_id, $meta['key'] );
+		}
+
+		return $meta;
 	}
 
 	/**
