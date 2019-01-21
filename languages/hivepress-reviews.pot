@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: HivePress Reviews\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-25 17:36+0000\n"
+"POT-Creation-Date: 2019-01-21 18:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -22,7 +22,8 @@ msgstr ""
 msgid "Your review has been submitted."
 msgstr ""
 
-#: includes/settings.php:37 includes/components/class-review.php:226
+#: includes/settings.php:37 includes/settings.php:196
+#: includes/components/class-review.php:274
 msgid "Rating"
 msgstr ""
 
@@ -30,16 +31,21 @@ msgstr ""
 msgid "Review"
 msgstr ""
 
-#: includes/components/class-review.php:148
-msgid "Your review is already submitted."
-msgstr ""
-
-#: templates/review/parts/loop.php:8
+#: includes/settings.php:185
+#: templates/listing/content-single/parts/reviews-title.php:5
 msgid "Reviews"
 msgstr ""
 
+#: includes/settings.php:189
+msgid "Number"
+msgstr ""
+
+#: includes/components/class-review.php:149
+msgid "Your review is already submitted."
+msgstr ""
+
 #: templates/review/parts/submit-button.php:7
-#: templates/review/parts/submit-popup.php:8
+#: templates/review/parts/submit-popup.php:6
 msgid "Write a Review"
 msgstr ""
 
