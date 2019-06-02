@@ -28,8 +28,11 @@ final class Review {
 		// Add attributes.
 		add_filter( 'hivepress/v1/attributes', [ $this, 'add_attributes' ] );
 
-		// Remove meta fields.
-		add_filter( 'hivepress/v1/meta_boxes/listing_attributes', [ $this, 'remove_meta_fields' ] );
+		// Add model fields.
+		add_filter( 'hivepress/v1/models/listing', [ $this, 'add_model_fields' ] );
+
+		// Remove edit fields.
+		add_filter( 'hivepress/v1/meta_boxes/listing_attributes', [ $this, 'remove_edit_fields' ] );
 
 		// Update rating.
 		add_action( 'wp_insert_comment', [ $this, 'update_rating' ] );
@@ -67,15 +70,30 @@ final class Review {
 	}
 
 	/**
-	 * Removes meta fields.
+	 * Adds model fields.
 	 *
-	 * @param array $meta_box Meta box arguments.
+	 * @param array $model Model arguments.
 	 * @return array
 	 */
-	public function remove_meta_fields( $meta_box ) {
-		unset( $meta_box['fields']['rating'] );
+	public function add_model_fields( $model ) {
+		$model['fields']['rating_count'] = [
+			'type'      => 'number',
+			'min_value' => 0,
+		];
 
-		return $meta_box;
+		return $model;
+	}
+
+	/**
+	 * Removes edit fields.
+	 *
+	 * @param array $form Form arguments.
+	 * @return array
+	 */
+	public function remove_edit_fields( $form ) {
+		unset( $form['fields']['rating'] );
+
+		return $form;
 	}
 
 	/**
@@ -141,8 +159,10 @@ final class Review {
 
 			if ( ! is_null( $listing_rating ) ) {
 				update_post_meta( $review->get_listing_id(), 'hp_rating', reset( $listing_rating ) );
+				update_post_meta( $review->get_listing_id(), 'hp_rating_count', end( $listing_rating ) );
 			} else {
 				delete_post_meta( $review->get_listing_id(), 'hp_rating' );
+				delete_post_meta( $review->get_listing_id(), 'hp_rating_count' );
 			}
 
 			// Get vendor ID.
