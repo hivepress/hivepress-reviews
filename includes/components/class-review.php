@@ -25,6 +25,12 @@ final class Review {
 	 */
 	public function __construct() {
 
+		// Add attributes.
+		add_filter( 'hivepress/v1/attributes', [ $this, 'add_attributes' ] );
+
+		// Remove meta fields.
+		add_filter( 'hivepress/v1/meta_boxes/listing_attributes', [ $this, 'remove_meta_fields' ] );
+
 		// Update rating.
 		add_action( 'wp_insert_comment', [ $this, 'update_rating' ] );
 		add_action( 'wp_set_comment_status', [ $this, 'update_rating' ] );
@@ -32,6 +38,44 @@ final class Review {
 
 		// Delete reviews.
 		add_action( 'delete_user', [ $this, 'delete_reviews' ] );
+	}
+
+	/**
+	 * Adds attributes.
+	 *
+	 * @param array $attributes Attributes.
+	 * @return array
+	 */
+	public function add_attributes( $attributes ) {
+		return array_merge(
+			$attributes,
+			[
+				'rating' => [
+					'model'        => 'listing',
+					'sortable'     => true,
+
+					'edit_field'   => [
+						'type' => 'rating',
+					],
+
+					'search_field' => [
+						'label' => esc_html__( 'Rating', 'hivepress-reviews' ),
+					],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Removes meta fields.
+	 *
+	 * @param array $meta_box Meta box arguments.
+	 * @return array
+	 */
+	public function remove_meta_fields( $meta_box ) {
+		unset( $meta_box['fields']['rating'] );
+
+		return $meta_box;
 	}
 
 	/**

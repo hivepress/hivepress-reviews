@@ -67,6 +67,12 @@ class Review extends Comment {
 						'max_length' => 128,
 					],
 
+					'approved'   => [
+						'type'      => 'number',
+						'min_value' => 0,
+						'max_value' => 1,
+					],
+
 					'user_name'  => [
 						'type'       => 'text',
 						'max_length' => 256,
@@ -94,6 +100,7 @@ class Review extends Comment {
 				'aliases' => [
 					'comment_content'      => 'text',
 					'comment_date'         => 'date',
+					'comment_approved'     => 'approved',
 					'comment_author'       => 'user_name',
 					'comment_author_email' => 'user_email',
 					'user_id'              => 'user_id',

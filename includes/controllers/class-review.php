@@ -111,6 +111,7 @@ class Review extends Controller {
 			array_merge(
 				$form->get_values(),
 				[
+					'approved'   => 0,
 					'user_id'    => $user->ID,
 					'user_name'  => $user->display_name,
 					'user_email' => $user->user_email,

@@ -11,18 +11,49 @@ use HivePress\Helpers as hp;
 defined( 'ABSPATH' ) || exit;
 
 return [
-	'parent' => 'page',
-
 	'blocks' => [
 		'page_container' => [
 			'blocks' => [
 				'page_columns' => [
 					'blocks' => [
+						'page_content' => [
+							'blocks' => [
+								'listing_details_primary' => [
+									'blocks' => [
+										'todo' => [
+											'type'     => 'element',
+											'filepath' => 'listing/view/rating',
+										],
+									],
+								],
+							],
+						],
 						'page_sidebar' => [
 							'blocks' => [
-								'review_submit_form' => [
-									'type'  => 'review_submit_form',
-									'order' => 10,
+								'listing_actions_primary' => [
+									'blocks' => [
+										'review_submit_modal' => [
+											'type'    => 'modal',
+											'caption' => esc_html__( 'Submit a Review', 'hivepress-reviews' ),
+
+											'blocks'  => [
+												'review_submit_form' => [
+													'type' => 'review_submit_form',
+													'order' => 10,
+
+													'attributes' => [
+														'class' => [ 'hp-form--narrow' ],
+													],
+												],
+											],
+										],
+
+										'review_submit_button' => [
+											'type'     => 'element',
+											'filepath' => 'review/submit/submit-link',
+											'order'    => 15,
+										],
+									],
 								],
 							],
 						],
