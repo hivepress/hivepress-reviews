@@ -26,15 +26,20 @@ return [
 										],
 									],
 								],
+
+								'todo'                    => [
+									'type' => 'reviews',
+								],
 							],
 						],
+
 						'page_sidebar' => [
 							'blocks' => [
 								'listing_actions_primary' => [
 									'blocks' => [
 										'review_submit_modal' => [
 											'type'    => 'modal',
-											'caption' => esc_html__( 'Submit a Review', 'hivepress-reviews' ),
+											'caption' => esc_html__( 'Write a Review', 'hivepress-reviews' ),
 
 											'blocks'  => [
 												'review_submit_form' => [

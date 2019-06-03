@@ -74,6 +74,7 @@ class Rating extends Number {
 		$this->attributes = hp\merge_arrays(
 			$this->attributes,
 			[
+				'class'          => [ 'hp-rating-stars', 'hp-rating-stars--large' ],
 				'data-component' => 'rating',
 				'data-name'      => $this->name,
 				'data-value'     => $this->value,

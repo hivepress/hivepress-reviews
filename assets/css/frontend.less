@@ -1,0 +1,51 @@
+.hp {
+	/*--------------------------------------------------------------
+	Ratings
+	--------------------------------------------------------------*/
+	&-rating {
+		display: flex;
+		align-items: center;
+
+		&__details,
+		&__stars {
+			&:not(:last-child) {
+				margin-right: 0.5rem;
+			}
+		}
+
+		&__details {
+			white-space: nowrap;
+		}
+
+		&__count {
+			opacity: 0.75;
+		}
+	}
+
+	&-rating-stars {
+		display: flex;
+		font-size: 0;
+
+		i {
+			font-size: 14px;
+			line-height: 1;
+			color: rgba(0,0,0,0.25);
+
+			&:not(:first-child) {
+				margin-left: 2px;
+			}
+
+			&.active {
+				color: #ffc107;
+			}
+		}
+
+		&--large i {
+			font-size: 16px;
+
+			&:not(:first-child) {
+				margin-left: 3px;
+			}
+		}
+	}
+}
