@@ -18,9 +18,10 @@ return [
 					'blocks' => [
 						'listing_details_primary' => [
 							'blocks' => [
-								'todo' => [
+								'listing_rating' => [
 									'type'     => 'element',
 									'filepath' => 'listing/view/rating',
+									'order'    => 30,
 								],
 							],
 						],
