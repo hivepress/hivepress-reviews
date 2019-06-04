@@ -49,48 +49,48 @@ class Review extends Comment {
 		$args = hp\merge_arrays(
 			[
 				'fields'  => [
-					'rating'     => [
+					'rating'       => [
 						'label'    => esc_html__( 'Rating', 'hivepress-reviews' ),
 						'type'     => 'rating',
 						'required' => true,
 					],
 
-					'text'       => [
+					'text'         => [
 						'label'      => esc_html__( 'Review', 'hivepress-reviews' ),
 						'type'       => 'textarea',
 						'max_length' => 2048,
 						'required'   => true,
 					],
 
-					'date'       => [
+					'date'         => [
 						'type'       => 'text',
 						'max_length' => 128,
 					],
 
-					'approved'   => [
+					'approved'     => [
 						'type'      => 'number',
 						'min_value' => 0,
 						'max_value' => 1,
 					],
 
-					'user_name'  => [
+					'author_name'  => [
 						'type'       => 'text',
 						'max_length' => 256,
 						'required'   => true,
 					],
 
-					'user_email' => [
+					'author_email' => [
 						'type'     => 'email',
 						'required' => true,
 					],
 
-					'user_id'    => [
+					'author_id'    => [
 						'type'      => 'number',
 						'min_value' => 0,
 						'required'  => true,
 					],
 
-					'listing_id' => [
+					'listing_id'   => [
 						'type'      => 'number',
 						'min_value' => 0,
 						'required'  => true,
@@ -101,9 +101,9 @@ class Review extends Comment {
 					'comment_content'      => 'text',
 					'comment_date'         => 'date',
 					'comment_approved'     => 'approved',
-					'comment_author'       => 'user_name',
-					'comment_author_email' => 'user_email',
-					'user_id'              => 'user_id',
+					'comment_author'       => 'author_name',
+					'comment_author_email' => 'author_email',
+					'user_id'              => 'author_id',
 					'comment_post_ID'      => 'listing_id',
 				],
 			],

@@ -85,15 +85,15 @@ class Review extends Controller {
 			return hp\rest_error( 400, $form->get_errors() );
 		}
 
-		// Get user.
-		$user_id = $request->get_param( 'user_id' ) ? $request->get_param( 'user_id' ) : get_current_user_id();
-		$user    = get_userdata( $user_id );
+		// Get author.
+		$author_id = $request->get_param( 'author_id' ) ? $request->get_param( 'author_id' ) : get_current_user_id();
+		$author    = get_userdata( $author_id );
 
-		if ( false === $user ) {
+		if ( false === $author ) {
 			return hp\rest_error( 400 );
 		}
 
-		if ( get_current_user_id() !== $user->ID && ! current_user_can( 'moderate_comments' ) ) {
+		if ( get_current_user_id() !== $author->ID && ! current_user_can( 'moderate_comments' ) ) {
 			return hp\rest_error( 403 );
 		}
 
@@ -111,10 +111,10 @@ class Review extends Controller {
 			array_merge(
 				$form->get_values(),
 				[
-					'approved'   => 0,
-					'user_id'    => $user->ID,
-					'user_name'  => $user->display_name,
-					'user_email' => $user->user_email,
+					'approved'     => 0,
+					'author_id'    => $author->ID,
+					'author_name'  => $author->display_name,
+					'author_email' => $author->user_email,
 				]
 			)
 		);

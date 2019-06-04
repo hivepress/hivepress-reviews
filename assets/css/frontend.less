@@ -29,7 +29,7 @@
 		i {
 			font-size: 14px;
 			line-height: 1;
-			color: rgba(0,0,0,0.25);
+			color: rgba(0,0,0,0.15);
 
 			&:not(:first-child) {
 				margin-left: 2px;
@@ -37,6 +37,22 @@
 
 			&.active {
 				color: #ffc107;
+				position: relative;
+
+				&.fa-star-half {
+					&::before {
+						position: relative;
+						z-index: 1;
+					}
+
+					&::after {
+						content: '\f005';
+						color: rgba(0,0,0,0.15);
+						position: absolute;
+						left: 0;
+						top: 0;
+					}
+				}
 			}
 		}
 
@@ -45,6 +61,66 @@
 
 			&:not(:first-child) {
 				margin-left: 3px;
+			}
+		}
+	}
+	/*--------------------------------------------------------------
+	Reviews
+	--------------------------------------------------------------*/
+	&-review {
+		&__content,
+		&__header {
+			&:not(:last-child) {
+				margin-bottom: 1rem;
+			}
+		}
+
+		&__header {
+			display: flex;
+			align-items: center;
+		}
+
+		&__image {
+			flex: 0 0 4rem;
+			margin-right: 1.5rem;
+
+			img {
+				display: block;
+				width: 100%;
+				border-radius: 50%;
+			}
+		}
+
+		&__details,
+		&__rating {
+			&:not(:last-child) {
+				margin-bottom: 0.5rem;
+			}
+		}
+
+		&__details {
+			display: flex;
+			align-items: center;
+		}
+
+		&__author,
+		&__date {
+			&:not(:last-child) {
+				margin-right: 0.5rem;
+			}
+		}
+
+		&__date {
+			font-size: 80%;
+		}
+
+		&__text {
+			p {
+				margin-bottom: 0.5rem;
+
+				&:last-child {
+					margin-bottom: 0;
+				}
 			}
 		}
 	}

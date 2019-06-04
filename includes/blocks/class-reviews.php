@@ -36,14 +36,18 @@ class Reviews extends Block {
 		$output = '';
 
 		// Get review IDs.
-		$review_ids = get_comments(
-			[
-				'type'    => 'hp_review',
-				'status'  => 'approve',
-				'post_id' => get_the_ID(),
-				'fields'  => 'ids',
-			]
-		);
+		$review_ids = [];
+
+		if ( is_singular( 'hp_listing' ) ) {
+			$review_ids = get_comments(
+				[
+					'type'    => 'hp_review',
+					'status'  => 'approve',
+					'post_id' => get_the_ID(),
+					'fields'  => 'ids',
+				]
+			);
+		}
 
 		// Render reviews.
 		if ( ! empty( $review_ids ) ) {
