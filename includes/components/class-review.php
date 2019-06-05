@@ -35,6 +35,10 @@ final class Review {
 		// Remove edit fields.
 		add_filter( 'hivepress/v1/meta_boxes/listing_attributes', [ $this, 'remove_edit_fields' ] );
 
+		// Set rating.
+		add_action( 'save_post_hp_listing', [ $this, 'set_rating' ] );
+		add_action( 'save_post_hp_vendor', [ $this, 'set_rating' ] );
+
 		// Update rating.
 		add_action( 'wp_insert_comment', [ $this, 'update_rating' ] );
 		add_action( 'wp_set_comment_status', [ $this, 'update_rating' ] );
@@ -153,6 +157,15 @@ final class Review {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Sets rating.
+	 *
+	 * @param int $listing_id Listing ID.
+	 */
+	public function set_rating( $listing_id ) {
+		add_post_meta( $listing_id, 'hp_rating', '', true );
 	}
 
 	/**
