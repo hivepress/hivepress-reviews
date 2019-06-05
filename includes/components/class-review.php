@@ -41,6 +41,87 @@ final class Review {
 
 		// Delete reviews.
 		add_action( 'delete_user', [ $this, 'delete_reviews' ] );
+
+		// todo
+		add_filter( 'hivepress/v1/templates/listing_view_block', [ $this, 'todo1' ] );
+		add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'todo2' ] );
+	}
+
+	// todo
+	public function todo1( $template ) {
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => [
+					'listing_details_primary' => [
+						'blocks' => [
+							'listing_rating' => [
+								'type'     => 'element',
+								'filepath' => 'listing/view/rating',
+								'order'    => 30,
+							],
+						],
+					],
+				],
+			],
+			'blocks'
+		);
+	}
+
+	// todo
+	public function todo2( $template ) {
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => [
+					'listing_details_primary' => [
+						'blocks' => [
+							'listing_rating' => [
+								'type'     => 'element',
+								'filepath' => 'listing/view/rating',
+								'order'    => 30,
+							],
+						],
+					],
+
+					'listing_actions_primary' => [
+						'blocks' => [
+							'review_submit_modal'  => [
+								'type'    => 'modal',
+								'caption' => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+
+								'blocks'  => [
+									'review_submit_form' => [
+										'type'       => 'review_submit_form',
+										'order'      => 10,
+
+										'attributes' => [
+											'class' => [ 'hp-form--narrow' ],
+										],
+									],
+								],
+							],
+
+							'review_submit_button' => [
+								'type'     => 'element',
+								'filepath' => 'review/submit/submit-link',
+								'order'    => 15,
+							],
+						],
+					],
+
+					'page_content'            => [
+						'blocks' => [
+							'reviews' => [
+								'type'  => 'reviews',
+								'order' => 100,
+							],
+						],
+					],
+				],
+			],
+			'blocks'
+		);
 	}
 
 	/**
