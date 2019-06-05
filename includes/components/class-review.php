@@ -26,10 +26,11 @@ final class Review {
 	public function __construct() {
 
 		// Add attributes.
-		add_filter( 'hivepress/v1/attributes', [ $this, 'add_attributes' ] );
+		add_filter( 'hivepress/v1/models/listing/attributes', [ $this, 'add_attributes' ] );
 
 		// Add model fields.
 		add_filter( 'hivepress/v1/models/listing', [ $this, 'add_model_fields' ] );
+		add_filter( 'hivepress/v1/models/vendor', [ $this, 'add_model_fields' ] );
 
 		// Remove edit fields.
 		add_filter( 'hivepress/v1/meta_boxes/listing_attributes', [ $this, 'remove_edit_fields' ] );
@@ -61,7 +62,6 @@ final class Review {
 			$attributes,
 			[
 				'rating' => [
-					'model'        => 'listing',
 					'sortable'     => true,
 
 					'edit_field'   => [
@@ -83,6 +83,12 @@ final class Review {
 	 * @return array
 	 */
 	public function add_model_fields( $model ) {
+		if ( ! isset( $model['fields']['rating'] ) ) {
+			$model['fields']['rating'] = [
+				'type' => 'rating',
+			];
+		}
+
 		$model['fields']['rating_count'] = [
 			'type'      => 'number',
 			'min_value' => 0,
@@ -182,8 +188,10 @@ final class Review {
 
 				if ( ! is_null( $vendor_rating ) ) {
 					update_post_meta( $vendor_id, 'hp_rating', reset( $vendor_rating ) );
+					update_post_meta( $vendor_id, 'hp_rating_count', end( $vendor_rating ) );
 				} else {
 					delete_post_meta( $vendor_id, 'hp_rating' );
+					delete_post_meta( $vendor_id, 'hp_rating_count' );
 				}
 			}
 		}
