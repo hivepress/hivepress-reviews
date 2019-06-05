@@ -104,6 +104,21 @@ class Review extends Controller {
 			return hp\rest_error( 400 );
 		}
 
+		// Check reviews.
+		$review_id = get_comments(
+			[
+				'type'    => 'hp_review',
+				'user_id' => $author->ID,
+				'post_id' => $listing->get_id(),
+				'number'  => 1,
+				'fields'  => 'ids',
+			]
+		);
+
+		if ( ! empty( $review_id ) ) {
+			return hp\rest_error( 403, esc_html__( "You've already submitted a review", 'hivepress-reviews' ) );
+		}
+
 		// Add review.
 		$review = new Models\Review();
 

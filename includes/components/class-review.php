@@ -42,86 +42,12 @@ final class Review {
 		// Delete reviews.
 		add_action( 'delete_user', [ $this, 'delete_reviews' ] );
 
-		// todo
-		add_filter( 'hivepress/v1/templates/listing_view_block', [ $this, 'todo1' ] );
-		add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'todo2' ] );
-	}
+		if ( ! is_admin() ) {
 
-	// todo
-	public function todo1( $template ) {
-		return hp\merge_trees(
-			$template,
-			[
-				'blocks' => [
-					'listing_details_primary' => [
-						'blocks' => [
-							'listing_rating' => [
-								'type'     => 'element',
-								'filepath' => 'listing/view/rating',
-								'order'    => 30,
-							],
-						],
-					],
-				],
-			],
-			'blocks'
-		);
-	}
-
-	// todo
-	public function todo2( $template ) {
-		return hp\merge_trees(
-			$template,
-			[
-				'blocks' => [
-					'listing_details_primary' => [
-						'blocks' => [
-							'listing_rating' => [
-								'type'     => 'element',
-								'filepath' => 'listing/view/rating',
-								'order'    => 30,
-							],
-						],
-					],
-
-					'listing_actions_primary' => [
-						'blocks' => [
-							'review_submit_modal'  => [
-								'type'    => 'modal',
-								'caption' => esc_html__( 'Write a Review', 'hivepress-reviews' ),
-
-								'blocks'  => [
-									'review_submit_form' => [
-										'type'       => 'review_submit_form',
-										'order'      => 10,
-
-										'attributes' => [
-											'class' => [ 'hp-form--narrow' ],
-										],
-									],
-								],
-							],
-
-							'review_submit_button' => [
-								'type'     => 'element',
-								'filepath' => 'review/submit/submit-link',
-								'order'    => 15,
-							],
-						],
-					],
-
-					'page_content'            => [
-						'blocks' => [
-							'reviews' => [
-								'type'  => 'reviews',
-								'order' => 100,
-							],
-						],
-					],
-				],
-			],
-			'blocks'
-		);
+			// Alter templates.
+			add_filter( 'hivepress/v1/templates/listing_view_block', [ $this, 'alter_listing_view_block' ] );
+			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_page' ] );
+		}
 	}
 
 	/**
@@ -283,5 +209,155 @@ final class Review {
 		foreach ( $review_ids as $review_id ) {
 			wp_delete_comment( $review_id, true );
 		}
+	}
+
+	/**
+	 * Alters listing view block.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_listing_view_block( $template ) {
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => [
+					'listing_details_primary' => [
+						'blocks' => [
+							'listing_rating' => [
+								'type'     => 'element',
+								'filepath' => 'listing/view/rating',
+								'order'    => 30,
+							],
+						],
+					],
+				],
+			],
+			'blocks'
+		);
+	}
+
+	/**
+	 * Alters listing view page.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_listing_view_page( $template ) {
+		$blocks = [
+			'listing_details_primary' => [
+				'blocks' => [
+					'listing_rating' => [
+						'type'     => 'element',
+						'filepath' => 'listing/view/rating',
+						'order'    => 30,
+					],
+				],
+			],
+		];
+
+		// Get review ID.
+		$review_id = null;
+
+		if ( is_user_logged_in() ) {
+			$review_id = get_comments(
+				[
+					'type'    => 'hp_review',
+					'user_id' => get_current_user_id(),
+					'post_id' => get_the_ID(),
+					'number'  => 1,
+					'fields'  => 'ids',
+				]
+			);
+		}
+
+		if ( empty( $review_id ) ) {
+			$blocks = array_merge(
+				$blocks,
+				[
+					'listing_actions_primary' => [
+						'blocks' => [
+							'review_submit_modal'  => [
+								'type'    => 'modal',
+								'caption' => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+
+								'blocks'  => [
+									'review_submit_form' => [
+										'type'       => 'review_submit_form',
+										'order'      => 10,
+
+										'attributes' => [
+											'class' => [ 'hp-form--narrow' ],
+										],
+									],
+								],
+							],
+
+							'review_submit_button' => [
+								'type'     => 'element',
+								'filepath' => 'review/submit/submit-link',
+								'order'    => 15,
+							],
+						],
+					],
+				]
+			);
+		}
+
+		// Get review IDs.
+		$review_ids = get_comments(
+			[
+				'type'    => 'hp_review',
+				'status'  => 'approve',
+				'post_id' => get_the_ID(),
+				'number'  => 1,
+				'fields'  => 'ids',
+			]
+		);
+
+		if ( ! empty( $review_ids ) ) {
+			$blocks = array_merge(
+				$blocks,
+				[
+					'page_content' => [
+						'blocks' => [
+							'reviews_container' => [
+								'type'       => 'container',
+								'order'      => 100,
+
+								'attributes' => [
+									'class' => [ 'hp-section' ],
+								],
+
+								'blocks'     => [
+									'reviews_title' => [
+										'type'     => 'element',
+										'filepath' => 'page/section-title',
+										'order'    => 10,
+
+										'context'  => [
+											'title' => esc_html__( 'Reviews', 'hivepress-reviews' ),
+										],
+									],
+
+									'reviews'       => [
+										'type'  => 'reviews',
+										'order' => 20,
+									],
+								],
+							],
+						],
+					],
+				]
+			);
+		}
+
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => $blocks,
+			],
+			'blocks'
+		);
 	}
 }
