@@ -1,180 +1,141 @@
 <?php
-namespace HivePress\Reviews;
+/**
+ * Review component.
+ *
+ * @package HivePress\Components
+ */
+
+namespace HivePress\Components;
+
+use HivePress\Helpers as hp;
+use HivePress\Models;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Manages reviews.
+ * Review component class.
  *
  * @class Review
  */
-class Review extends \HivePress\Component {
+final class Review {
 
 	/**
 	 * Class constructor.
-	 *
-	 * @param array $settings
 	 */
-	public function __construct( $settings ) {
-		parent::__construct( $settings );
+	public function __construct() {
 
-		// Manage rating field.
-		add_filter( 'hivepress/form/field_value/rating', [ $this, 'sanitize_rating_field' ] );
-		add_filter( 'hivepress/form/field_html/rating', [ $this, 'render_rating_field' ], 10, 4 );
+		// Add attributes.
+		add_filter( 'hivepress/v1/models/listing/attributes', [ $this, 'add_attributes' ] );
 
-		// Submit review.
-		add_filter( 'hivepress/form/form_values/review__submit', [ $this, 'set_form_values' ] );
-		add_action( 'hivepress/form/submit_form/review__submit', [ $this, 'submit' ] );
+		// Add model fields.
+		add_filter( 'hivepress/v1/models/listing', [ $this, 'add_model_fields' ] );
+		add_filter( 'hivepress/v1/models/vendor', [ $this, 'add_model_fields' ] );
+
+		// Remove edit fields.
+		add_filter( 'hivepress/v1/meta_boxes/listing_attributes', [ $this, 'remove_edit_fields' ] );
 
 		// Set rating.
-		add_action( 'wp_insert_post', [ $this, 'set_rating' ], 10, 3 );
+		add_action( 'save_post_hp_listing', [ $this, 'set_rating' ] );
+		add_action( 'save_post_hp_vendor', [ $this, 'set_rating' ] );
 
 		// Update rating.
-		add_action( 'comment_post', [ $this, 'update_rating' ] );
+		add_action( 'wp_insert_comment', [ $this, 'update_rating' ] );
 		add_action( 'wp_set_comment_status', [ $this, 'update_rating' ] );
 		add_action( 'delete_comment', [ $this, 'update_rating' ] );
-		add_filter( 'wxr_importer.pre_process.post_meta', [ $this, 'import_rating' ], 10, 2 );
+
+		// Delete reviews.
+		add_action( 'delete_user', [ $this, 'delete_reviews' ] );
 
 		if ( ! is_admin() ) {
 
-			// Add sorting options.
-			add_filter( 'hivepress/form/form_fields/listing__sort', [ $this, 'add_sorting_options' ], 20 );
-
-			// Set sorting query.
-			add_action( 'pre_get_posts', [ $this, 'set_sorting_query' ] );
-
-			// Set template context.
-			add_filter( 'hivepress/template/template_context/single_listing', [ $this, 'set_template_context' ] );
+			// Alter templates.
+			add_filter( 'hivepress/v1/templates/listing_view_block', [ $this, 'alter_listing_view_block' ] );
+			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_page' ] );
 		}
 	}
 
 	/**
-	 * Sanitizes rating field.
+	 * Adds attributes.
 	 *
-	 * @param mixed $value
-	 * @return mixed
-	 */
-	public function sanitize_rating_field( $value ) {
-		if ( '' !== $value ) {
-			$value = absint( $value );
-
-			if ( $value < 1 ) {
-				$value = 1;
-			} elseif ( $value > 5 ) {
-				$value = 5;
-			}
-		}
-
-		return $value;
-	}
-
-	/**
-	 * Renders rating field.
-	 *
-	 * @param string $output
-	 * @param string $id
-	 * @param array  $args
-	 * @param mixed  $value
-	 * @return string
-	 */
-	public function render_rating_field( $output, $id, $args, $value ) {
-
-		// Render field.
-		$output = '<div class="hp-rating hp-js-rating" data-id="' . esc_attr( $id ) . '" data-value="' . esc_attr( $value ) . '"></div>';
-
-		return $output;
-	}
-
-	/**
-	 * Sets form values.
-	 *
-	 * @param array $values
+	 * @param array $attributes Attributes.
 	 * @return array
 	 */
-	public function set_form_values( $values ) {
-		$values['post_id'] = get_the_ID();
+	public function add_attributes( $attributes ) {
+		return array_merge(
+			$attributes,
+			[
+				'rating' => [
+					'sortable'     => true,
 
-		return $values;
+					'edit_field'   => [
+						'type' => 'rating',
+					],
+
+					'search_field' => [
+						'label' => esc_html__( 'Rating', 'hivepress-reviews' ),
+					],
+				],
+			]
+		);
 	}
 
 	/**
-	 * Submits review.
+	 * Adds model fields.
 	 *
-	 * @param array $values
+	 * @param array $model Model arguments.
+	 * @return array
 	 */
-	public function submit( $values ) {
-
-		// Get post ID.
-		$post_id = hp_get_post_id(
-			[
-				'post__in'    => [ absint( $values['post_id'] ) ],
-				'post_type'   => 'hp_listing',
-				'post_status' => 'publish',
-			]
-		);
-
-		if ( 0 !== $post_id && count( hivepress()->form->get_messages() ) === 0 ) {
-
-			// Get review IDs.
-			$review_ids = get_comments(
-				[
-					'type'    => 'comment',
-					'user_id' => get_current_user_id(),
-					'post_id' => $post_id,
-					'fields'  => 'ids',
-				]
-			);
-
-			if ( empty( $review_ids ) ) {
-
-				// Add review.
-				$review_id = wp_insert_comment(
-					[
-						'user_id'              => get_current_user_id(),
-						'comment_author'       => hivepress()->user->get_name(),
-						'comment_author_email' => hivepress()->user->get_email(),
-						'comment_post_ID'      => $post_id,
-						'comment_content'      => $values['review'],
-						'comment_approved'     => 0,
-					]
-				);
-
-				if ( false !== $review_id ) {
-
-					// Set rating.
-					update_comment_meta( $review_id, 'hp_rating', $values['rating'] );
-				}
-			} else {
-				hivepress()->form->add_error( esc_html__( 'Your review is already submitted.', 'hivepress-reviews' ) );
-			}
+	public function add_model_fields( $model ) {
+		if ( ! isset( $model['fields']['rating'] ) ) {
+			$model['fields']['rating'] = [
+				'type' => 'rating',
+			];
 		}
+
+		$model['fields']['rating_count'] = [
+			'type'      => 'number',
+			'min_value' => 0,
+		];
+
+		return $model;
+	}
+
+	/**
+	 * Removes edit fields.
+	 *
+	 * @param array $form Form arguments.
+	 * @return array
+	 */
+	public function remove_edit_fields( $form ) {
+		unset( $form['fields']['rating'] );
+
+		return $form;
 	}
 
 	/**
 	 * Gets rating.
 	 *
-	 * @param array $args
+	 * @param array $args Query arguments.
 	 * @return array
 	 */
-	private function get_rating( $args ) {
+	protected function get_rating( $args ) {
 
 		// Get review IDs.
 		$review_ids = get_comments(
 			array_merge(
 				[
-					'post_type' => 'hp_listing',
-					'type'      => 'comment',
-					'status'    => 'approve',
-					'fields'    => 'ids',
+					'type'   => 'hp_review',
+					'status' => 'approve',
+					'fields' => 'ids',
 				],
 				$args
 			)
 		);
 
-		// Set defaults.
+		// Get rating count.
 		$rating_count = count( $review_ids );
-		$rating_value = 0;
+		$rating_value = null;
 
 		// Calculate rating.
 		foreach ( $review_ids as $review_id ) {
@@ -191,150 +152,233 @@ class Review extends \HivePress\Component {
 
 		if ( $rating_count > 0 ) {
 			$rating_value = round( $rating_value / $rating_count, 1 );
+
+			return [ $rating_value, $rating_count ];
 		}
 
-		return [
-			'value' => $rating_value,
-			'count' => $rating_count,
-		];
+		return null;
 	}
 
 	/**
 	 * Sets rating.
 	 *
-	 * @param int     $post_id
-	 * @param WP_Post $post
-	 * @param bool    $update
+	 * @param int $listing_id Listing ID.
 	 */
-	public function set_rating( $post_id, $post, $update ) {
-		if ( 'hp_listing' === $post->post_type && ! $update ) {
-			add_post_meta( $post_id, 'hp_rating', '', true );
-		}
+	public function set_rating( $listing_id ) {
+		add_post_meta( $listing_id, 'hp_rating', '', true );
 	}
 
 	/**
 	 * Updates rating.
 	 *
-	 * @param int $review_id
+	 * @param int $review_id Review ID.
 	 */
 	public function update_rating( $review_id ) {
 
 		// Get review.
-		$review = get_comment( $review_id );
+		$review = Models\Review::get( $review_id );
 
-		if ( ! is_null( $review ) && '' === $review->comment_type && 'hp_listing' === $review->post_type ) {
+		if ( ! is_null( $review ) ) {
 
-			// Update post rating.
-			$post_rating = $this->get_rating( [ 'post_id' => $review->comment_post_ID ] );
+			// Update listing rating.
+			$listing_rating = $this->get_rating( [ 'post_id' => $review->get_listing_id() ] );
 
-			if ( $post_rating['count'] > 0 ) {
-				update_post_meta( $review->comment_post_ID, 'hp_rating_count', $post_rating['count'] );
-				update_post_meta( $review->comment_post_ID, 'hp_rating', $post_rating['value'] );
+			if ( ! is_null( $listing_rating ) ) {
+				update_post_meta( $review->get_listing_id(), 'hp_rating', reset( $listing_rating ) );
+				update_post_meta( $review->get_listing_id(), 'hp_rating_count', end( $listing_rating ) );
 			} else {
-				delete_post_meta( $review->comment_post_ID, 'hp_rating_count' );
-				update_post_meta( $review->comment_post_ID, 'hp_rating', '' );
+				delete_post_meta( $review->get_listing_id(), 'hp_rating' );
+				delete_post_meta( $review->get_listing_id(), 'hp_rating_count' );
 			}
 
-			// Update vendor rating.
-			$vendor_id     = get_post_field( 'post_author', $review->comment_post_ID );
-			$vendor_rating = $this->get_rating( [ 'post_author' => $vendor_id ] );
+			// Get vendor ID.
+			$vendor_id = wp_get_post_parent_id( $review->get_listing_id() );
 
-			if ( $vendor_rating['count'] > 0 ) {
-				update_user_meta( $vendor_id, 'hp_rating_count', $vendor_rating['count'] );
-				update_user_meta( $vendor_id, 'hp_rating', $vendor_rating['value'] );
-			} else {
-				delete_user_meta( $vendor_id, 'hp_rating_count' );
-				delete_user_meta( $vendor_id, 'hp_rating' );
-			}
-		}
-	}
+			if ( $vendor_id ) {
 
-	/**
-	 * Imports rating.
-	 *
-	 * @param array $meta
-	 * @param int   $post_id
-	 * @return array
-	 */
-	public function import_rating( $meta, $post_id ) {
-		if ( 'hp_rating' === $meta['key'] ) {
-			delete_post_meta( $post_id, $meta['key'] );
-		}
+				// Update vendor rating.
+				$vendor_rating = $this->get_rating( [ 'post_parent' => $vendor_id ] );
 
-		return $meta;
-	}
-
-	/**
-	 * Adds sorting options.
-	 *
-	 * @param array $fields
-	 * @return array
-	 */
-	public function add_sorting_options( $fields ) {
-		$fields['sort']['options']['rating'] = esc_html__( 'Rating', 'hivepress-reviews' );
-
-		return $fields;
-	}
-
-	/**
-	 * Sets sorting query.
-	 *
-	 * @param WP_Query $query
-	 */
-	public function set_sorting_query( $query ) {
-		if ( $query->is_main_query() && is_post_type_archive( 'hp_listing' ) ) {
-
-			// Sort results.
-			$sort_filters = hivepress()->form->validate_form( 'listing__sort' );
-
-			if ( false !== $sort_filters && 'rating' === $sort_filters['sort'] ) {
-				$query->set( 'meta_key', 'hp_rating' );
-				$query->set( 'orderby', 'meta_value_num' );
-				$query->set( 'order', 'DESC' );
+				if ( ! is_null( $vendor_rating ) ) {
+					update_post_meta( $vendor_id, 'hp_rating', reset( $vendor_rating ) );
+					update_post_meta( $vendor_id, 'hp_rating_count', end( $vendor_rating ) );
+				} else {
+					delete_post_meta( $vendor_id, 'hp_rating' );
+					delete_post_meta( $vendor_id, 'hp_rating_count' );
+				}
 			}
 		}
 	}
 
 	/**
-	 * Sets template context.
+	 * Deletes reviews.
 	 *
-	 * @param array $context
-	 * @return array
+	 * @param int $user_id User ID.
 	 */
-	public function set_template_context( $context ) {
+	public function delete_reviews( $user_id ) {
 
-		// Set defaults.
-		$context['review_allowed'] = true;
-
-		// Get reviews.
-		$context['reviews'] = get_comments(
+		// Get review IDs.
+		$review_ids = get_comments(
 			[
-				'type'    => 'comment',
-				'status'  => 'approve',
-				'post_id' => get_the_ID(),
+				'type'    => 'hp_review',
+				'user_id' => $user_id,
+				'fields'  => 'ids',
 			]
 		);
 
-		if ( is_user_logged_in() ) {
+		// Delete reviews.
+		foreach ( $review_ids as $review_id ) {
+			wp_delete_comment( $review_id, true );
+		}
+	}
 
-			// Get reviews.
-			$reviews = get_comments(
+	/**
+	 * Alters listing view block.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_listing_view_block( $template ) {
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => [
+					'listing_details_primary' => [
+						'blocks' => [
+							'listing_rating' => [
+								'type'     => 'element',
+								'filepath' => 'listing/view/listing-rating',
+								'order'    => 30,
+							],
+						],
+					],
+				],
+			],
+			'blocks'
+		);
+	}
+
+	/**
+	 * Alters listing view page.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_listing_view_page( $template ) {
+		$blocks = [
+			'listing_details_primary' => [
+				'blocks' => [
+					'listing_rating' => [
+						'type'     => 'element',
+						'filepath' => 'listing/view/listing-rating',
+						'order'    => 30,
+					],
+				],
+			],
+		];
+
+		// Get review ID.
+		$review_id = null;
+
+		if ( is_user_logged_in() ) {
+			$review_id = get_comments(
 				[
-					'type'    => 'comment',
+					'type'    => 'hp_review',
 					'user_id' => get_current_user_id(),
 					'post_id' => get_the_ID(),
 					'number'  => 1,
 					'fields'  => 'ids',
 				]
 			);
-
-			if ( ! empty( $reviews ) ) {
-				$context['review_allowed'] = false;
-			}
-		} else {
-			$context['review_allowed'] = false;
 		}
 
-		return $context;
+		if ( empty( $review_id ) ) {
+			$blocks = array_merge(
+				$blocks,
+				[
+					'listing_actions_primary' => [
+						'blocks' => [
+							'review_submit_modal'  => [
+								'type'    => 'modal',
+								'caption' => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+
+								'blocks'  => [
+									'review_submit_form' => [
+										'type'       => 'review_submit_form',
+										'order'      => 10,
+
+										'attributes' => [
+											'class' => [ 'hp-form--narrow' ],
+										],
+									],
+								],
+							],
+
+							'review_submit_button' => [
+								'type'     => 'element',
+								'filepath' => 'listing/view/page/review-submit-link',
+								'order'    => 15,
+							],
+						],
+					],
+				]
+			);
+		}
+
+		// Get review IDs.
+		$review_ids = get_comments(
+			[
+				'type'    => 'hp_review',
+				'status'  => 'approve',
+				'post_id' => get_the_ID(),
+				'number'  => 1,
+				'fields'  => 'ids',
+			]
+		);
+
+		if ( ! empty( $review_ids ) ) {
+			$blocks = array_merge(
+				$blocks,
+				[
+					'page_content' => [
+						'blocks' => [
+							'reviews_container' => [
+								'type'       => 'container',
+								'order'      => 100,
+
+								'attributes' => [
+									'class' => [ 'hp-section' ],
+								],
+
+								'blocks'     => [
+									'reviews_title' => [
+										'type'     => 'element',
+										'filepath' => 'page/section-title',
+										'order'    => 10,
+
+										'context'  => [
+											'title' => esc_html__( 'Reviews', 'hivepress-reviews' ),
+										],
+									],
+
+									'reviews'       => [
+										'type'  => 'reviews',
+										'order' => 20,
+									],
+								],
+							],
+						],
+					],
+				]
+			);
+		}
+
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => $blocks,
+			],
+			'blocks'
+		);
 	}
 }

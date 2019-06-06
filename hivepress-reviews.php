@@ -1,23 +1,23 @@
 <?php
 /**
  * Plugin Name: HivePress Reviews
- * Description: Reviews add-on for HivePress plugin.
- * Version: 1.0.1
+ * Description: Reviews extension for HivePress plugin.
+ * Version: 1.1.1
  * Author: HivePress
- * Author URI: https://hivepress.co/
+ * Author URI: https://hivepress.io/
  * Text Domain: hivepress-reviews
  * Domain Path: /languages/
  *
- * @package HivePress\Reviews
+ * @package HivePress
  */
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-// Register plugin path.
+// Register plugin directory.
 add_filter(
-	'hivepress/core/plugin_paths',
-	function( $paths ) {
-		return array_merge( $paths, [ dirname( __FILE__ ) ] );
+	'hivepress/v1/dirs',
+	function( $dirs ) {
+		return array_merge( $dirs, [ __DIR__ ] );
 	}
 );

@@ -1,38 +1,35 @@
 .hp {
 	/*--------------------------------------------------------------
-	Listings
-	--------------------------------------------------------------*/
-	&-listing {
-		&__rating {
-			display: flex;
-			align-items: center;
-
-			span {
-				margin-left: 0.25rem;
-				white-space: nowrap;
-			}
-		}
-
-		&--single &__rating {
-			justify-content: center;
-
-			&:not(:last-child) {
-				margin-bottom: 1rem;
-			}
-		}
-	}
-	/*--------------------------------------------------------------
 	Ratings
 	--------------------------------------------------------------*/
 	&-rating {
 		display: flex;
+		align-items: center;
+
+		&__details,
+		&__stars {
+			&:not(:last-child) {
+				margin-right: 0.5rem;
+			}
+		}
+
+		&__details {
+			white-space: nowrap;
+		}
+
+		&__count {
+			opacity: 0.75;
+		}
+	}
+
+	&-rating-stars {
+		display: flex;
 		font-size: 0;
-		white-space: nowrap;
 
 		i {
-			font-size: 12px;
+			font-size: 14px;
 			line-height: 1;
-			color: rgba(0,0,0,0.25);
+			color: rgba(0,0,0,0.15);
 
 			&:not(:first-child) {
 				margin-left: 2px;
@@ -40,54 +37,77 @@
 
 			&.active {
 				color: #ffc107;
+				position: relative;
+
+				&.fa-star-half {
+					&::before {
+						position: relative;
+						z-index: 1;
+					}
+
+					&::after {
+						content: '\f005';
+						color: rgba(0,0,0,0.15);
+						position: absolute;
+						left: 0;
+						top: 0;
+					}
+				}
+			}
+		}
+
+		&--large i {
+			font-size: 16px;
+
+			&:not(:first-child) {
+				margin-left: 3px;
 			}
 		}
 	}
 	/*--------------------------------------------------------------
 	Reviews
 	--------------------------------------------------------------*/
-	&-reviews {
-		&:not(:last-child) {
-			margin-bottom: 2rem;
-		}
-	}
-
 	&-review {
-		&--archive {
-			display: flex;
-		}
-
-		&:not(:last-child) {
-			margin-bottom: 1.5rem;
-		}
-
-		&__sidebar {
-			flex: 0 0 3rem;
-			margin-right: 1.5rem;
-		}
-
-		&__image {
-			img {
-				display: block;
-				width: 100%;
+		&__content,
+		&__header {
+			&:not(:last-child) {
+				margin-bottom: 1rem;
 			}
 		}
 
-		&__author {
-			margin-bottom: 0.5rem;
-		}
-
-		&__summary {
+		&__header {
 			display: flex;
 			align-items: center;
 		}
 
-		&--archive &__summary {
-			margin-bottom: 0.5rem;
+		&__image {
+			flex: 0 0 4rem;
+			margin-right: 1.5rem;
+
+			img {
+				display: block;
+				width: 100%;
+				border-radius: 50%;
+			}
 		}
 
+		&__details,
 		&__rating {
-			margin-right: 0.5rem;
+			&:not(:last-child) {
+				margin-bottom: 0.5rem;
+			}
+		}
+
+		&__details {
+			display: flex;
+			align-items: center;
+		}
+
+		&__author,
+		&__date {
+			&:not(:last-child) {
+				margin-right: 0.5rem;
+			}
 		}
 
 		&__date {

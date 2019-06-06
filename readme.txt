@@ -2,19 +2,19 @@
 Contributors: hivepress
 Tags: hivepress, reviews, directory, listings, classifieds
 Requires at least: 4.7
-Tested up to: 5.0
+Tested up to: 5.2.1
 Requires PHP: 5.6
-Stable tag: 1.0.1
+Stable tag: 1.1.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Reviews add-on for HivePress plugin.
+Reviews extension for HivePress plugin.
 
 == Description ==
 
-HivePress Reviews is an add-on for [HivePress](https://wordpress.org/plugins/hivepress/), a multipurpose listing & directory plugin. It allows users to rate listings, write reviews and sort listings by rating.
+HivePress Reviews is an extension for [HivePress](https://wordpress.org/plugins/hivepress/) plugin. It allows users to rate and review listings.
 
-[Demo](https://demo.hivepress.co/) | [Documentation](https://docs.hivepress.co/article/hivepress-reviews/) | [Support](https://github.com/hivepress/hivepress-reviews/issues)
+[Demo](https://demo.hivepress.co/) | [Documentation](https://docs.hivepress.co/) | [Support](https://github.com/hivepress/hivepress/issues)
 
 == Installation ==
 
