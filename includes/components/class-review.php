@@ -247,7 +247,7 @@ final class Review {
 						'blocks' => [
 							'listing_rating' => [
 								'type'     => 'element',
-								'filepath' => 'listing/view/rating',
+								'filepath' => 'listing/view/listing-rating',
 								'order'    => 30,
 							],
 						],
@@ -270,7 +270,7 @@ final class Review {
 				'blocks' => [
 					'listing_rating' => [
 						'type'     => 'element',
-						'filepath' => 'listing/view/rating',
+						'filepath' => 'listing/view/listing-rating',
 						'order'    => 30,
 					],
 				],
@@ -316,7 +316,7 @@ final class Review {
 
 							'review_submit_button' => [
 								'type'     => 'element',
-								'filepath' => 'review/submit/submit-link',
+								'filepath' => 'listing/view/page/review-submit-link',
 								'order'    => 15,
 							],
 						],

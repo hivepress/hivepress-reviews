@@ -62,7 +62,7 @@ class Review_View_Block extends Template {
 								'blocks'     => [
 									'review_image'   => [
 										'type'     => 'element',
-										'filepath' => 'review/view/image',
+										'filepath' => 'review/view/review-image',
 										'order'    => 10,
 									],
 
@@ -86,13 +86,13 @@ class Review_View_Block extends Template {
 												'blocks' => [
 													'review_author' => [
 														'type'     => 'element',
-														'filepath' => 'review/view/author',
+														'filepath' => 'review/view/review-author',
 														'order'    => 10,
 													],
 
 													'review_date'   => [
 														'type'     => 'element',
-														'filepath' => 'review/view/date',
+														'filepath' => 'review/view/review-date',
 														'order'    => 20,
 													],
 												],
@@ -100,7 +100,7 @@ class Review_View_Block extends Template {
 
 											'review_rating'  => [
 												'type'     => 'element',
-												'filepath' => 'review/view/rating',
+												'filepath' => 'review/view/review-rating',
 												'order'    => 20,
 											],
 										],
@@ -119,7 +119,7 @@ class Review_View_Block extends Template {
 								'blocks'     => [
 									'review_text' => [
 										'type'     => 'element',
-										'filepath' => 'review/view/text',
+										'filepath' => 'review/view/review-text',
 										'order'    => 10,
 									],
 								],
