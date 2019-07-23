@@ -52,6 +52,8 @@ final class Review {
 			// Alter templates.
 			add_filter( 'hivepress/v1/templates/listing_view_block', [ $this, 'alter_listing_view_block' ] );
 			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_page' ] );
+			add_filter( 'hivepress/v1/templates/vendor_view_block', [ $this, 'alter_vendor_view_block' ] );
+			add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_page' ] );
 		}
 	}
 
@@ -377,6 +379,58 @@ final class Review {
 			$template,
 			[
 				'blocks' => $blocks,
+			],
+			'blocks'
+		);
+	}
+
+	/**
+	 * Alters vendor view block.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_vendor_view_block( $template ) {
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => [
+					'vendor_details_primary' => [
+						'blocks' => [
+							'vendor_rating' => [
+								'type'     => 'element',
+								'filepath' => 'vendor/view/vendor-rating',
+								'order'    => 20,
+							],
+						],
+					],
+				],
+			],
+			'blocks'
+		);
+	}
+
+	/**
+	 * Alters vendor view page.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_vendor_view_page( $template ) {
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => [
+					'vendor_details_primary' => [
+						'blocks' => [
+							'vendor_rating' => [
+								'type'     => 'element',
+								'filepath' => 'vendor/view/vendor-rating',
+								'order'    => 20,
+							],
+						],
+					],
+				],
 			],
 			'blocks'
 		);
