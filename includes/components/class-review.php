@@ -47,6 +47,9 @@ final class Review {
 		// Delete reviews.
 		add_action( 'delete_user', [ $this, 'delete_reviews' ] );
 
+		// Import reviews.
+		add_action( 'import_start', [ $this, 'import_reviews' ] );
+
 		if ( ! is_admin() ) {
 
 			// Alter templates.
@@ -232,6 +235,15 @@ final class Review {
 		foreach ( $review_ids as $review_id ) {
 			wp_delete_comment( $review_id, true );
 		}
+	}
+
+	/**
+	 * Imports reviews.
+	 */
+	public function import_reviews() {
+		remove_action( 'save_post_hp_listing', [ $this, 'set_rating' ] );
+		remove_action( 'save_post_hp_vendor', [ $this, 'set_rating' ] );
+		remove_action( 'wp_insert_comment', [ $this, 'update_rating' ] );
 	}
 
 	/**
