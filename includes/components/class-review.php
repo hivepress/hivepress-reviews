@@ -47,11 +47,16 @@ final class Review {
 		// Delete reviews.
 		add_action( 'delete_user', [ $this, 'delete_reviews' ] );
 
+		// Import reviews.
+		add_action( 'import_start', [ $this, 'import_reviews' ] );
+
 		if ( ! is_admin() ) {
 
 			// Alter templates.
 			add_filter( 'hivepress/v1/templates/listing_view_block', [ $this, 'alter_listing_view_block' ] );
 			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_page' ] );
+			add_filter( 'hivepress/v1/templates/vendor_view_block', [ $this, 'alter_vendor_view_block' ] );
+			add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_page' ] );
 		}
 	}
 
@@ -233,6 +238,15 @@ final class Review {
 	}
 
 	/**
+	 * Imports reviews.
+	 */
+	public function import_reviews() {
+		remove_action( 'save_post_hp_listing', [ $this, 'set_rating' ] );
+		remove_action( 'save_post_hp_vendor', [ $this, 'set_rating' ] );
+		remove_action( 'wp_insert_comment', [ $this, 'update_rating' ] );
+	}
+
+	/**
 	 * Alters listing view block.
 	 *
 	 * @param array $template Template arguments.
@@ -377,6 +391,58 @@ final class Review {
 			$template,
 			[
 				'blocks' => $blocks,
+			],
+			'blocks'
+		);
+	}
+
+	/**
+	 * Alters vendor view block.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_vendor_view_block( $template ) {
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => [
+					'vendor_details_primary' => [
+						'blocks' => [
+							'vendor_rating' => [
+								'type'     => 'element',
+								'filepath' => 'vendor/view/vendor-rating',
+								'order'    => 20,
+							],
+						],
+					],
+				],
+			],
+			'blocks'
+		);
+	}
+
+	/**
+	 * Alters vendor view page.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_vendor_view_page( $template ) {
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => [
+					'vendor_details_primary' => [
+						'blocks' => [
+							'vendor_rating' => [
+								'type'     => 'element',
+								'filepath' => 'vendor/view/vendor-rating',
+								'order'    => 20,
+							],
+						],
+					],
+				],
 			],
 			'blocks'
 		);

@@ -75,18 +75,24 @@ class Review_View_Block extends Template {
 										],
 
 										'blocks'     => [
+											'review_author' => [
+												'type'     => 'element',
+												'filepath' => 'review/view/review-author',
+												'order'    => 10,
+											],
+
 											'review_details' => [
 												'type'   => 'container',
-												'order'  => 10,
+												'order'  => 20,
 
 												'attributes' => [
 													'class' => [ 'hp-review__details' ],
 												],
 
 												'blocks' => [
-													'review_author' => [
+													'review_rating'  => [
 														'type'     => 'element',
-														'filepath' => 'review/view/review-author',
+														'filepath' => 'review/view/review-rating',
 														'order'    => 10,
 													],
 
@@ -96,12 +102,6 @@ class Review_View_Block extends Template {
 														'order'    => 20,
 													],
 												],
-											],
-
-											'review_rating'  => [
-												'type'     => 'element',
-												'filepath' => 'review/view/review-rating',
-												'order'    => 20,
 											],
 										],
 									],
