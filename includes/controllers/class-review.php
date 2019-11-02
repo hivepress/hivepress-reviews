@@ -116,7 +116,7 @@ class Review extends Controller {
 		);
 
 		if ( ! empty( $review_id ) ) {
-			return hp\rest_error( 403, esc_html__( "You've already submitted a review", 'hivepress-reviews' ) );
+			return hp\rest_error( 403, esc_html__( "You've already submitted a review.", 'hivepress-reviews' ) );
 		}
 
 		// Add review.
