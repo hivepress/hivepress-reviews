@@ -91,7 +91,7 @@ class Review_Submit extends Model_Form {
 		$args = hp\merge_arrays(
 			[
 				'title'   => esc_html__( 'Submit Review', 'hivepress-reviews' ),
-				'message' => esc_html__( 'Your review has been submitted', 'hivepress-reviews' ),
+				'message' => esc_html__( 'Your review has been submitted.', 'hivepress-reviews' ),
 				'model'   => 'review',
 				'action'  => hp\get_rest_url( '/reviews' ),
 
