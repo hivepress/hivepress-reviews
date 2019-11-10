@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: HivePress Reviews\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-06 18:10+0000\n"
+"POT-Creation-Date: 2019-11-10 21:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -15,32 +15,21 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.3.0; wp-5.2.1"
 
-#. Author of the plugin
-msgid "HivePress"
-msgstr ""
-
-#. Name of the plugin
-msgid "HivePress Reviews"
-msgstr ""
-
-#. Author URI of the plugin
-msgid "https://hivepress.io/"
-msgstr ""
-
-#: includes/components/class-review.php:76 includes/models/class-review.php:53
+#: includes/components/class-review.php:81 includes/models/class-review.php:53
 msgid "Rating"
 msgstr ""
 
-#: includes/models/class-review.php:59
-msgid "Review"
+#: includes/components/class-review.php:317
+#: templates/listing/view/page/review-submit-link.php:5
+msgid "Write a Review"
 msgstr ""
 
-#: includes/components/class-review.php:360
+#: includes/components/class-review.php:374
 msgid "Reviews"
 msgstr ""
 
-#. Description of the plugin
-msgid "Reviews extension for HivePress plugin."
+#: includes/controllers/class-review.php:119
+msgid "You've already submitted a review."
 msgstr ""
 
 #: includes/forms/class-review-submit.php:93
@@ -48,15 +37,26 @@ msgstr ""
 msgid "Submit Review"
 msgstr ""
 
-#: includes/components/class-review.php:303
-#: templates/listing/view/page/review-submit-link.php:5
-msgid "Write a Review"
-msgstr ""
-
-#: includes/controllers/class-review.php:119
-msgid "You've already submitted a review"
-msgstr ""
-
 #: includes/forms/class-review-submit.php:94
-msgid "Your review has been submitted"
+msgid "Your review has been submitted."
+msgstr ""
+
+#: includes/models/class-review.php:59
+msgid "Review"
+msgstr ""
+
+#. Name of the plugin
+msgid "HivePress Reviews"
+msgstr ""
+
+#. Description of the plugin
+msgid "Reviews extension for HivePress plugin."
+msgstr ""
+
+#. Author of the plugin
+msgid "HivePress"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://hivepress.io/"
 msgstr ""

@@ -15,6 +15,6 @@ return [
 		'handle'  => 'hp-reviews-frontend',
 		'src'     => HP_REVIEWS_URL . '/assets/css/frontend.min.css',
 		'version' => HP_REVIEWS_VERSION,
-		'editor'  => true,
+		'scope'   => [ 'frontend', 'editor' ],
 	],
 ];
