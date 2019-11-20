@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: HivePress Reviews\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-10 21:39+0000\n"
+"POT-Creation-Date: 2019-11-20 11:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -50,7 +50,7 @@ msgid "HivePress Reviews"
 msgstr ""
 
 #. Description of the plugin
-msgid "Reviews extension for HivePress plugin."
+msgid "Allow users to rate and review listings."
 msgstr ""
 
 #. Author of the plugin
