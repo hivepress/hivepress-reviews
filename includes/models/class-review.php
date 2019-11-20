@@ -86,13 +86,13 @@ class Review extends Comment {
 
 					'author_id'    => [
 						'type'      => 'number',
-						'min_value' => 0,
+						'min_value' => 1,
 						'required'  => true,
 					],
 
 					'listing_id'   => [
 						'type'      => 'number',
-						'min_value' => 0,
+						'min_value' => 1,
 						'required'  => true,
 					],
 				],
