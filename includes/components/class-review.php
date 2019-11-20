@@ -36,8 +36,8 @@ final class Review {
 		add_filter( 'hivepress/v1/meta_boxes/listing_attributes', [ $this, 'remove_edit_fields' ] );
 
 		// Set rating.
-		add_action( 'save_post_hp_listing', [ $this, 'set_rating' ] );
-		add_action( 'save_post_hp_vendor', [ $this, 'set_rating' ] );
+		add_action( 'hivepress/v1/models/listing/update', [ $this, 'set_rating' ] );
+		add_action( 'hivepress/v1/models/vendor/update', [ $this, 'set_rating' ] );
 
 		// Update rating.
 		add_action( 'wp_insert_comment', [ $this, 'update_rating' ] );
@@ -241,8 +241,8 @@ final class Review {
 	 * Imports reviews.
 	 */
 	public function import_reviews() {
-		remove_action( 'save_post_hp_listing', [ $this, 'set_rating' ] );
-		remove_action( 'save_post_hp_vendor', [ $this, 'set_rating' ] );
+		remove_action( 'hivepress/v1/models/listing/update', [ $this, 'set_rating' ] );
+		remove_action( 'hivepress/v1/models/vendor/update', [ $this, 'set_rating' ] );
 		remove_action( 'wp_insert_comment', [ $this, 'update_rating' ] );
 	}
 
@@ -331,7 +331,7 @@ final class Review {
 							'review_submit_button' => [
 								'type'     => 'element',
 								'filepath' => 'listing/view/page/review-submit-link',
-								'order'    => 15,
+								'order'    => 20,
 							],
 						],
 					],
