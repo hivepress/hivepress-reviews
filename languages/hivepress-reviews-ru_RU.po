@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: HivePress Reviews\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-20 11:39+0000\n"
-"PO-Revision-Date: 2019-11-21 13:13+0000\n"
+"PO-Revision-Date: 2019-11-21 20:23+0000\n"
 "Last-Translator: admin <admin@admin.com>\n"
 "Language-Team: Русский\n"
 "Language: ru_RU\n"
@@ -22,7 +22,7 @@ msgstr "Рейтинг"
 #: includes/components/class-review.php:317
 #: templates/listing/view/page/review-submit-link.php:5
 msgid "Write a Review"
-msgstr "Написать Отзыв"
+msgstr "Написать отзыв"
 
 #: includes/components/class-review.php:374
 msgid "Reviews"
@@ -35,7 +35,7 @@ msgstr "Вы уже отправили отзыв."
 #: includes/forms/class-review-submit.php:93
 #: includes/forms/class-review-submit.php:113
 msgid "Submit Review"
-msgstr "Добавить Отзыв"
+msgstr "Отправить отзыв"
 
 #: includes/forms/class-review-submit.php:94
 msgid "Your review has been submitted."
@@ -47,11 +47,12 @@ msgstr "Отзыв"
 
 #. Name of the plugin
 msgid "HivePress Reviews"
-msgstr ""
+msgstr "HivePress Отзывы"
 
 #. Description of the plugin
 msgid "Allow users to rate and review listings."
 msgstr ""
+"Дайте пользователям возможность оценивать и оставлять отзывы на позиции."
 
 #. Author of the plugin
 msgid "HivePress"
