@@ -36,19 +36,16 @@ final class Review {
 		add_filter( 'hivepress/v1/meta_boxes/listing_attributes', [ $this, 'remove_edit_fields' ] );
 
 		// Set rating.
-		add_action( 'hivepress/v1/models/listing/update', [ $this, 'set_rating' ] );
-		add_action( 'hivepress/v1/models/vendor/update', [ $this, 'set_rating' ] );
+		add_action( 'hivepress/v1/models/listing/create', [ $this, 'set_rating' ] );
+		add_action( 'hivepress/v1/models/vendor/create', [ $this, 'set_rating' ] );
 
 		// Update rating.
-		add_action( 'wp_insert_comment', [ $this, 'update_rating' ] );
-		add_action( 'wp_set_comment_status', [ $this, 'update_rating' ] );
-		add_action( 'delete_comment', [ $this, 'update_rating' ] );
+		add_action( 'hivepress/v1/models/review/create', [ $this, 'update_rating' ] );
+		add_action( 'hivepress/v1/models/review/update_status', [ $this, 'update_rating' ] );
+		add_action( 'hivepress/v1/models/review/delete', [ $this, 'update_rating' ] );
 
 		// Delete reviews.
-		add_action( 'delete_user', [ $this, 'delete_reviews' ] );
-
-		// Import reviews.
-		add_action( 'import_start', [ $this, 'import_reviews' ] );
+		add_action( 'hivepress/v1/models/user/delete', [ $this, 'delete_reviews' ] );
 
 		if ( ! is_admin() ) {
 
@@ -235,15 +232,6 @@ final class Review {
 		foreach ( $review_ids as $review_id ) {
 			wp_delete_comment( $review_id, true );
 		}
-	}
-
-	/**
-	 * Imports reviews.
-	 */
-	public function import_reviews() {
-		remove_action( 'hivepress/v1/models/listing/update', [ $this, 'set_rating' ] );
-		remove_action( 'hivepress/v1/models/vendor/update', [ $this, 'set_rating' ] );
-		remove_action( 'wp_insert_comment', [ $this, 'update_rating' ] );
 	}
 
 	/**
