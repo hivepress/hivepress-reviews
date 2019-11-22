@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: HivePress Reviews\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-20 11:39+0000\n"
-"PO-Revision-Date: 2019-11-21 20:23+0000\n"
+"PO-Revision-Date: 2019-11-22 11:30+0000\n"
 "Last-Translator: admin <admin@admin.com>\n"
 "Language-Team: Русский\n"
 "Language: ru_RU\n"
@@ -52,12 +52,12 @@ msgstr "HivePress Отзывы"
 #. Description of the plugin
 msgid "Allow users to rate and review listings."
 msgstr ""
-"Дайте пользователям возможность оценивать и оставлять отзывы на позиции."
+"Дайте пользователям возможность оценивать и оставлять отзывы на объявления."
 
 #. Author of the plugin
 msgid "HivePress"
-msgstr ""
+msgstr "HivePress"
 
 #. Author URI of the plugin
 msgid "https://hivepress.io/"
-msgstr ""
+msgstr "https://hivepress.io/"
