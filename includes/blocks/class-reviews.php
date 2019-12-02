@@ -21,13 +21,6 @@ defined( 'ABSPATH' ) || exit;
 class Reviews extends Block {
 
 	/**
-	 * Block type.
-	 *
-	 * @var string
-	 */
-	protected static $type;
-
-	/**
 	 * Renders block HTML.
 	 *
 	 * @return string
@@ -39,14 +32,12 @@ class Reviews extends Block {
 		$review_ids = [];
 
 		if ( is_singular( 'hp_listing' ) ) {
-			$review_ids = get_comments(
+			$review_ids = Models\Review::filter(
 				[
-					'type'    => 'hp_review',
-					'status'  => 'approve',
-					'post_id' => get_the_ID(),
-					'fields'  => 'ids',
+					'status'     => 'approve',
+					'listing_id' => get_the_ID(),
 				]
-			);
+			)->get_ids();
 		}
 
 		// Render reviews.
@@ -56,7 +47,7 @@ class Reviews extends Block {
 			foreach ( $review_ids as $review_id ) {
 
 				// Get review.
-				$review = Models\Review::get( $review_id );
+				$review = Models\Review::get_by_id( $review_id );
 
 				if ( ! is_null( $review ) ) {
 					$output .= '<div class="hp-grid__item">';

@@ -178,7 +178,7 @@ final class Review {
 	public function update_rating( $review_id ) {
 
 		// Get review.
-		$review = Models\Review::get( $review_id );
+		$review = Models\Review::get_by_id( $review_id );
 
 		if ( ! is_null( $review ) ) {
 

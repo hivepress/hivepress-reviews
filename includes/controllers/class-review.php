@@ -22,13 +22,6 @@ defined( 'ABSPATH' ) || exit;
 class Review extends Controller {
 
 	/**
-	 * Controller name.
-	 *
-	 * @var string
-	 */
-	protected static $name;
-
-	/**
 	 * Controller routes.
 	 *
 	 * @var array
@@ -98,22 +91,19 @@ class Review extends Controller {
 		}
 
 		// Get listing.
-		$listing = Models\Listing::get( $form->get_value( 'listing_id' ) );
+		$listing = Models\Listing::get_by_id( $form->get_value( 'listing_id' ) );
 
 		if ( is_null( $listing ) || $listing->get_status() !== 'publish' ) {
 			return hp\rest_error( 400 );
 		}
 
 		// Check reviews.
-		$review_id = get_comments(
+		$review_id = Models\Review::filter(
 			[
-				'type'    => 'hp_review',
-				'user_id' => $author->ID,
-				'post_id' => $listing->get_id(),
-				'number'  => 1,
-				'fields'  => 'ids',
+				'user_id'    => $author->ID,
+				'listing_id' => $listing->get_id(),
 			]
-		);
+		)->get_first_id();
 
 		if ( ! empty( $review_id ) ) {
 			return hp\rest_error( 403, esc_html__( "You've already submitted a review.", 'hivepress-reviews' ) );

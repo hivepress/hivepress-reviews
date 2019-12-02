@@ -20,13 +20,6 @@ defined( 'ABSPATH' ) || exit;
 class Review extends Comment {
 
 	/**
-	 * Model name.
-	 *
-	 * @var string
-	 */
-	protected static $name;
-
-	/**
 	 * Model fields.
 	 *
 	 * @var array
