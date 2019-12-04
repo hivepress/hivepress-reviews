@@ -157,8 +157,6 @@ final class Review {
 
 			return [ $rating_value, $rating_count ];
 		}
-
-		return null;
 	}
 
 	/**

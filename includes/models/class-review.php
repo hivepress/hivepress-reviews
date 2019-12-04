@@ -61,9 +61,7 @@ class Review extends Comment {
 					],
 
 					'approved'     => [
-						'type'      => 'number',
-						'min_value' => 0,
-						'max_value' => 1,
+						'type' => 'checkbox',
 					],
 
 					'author_name'  => [

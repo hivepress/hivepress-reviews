@@ -34,7 +34,7 @@ class Reviews extends Block {
 		if ( is_singular( 'hp_listing' ) ) {
 			$review_ids = Models\Review::filter(
 				[
-					'status'     => 'approve',
+					'approved'   => true,
 					'listing_id' => get_the_ID(),
 				]
 			)->get_ids();
