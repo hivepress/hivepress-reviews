@@ -246,9 +246,9 @@ final class Review {
 					'listing_details_primary' => [
 						'blocks' => [
 							'listing_rating' => [
-								'type'     => 'element',
-								'filepath' => 'listing/view/listing-rating',
-								'order'    => 30,
+								'type'   => 'part',
+								'path'   => 'listing/view/listing-rating',
+								'_order' => 30,
 							],
 						],
 					],
@@ -269,9 +269,9 @@ final class Review {
 			'listing_details_primary' => [
 				'blocks' => [
 					'listing_rating' => [
-						'type'     => 'element',
-						'filepath' => 'listing/view/listing-rating',
-						'order'    => 30,
+						'type'   => 'part',
+						'path'   => 'listing/view/listing-rating',
+						'_order' => 30,
 					],
 				],
 			],
@@ -299,13 +299,13 @@ final class Review {
 					'listing_actions_primary' => [
 						'blocks' => [
 							'review_submit_modal'  => [
-								'type'    => 'modal',
-								'caption' => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+								'type'   => 'modal',
+								'title'  => esc_html__( 'Write a Review', 'hivepress-reviews' ),
 
-								'blocks'  => [
+								'blocks' => [
 									'review_submit_form' => [
 										'type'       => 'review_submit_form',
-										'order'      => 10,
+										'_order'     => 10,
 
 										'attributes' => [
 											'class' => [ 'hp-form--narrow' ],
@@ -315,9 +315,9 @@ final class Review {
 							],
 
 							'review_submit_button' => [
-								'type'     => 'element',
-								'filepath' => 'listing/view/page/review-submit-link',
-								'order'    => 20,
+								'type'   => 'part',
+								'path'   => 'listing/view/page/review-submit-link',
+								'_order' => 20,
 							],
 						],
 					],
@@ -344,7 +344,7 @@ final class Review {
 						'blocks' => [
 							'reviews_container' => [
 								'type'       => 'container',
-								'order'      => 100,
+								'_order'     => 100,
 
 								'attributes' => [
 									'class' => [ 'hp-section' ],
@@ -352,18 +352,18 @@ final class Review {
 
 								'blocks'     => [
 									'reviews_title' => [
-										'type'     => 'element',
-										'filepath' => 'page/section-title',
-										'order'    => 10,
+										'type'    => 'part',
+										'path'    => 'page/section-title',
+										'_order'  => 10,
 
-										'context'  => [
+										'context' => [
 											'title' => esc_html__( 'Reviews', 'hivepress-reviews' ),
 										],
 									],
 
 									'reviews'       => [
-										'type'  => 'reviews',
-										'order' => 20,
+										'type'   => 'reviews',
+										'_order' => 20,
 									],
 								],
 							],
@@ -396,9 +396,9 @@ final class Review {
 					'vendor_details_primary' => [
 						'blocks' => [
 							'vendor_rating' => [
-								'type'     => 'element',
-								'filepath' => 'vendor/view/vendor-rating',
-								'order'    => 20,
+								'type'   => 'part',
+								'path'   => 'vendor/view/vendor-rating',
+								'_order' => 20,
 							],
 						],
 					],
@@ -422,9 +422,9 @@ final class Review {
 					'vendor_details_primary' => [
 						'blocks' => [
 							'vendor_rating' => [
-								'type'     => 'element',
-								'filepath' => 'vendor/view/vendor-rating',
-								'order'    => 20,
+								'type'   => 'part',
+								'path'   => 'vendor/view/vendor-rating',
+								'_order' => 20,
 							],
 						],
 					],

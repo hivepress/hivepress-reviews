@@ -37,7 +37,7 @@ class Review_View_Block extends Template {
 				'blocks' => [
 					'review_container' => [
 						'type'       => 'container',
-						'order'      => 10,
+						'_order'     => 10,
 
 						'attributes' => [
 							'class' => [ 'hp-review', 'hp-review--view-block' ],
@@ -46,7 +46,7 @@ class Review_View_Block extends Template {
 						'blocks'     => [
 							'review_header'  => [
 								'type'       => 'container',
-								'order'      => 10,
+								'_order'     => 10,
 
 								'attributes' => [
 									'class' => [ 'hp-review__header' ],
@@ -54,14 +54,14 @@ class Review_View_Block extends Template {
 
 								'blocks'     => [
 									'review_image'   => [
-										'type'     => 'element',
-										'filepath' => 'review/view/review-image',
-										'order'    => 10,
+										'type'   => 'part',
+										'path'   => 'review/view/review-image',
+										'_order' => 10,
 									],
 
 									'review_summary' => [
 										'type'       => 'container',
-										'order'      => 20,
+										'_order'     => 20,
 
 										'attributes' => [
 											'class' => [ 'hp-review__summary' ],
@@ -69,14 +69,14 @@ class Review_View_Block extends Template {
 
 										'blocks'     => [
 											'review_author' => [
-												'type'     => 'element',
-												'filepath' => 'review/view/review-author',
-												'order'    => 10,
+												'type'   => 'part',
+												'path'   => 'review/view/review-author',
+												'_order' => 10,
 											],
 
 											'review_details' => [
 												'type'   => 'container',
-												'order'  => 20,
+												'_order' => 20,
 
 												'attributes' => [
 													'class' => [ 'hp-review__details' ],
@@ -84,15 +84,15 @@ class Review_View_Block extends Template {
 
 												'blocks' => [
 													'review_rating'  => [
-														'type'     => 'element',
-														'filepath' => 'review/view/review-rating',
-														'order'    => 10,
+														'type'     => 'part',
+														'path' => 'review/view/review-rating',
+														'_order'    => 10,
 													],
 
 													'review_date'   => [
-														'type'     => 'element',
-														'filepath' => 'review/view/review-date',
-														'order'    => 20,
+														'type'     => 'part',
+														'path' => 'review/view/review-date',
+														'_order'    => 20,
 													],
 												],
 											],
@@ -103,7 +103,7 @@ class Review_View_Block extends Template {
 
 							'review_content' => [
 								'type'       => 'container',
-								'order'      => 20,
+								'_order'     => 20,
 
 								'attributes' => [
 									'class' => [ 'hp-review__content' ],
@@ -111,9 +111,9 @@ class Review_View_Block extends Template {
 
 								'blocks'     => [
 									'review_text' => [
-										'type'     => 'element',
-										'filepath' => 'review/view/review-text',
-										'order'    => 10,
+										'type'   => 'part',
+										'path'   => 'review/view/review-text',
+										'_order' => 10,
 									],
 								],
 							],

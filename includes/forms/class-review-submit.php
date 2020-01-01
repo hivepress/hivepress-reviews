@@ -90,11 +90,11 @@ class Review_Submit extends Model_Form {
 
 				'fields'  => [
 					'rating'     => [
-						'order' => 10,
+						'_order' => 10,
 					],
 
 					'text'       => [
-						'order' => 20,
+						'_order' => 20,
 					],
 
 					'listing_id' => [

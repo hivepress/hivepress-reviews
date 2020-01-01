@@ -22,29 +22,22 @@ defined( 'ABSPATH' ) || exit;
 class Review extends Controller {
 
 	/**
-	 * Controller routes.
-	 *
-	 * @var array
-	 */
-	protected static $routes = [];
-
-	/**
-	 * Class initializer.
+	 * Class constructor.
 	 *
 	 * @param array $args Controller arguments.
 	 */
-	public static function init( $args = [] ) {
+	public function __construct( $args = [] ) {
 		$args = hp\merge_arrays(
 			[
 				'routes' => [
 					[
-						'path'      => '/reviews',
-						'rest'      => true,
+						'path'   => '/reviews',
+						'rest'   => true,
 
-						'endpoints' => [
+						'routes' => [
 							[
-								'methods' => 'POST',
-								'action'  => 'submit_review',
+								'method' => 'POST',
+								'action' => [ $this, 'submit_review' ],
 							],
 						],
 					],
@@ -53,7 +46,7 @@ class Review extends Controller {
 			$args
 		);
 
-		parent::init( $args );
+		parent::__construct( $args );
 	}
 
 	/**
