@@ -176,7 +176,7 @@ final class Review {
 	public function update_rating( $review_id ) {
 
 		// Get review.
-		$review = Models\Review::get_by_id( $review_id );
+		$review = Models\Review::query()->get_by_id( $review_id );
 
 		if ( ! is_null( $review ) ) {
 
@@ -253,8 +253,7 @@ final class Review {
 						],
 					],
 				],
-			],
-			'blocks'
+			]
 		);
 	}
 
@@ -377,8 +376,7 @@ final class Review {
 			$template,
 			[
 				'blocks' => $blocks,
-			],
-			'blocks'
+			]
 		);
 	}
 
@@ -403,8 +401,7 @@ final class Review {
 						],
 					],
 				],
-			],
-			'blocks'
+			]
 		);
 	}
 
@@ -429,8 +426,7 @@ final class Review {
 						],
 					],
 				],
-			],
-			'blocks'
+			]
 		);
 	}
 }

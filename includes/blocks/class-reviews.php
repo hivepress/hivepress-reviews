@@ -32,7 +32,7 @@ class Reviews extends Block {
 		$review_ids = [];
 
 		if ( is_singular( 'hp_listing' ) ) {
-			$review_ids = Models\Review::filter(
+			$review_ids = Models\Review::query()->filter(
 				[
 					'approved'   => true,
 					'listing_id' => get_the_ID(),
@@ -47,7 +47,7 @@ class Reviews extends Block {
 			foreach ( $review_ids as $review_id ) {
 
 				// Get review.
-				$review = Models\Review::get_by_id( $review_id );
+				$review = Models\Review::query()->get_by_id( $review_id );
 
 				if ( ! is_null( $review ) ) {
 					$output .= '<div class="hp-grid__item">';

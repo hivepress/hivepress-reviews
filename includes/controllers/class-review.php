@@ -84,14 +84,14 @@ class Review extends Controller {
 		}
 
 		// Get listing.
-		$listing = Models\Listing::get_by_id( $form->get_value( 'listing_id' ) );
+		$listing = Models\Listing::query()->get_by_id( $form->get_value( 'listing_id' ) );
 
 		if ( is_null( $listing ) || $listing->get_status() !== 'publish' ) {
 			return hp\rest_error( 400 );
 		}
 
 		// Check reviews.
-		$review_id = Models\Review::filter(
+		$review_id = Models\Review::query()->filter(
 			[
 				'user_id'    => $author->ID,
 				'listing_id' => $listing->get_id(),
