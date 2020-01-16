@@ -342,27 +342,14 @@ final class Review {
 					'page_content' => [
 						'blocks' => [
 							'reviews_container' => [
-								'type'       => 'container',
-								'_order'     => 100,
+								'type'   => 'section',
+								'title'  => esc_html__( 'Reviews', 'hivepress-reviews' ),
+								'_order' => 100,
 
-								'attributes' => [
-									'class' => [ 'hp-section' ],
-								],
-
-								'blocks'     => [
-									'reviews_title' => [
-										'type'    => 'part',
-										'path'    => 'page/section-title',
-										'_order'  => 10,
-
-										'context' => [
-											'title' => esc_html__( 'Reviews', 'hivepress-reviews' ),
-										],
-									],
-
-									'reviews'       => [
+								'blocks' => [
+									'reviews' => [
 										'type'   => 'reviews',
-										'_order' => 20,
+										'_order' => 10,
 									],
 								],
 							],

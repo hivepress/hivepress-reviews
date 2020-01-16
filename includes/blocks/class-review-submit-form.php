@@ -38,13 +38,13 @@ class Review_Submit_Form extends Form {
 	/**
 	 * Bootstraps block properties.
 	 */
-	protected function bootstrap() {
+	protected function boot() {
 
 		// Set listing ID.
 		if ( is_singular( 'hp_listing' ) ) {
 			$this->values['listing_id'] = get_the_ID();
 		}
 
-		parent::bootstrap();
+		parent::boot();
 	}
 }

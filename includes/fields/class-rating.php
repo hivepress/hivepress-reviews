@@ -63,7 +63,7 @@ class Rating extends Number {
 	/**
 	 * Bootstraps field properties.
 	 */
-	protected function bootstrap() {
+	protected function boot() {
 		$this->attributes = hp\merge_arrays(
 			$this->attributes,
 			[
@@ -74,7 +74,7 @@ class Rating extends Number {
 			]
 		);
 
-		Field::bootstrap();
+		Field::boot();
 	}
 
 	/**
