@@ -20,26 +20,21 @@ defined( 'ABSPATH' ) || exit;
 class Rating extends Number {
 
 	/**
-	 * Field title.
-	 *
-	 * @var string
-	 */
-	protected static $title;
-
-	/**
 	 * Class initializer.
 	 *
-	 * @param array $args Field arguments.
+	 * @param array $meta Field meta.
 	 */
-	public static function init( $args = [] ) {
-		$args = hp\merge_arrays(
+	public static function init( $meta = [] ) {
+		$meta = hp\merge_arrays(
 			[
-				'title' => null,
+				'label'      => null,
+				'editable'   => false,
+				'filterable' => false,
 			],
-			$args
+			$meta
 		);
 
-		parent::init( $args );
+		parent::init( $meta );
 	}
 
 	/**
@@ -49,12 +44,12 @@ class Rating extends Number {
 	 */
 	public function __construct( $args = [] ) {
 		$args = hp\merge_arrays(
+			$args,
 			[
 				'decimals'  => 1,
 				'min_value' => 1,
 				'max_value' => 5,
-			],
-			$args
+			]
 		);
 
 		parent::__construct( $args );
@@ -64,6 +59,8 @@ class Rating extends Number {
 	 * Bootstraps field properties.
 	 */
 	protected function boot() {
+
+		// Set attributes.
 		$this->attributes = hp\merge_arrays(
 			$this->attributes,
 			[

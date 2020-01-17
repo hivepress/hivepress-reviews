@@ -20,85 +20,45 @@ defined( 'ABSPATH' ) || exit;
 class Review_Submit extends Model_Form {
 
 	/**
-	 * Form title.
-	 *
-	 * @var string
-	 */
-	protected static $title;
-
-	/**
-	 * Form message.
-	 *
-	 * @var string
-	 */
-	protected static $message;
-
-	/**
-	 * Model name.
-	 *
-	 * @var string
-	 */
-	protected static $model;
-
-	/**
-	 * Form action.
-	 *
-	 * @var string
-	 */
-	protected static $action;
-
-	/**
-	 * Form method.
-	 *
-	 * @var string
-	 */
-	protected static $method = 'POST';
-
-	/**
-	 * Form captcha.
-	 *
-	 * @var bool
-	 */
-	protected static $captcha = false;
-
-	/**
-	 * Form fields.
-	 *
-	 * @var array
-	 */
-	protected static $fields = [];
-
-	/**
-	 * Form button.
-	 *
-	 * @var object
-	 */
-	protected static $button;
-
-	/**
 	 * Class initializer.
+	 *
+	 * @param array $meta Form meta.
+	 */
+	public static function init( $meta = [] ) {
+		$meta = hp\merge_arrays(
+			[
+				'label'   => esc_html__( 'Submit Review', 'hivepress-reviews' ),
+				'captcha' => false,
+				'model'   => 'review',
+			],
+			$meta
+		);
+
+		parent::init( $meta );
+	}
+
+	/**
+	 * Class constructor.
 	 *
 	 * @param array $args Form arguments.
 	 */
-	public static function init( $args = [] ) {
+	public function __construct( $args = [] ) {
 		$args = hp\merge_arrays(
 			[
-				'title'   => esc_html__( 'Submit Review', 'hivepress-reviews' ),
 				'message' => esc_html__( 'Your review has been submitted.', 'hivepress-reviews' ),
-				'model'   => 'review',
-				'action'  => hp\get_rest_url( '/reviews' ),
+				'action'  => hivepress()->router->get_url( 'review_submit_action' ),
 
 				'fields'  => [
-					'rating'     => [
+					'rating'  => [
 						'_order' => 10,
 					],
 
-					'text'       => [
+					'text'    => [
 						'_order' => 20,
 					],
 
-					'listing_id' => [
-						'type' => 'hidden',
+					'listing' => [
+						'display_type' => 'hidden',
 					],
 				],
 
@@ -109,6 +69,6 @@ class Review_Submit extends Model_Form {
 			$args
 		);
 
-		parent::init( $args );
+		parent::__construct( $args );
 	}
 }

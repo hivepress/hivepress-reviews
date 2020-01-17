@@ -4,7 +4,7 @@
  *
  * @package HivePress\Configs
  */
-
+// todo.
 use HivePress\Helpers as hp;
 
 // Exit if accessed directly.
@@ -18,9 +18,9 @@ return [
 	],
 
 	'reviews_frontend' => [
-		'handle'  => 'hp-reviews-frontend',
+		'handle'  => 'hivepress-reviews-frontend',
 		'src'     => hivepress()->get_url( 'reviews' ) . '/assets/js/frontend.min.js',
 		'version' => hivepress()->get_version( 'reviews' ),
-		'deps'    => [ 'hp-core-frontend', 'raty' ],
+		'deps'    => [ 'hivepress-core', 'raty' ],
 	],
 ];

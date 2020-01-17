@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @class Review
  */
-class Review extends Controller {
+final class Review extends Controller {
 
 	/**
 	 * Class constructor.
@@ -30,16 +30,16 @@ class Review extends Controller {
 		$args = hp\merge_arrays(
 			[
 				'routes' => [
-					[
-						'path'   => '/reviews',
-						'rest'   => true,
+					'reviews_resource'     => [
+						'path' => '/reviews',
+						'rest' => true,
+					],
 
-						'routes' => [
-							[
-								'method' => 'POST',
-								'action' => [ $this, 'submit_review' ],
-							],
-						],
+					'review_submit_action' => [
+						'base'   => 'reviews_resource',
+						'method' => 'POST',
+						'action' => [ $this, 'submit_review' ],
+						'rest'   => true,
 					],
 				],
 			],
@@ -63,56 +63,43 @@ class Review extends Controller {
 		}
 
 		// Validate form.
-		$form = new Forms\Review_Submit();
-
-		$form->set_values( $request->get_params() );
+		$form = ( new Forms\Review_Submit() )->set_values( $request->get_params() );
 
 		if ( ! $form->validate() ) {
 			return hp\rest_error( 400, $form->get_errors() );
 		}
 
 		// Get author.
-		$author_id = $request->get_param( 'author_id' ) ? $request->get_param( 'author_id' ) : get_current_user_id();
-		$author    = get_userdata( $author_id );
+		$author_id = $request->get_param( 'author' ) ? $request->get_param( 'author' ) : get_current_user_id();
 
-		if ( false === $author ) {
+		$author = Models\User::query()->get_by_id( $author_id );
+
+		if ( empty( $author ) ) {
 			return hp\rest_error( 400 );
 		}
 
-		if ( get_current_user_id() !== $author->ID && ! current_user_can( 'moderate_comments' ) ) {
+		// Check permissions.
+		if ( ! current_user_can( 'edit_users' ) && get_current_user_id() !== $author->get_id() ) {
 			return hp\rest_error( 403 );
 		}
 
 		// Get listing.
-		$listing = Models\Listing::query()->get_by_id( $form->get_value( 'listing_id' ) );
+		$listing = Models\Listing::query()->get_by_id( $form->get_value( 'listing' ) );
 
-		if ( is_null( $listing ) || $listing->get_status() !== 'publish' ) {
+		if ( empty( $listing ) || $listing->get_status() !== 'publish' ) {
 			return hp\rest_error( 400 );
 		}
 
-		// Check reviews.
-		$review_id = Models\Review::query()->filter(
-			[
-				'user_id'    => $author->ID,
-				'listing_id' => $listing->get_id(),
-			]
-		)->get_first_id();
-
-		if ( ! empty( $review_id ) ) {
-			return hp\rest_error( 403, esc_html__( "You've already submitted a review.", 'hivepress-reviews' ) );
-		}
-
+		// todo check if review is already submitted.
 		// Add review.
-		$review = new Models\Review();
-
-		$review->fill(
+		// todo make sure that its not approved by default.
+		$review = ( new Models\Review() )->fill(
 			array_merge(
 				$form->get_values(),
 				[
-					'approved'     => 0,
-					'author_id'    => $author->ID,
-					'author_name'  => $author->display_name,
-					'author_email' => $author->user_email,
+					'author'               => $author->get_id(),
+					'author__display_name' => $author->get_display_name(),
+					'author__email'        => $author->get_email(),
 				]
 			)
 		);
@@ -121,13 +108,11 @@ class Review extends Controller {
 			return hp\rest_error( 400 );
 		}
 
-		return new \WP_Rest_Response(
+		return hp\rest_response(
+			201,
 			[
-				'data' => [
-					'id' => $review->get_id(),
-				],
-			],
-			200
+				'id' => $review->get_id(),
+			]
 		);
 	}
 }

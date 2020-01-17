@@ -12,7 +12,6 @@ defined( 'ABSPATH' ) || exit;
 
 return [
 	'review' => [
-		'public'  => false,
-		'show_ui' => true,
+		'public' => true,
 	],
 ];
