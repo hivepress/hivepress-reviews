@@ -49,6 +49,13 @@ class Review extends Comment {
 						'_alias' => 'comment_date',
 					],
 
+					'approved'             => [
+						'type'      => 'number',
+						'min_value' => 0,
+						'max_value' => 1,
+						'_alias'    => 'comment_approved',
+					],
+
 					'author'               => [
 						'type'      => 'number',
 						'min_value' => 1,

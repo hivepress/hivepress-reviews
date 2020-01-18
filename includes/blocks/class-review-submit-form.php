@@ -40,9 +40,11 @@ class Review_Submit_Form extends Form {
 	 */
 	protected function boot() {
 
-		// Set listing ID.
-		if ( is_singular( 'hp_listing' ) ) {
-			$this->values['listing_id'] = get_the_ID();
+		// Get listing.
+		$listing = $this->get_context( 'listing' );
+
+		if ( hp\is_class_instance( $listing, '\HivePress\Models\Listing' ) ) {
+			$this->values['listing'] = $listing->get_id();
 		}
 
 		parent::boot();

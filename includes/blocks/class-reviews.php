@@ -28,43 +28,42 @@ class Reviews extends Block {
 	public function render() {
 		$output = '';
 
-		// Get review IDs.
-		$review_ids = [];
+		// Get reviews.
+		$reviews = [];
 
-		if ( is_singular( 'hp_listing' ) ) {
-			$review_ids = Models\Review::query()->filter(
+		$listing = $this->get_context( 'listing' );
+
+		if ( hp\is_class_instance( $listing, '\HivePress\Models\Listing' ) ) {
+			$reviews = Models\Review::query()->filter(
 				[
-					'approved'   => true,
-					'listing_id' => get_the_ID(),
+					'listing'  => $listing->get_id(),
+					'approved' => true,
 				]
-			)->get_ids();
+			)
+			->order( [ 'created_date' => 'desc' ] )
+			->get()
+			->serialize();
 		}
 
 		// Render reviews.
-		if ( ! empty( $review_ids ) ) {
+		if ( $reviews ) {
 			$output .= '<div class="hp-grid">';
 
-			foreach ( $review_ids as $review_id ) {
+			foreach ( $reviews as $review ) {
+				$output .= '<div class="hp-grid__item">';
 
-				// Get review.
-				$review = Models\Review::query()->get_by_id( $review_id );
+				// Render review.
+				$output .= ( new Template(
+					[
+						'template' => 'review_view_block',
 
-				if ( ! is_null( $review ) ) {
-					$output .= '<div class="hp-grid__item">';
+						'context'  => [
+							'review' => $review,
+						],
+					]
+				) )->render();
 
-					// Render review.
-					$output .= ( new Template(
-						[
-							'template' => 'review_view_block',
-
-							'context'  => [
-								'review' => $review,
-							],
-						]
-					) )->render();
-
-					$output .= '</div>';
-				}
+				$output .= '</div>';
 			}
 
 			$output .= '</div>';

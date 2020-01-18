@@ -19,5 +19,332 @@ defined( 'ABSPATH' ) || exit;
  * @class Review
  */
 final class Review extends Component {
-	// todo.
+
+	/**
+	 * Class constructor.
+	 *
+	 * @param array $args Component arguments.
+	 */
+	public function __construct( $args = [] ) {
+
+		// Add attributes.
+		add_filter( 'hivepress/v1/models/listing/attributes', [ $this, 'add_attributes' ] );
+
+		// Add model fields.
+		add_filter( 'hivepress/v1/models/listing', [ $this, 'add_model_fields' ] );
+		add_filter( 'hivepress/v1/models/vendor', [ $this, 'add_model_fields' ] );
+
+		// Update rating.
+		add_action( 'hivepress/v1/models/review/create', [ $this, 'update_rating' ] );
+		add_action( 'hivepress/v1/models/review/update_status', [ $this, 'update_rating' ] );
+		add_action( 'hivepress/v1/models/review/delete', [ $this, 'update_rating' ] );
+
+		// Validate review.
+		add_filter( 'hivepress/v1/models/review/errors', [ $this, 'validate_review' ], 10, 2 );
+
+		// Delete reviews.
+		add_action( 'hivepress/v1/models/user/delete', [ $this, 'delete_reviews' ] );
+
+		if ( ! is_admin() ) {
+
+			// Alter templates.
+			add_filter( 'hivepress/v1/templates/listing_view_block', [ $this, 'alter_listing_view_template' ] );
+			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_template' ] );
+			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_page' ] );
+			add_filter( 'hivepress/v1/templates/vendor_view_block', [ $this, 'alter_vendor_view_template' ] );
+			add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_template' ] );
+		}
+
+		parent::__construct( $args );
+	}
+
+	/**
+	 * Adds attributes.
+	 *
+	 * @param array $attributes Attributes.
+	 * @return array
+	 */
+	public function add_attributes( $attributes ) {
+		return array_merge(
+			$attributes,
+			[
+				'rating' => [
+					'label'      => esc_html__( 'Rating', 'hivepress-reviews' ),
+					'protected'  => true,
+					'sortable'   => true,
+
+					'edit_field' => [
+						'label' => esc_html__( 'Rating', 'hivepress-reviews' ),
+						'type'  => 'rating',
+					],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Adds model fields.
+	 *
+	 * @param array $model Model arguments.
+	 * @return array
+	 */
+	public function add_model_fields( $model ) {
+		$model['fields'] = array_merge(
+			[
+				'rating' => [
+					'type'      => 'rating',
+					'_external' => true,
+				],
+			],
+			$model['fields'],
+			[
+				'rating_count' => [
+					'type'      => 'number',
+					'min_value' => 0,
+					'_external' => true,
+				],
+			]
+		);
+
+		return $model;
+	}
+
+	/**
+	 * Gets rating.
+	 *
+	 * @param array $listing_ids Listing IDs.
+	 * @return array
+	 */
+	protected function get_rating( $listing_ids ) {
+		global $wpdb;
+
+		$rating = [ null, null ];
+
+		if ( $listing_ids ) {
+
+			// Get results.
+			$placeholder = implode( ', ', array_fill( 0, count( (array) $listing_ids ), '%d' ) );
+
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT AVG( CAST( meta_value AS DECIMAL ) ), COUNT( * ) FROM {$wpdb->comments}
+					INNER JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
+					WHERE comment_type = %s AND comment_approved = %s AND comment_post_ID IN ( {$placeholder} );",
+					array_merge( [ 'hp_review', '1' ], (array) $listing_ids )
+				),
+				ARRAY_A
+			);
+
+			// Get rating.
+			$rating = array_map(
+				function( $value ) {
+					return empty( $value ) ? null : floatval( $value );
+				},
+				reset( $results )
+			);
+		}
+
+		return $rating;
+	}
+
+	/**
+	 * Updates rating.
+	 *
+	 * @param int $review_id Review ID.
+	 */
+	public function update_rating( $review_id ) {
+
+		// Get review.
+		$review = Models\Review::query()->get_by_id( $review_id );
+
+		// Get listing.
+		$listing = $review->get_listing();
+
+		if ( $listing ) {
+
+			// Get listing rating.
+			$listing_rating = $this->get_rating( $listing->get_id() );
+
+			// Update listing rating.
+			$listing->fill(
+				[
+					'rating'       => reset( $listing_rating ),
+					'rating_count' => end( $listing_rating ),
+				]
+			)->save();
+
+			// Get vendor.
+			$vendor = $listing->get_vendor();
+
+			if ( $vendor ) {
+
+				// Get vendor rating.
+				$vendor_rating = $this->get_rating(
+					Models\Listing::query()->filter(
+						[
+							'status' => 'publish',
+							'vendor' => $vendor->get_id(),
+						]
+					)->get_ids()
+				);
+
+				// Update vendor rating.
+				$vendor->fill(
+					[
+						'rating'       => reset( $vendor_rating ),
+						'rating_count' => end( $vendor_rating ),
+					]
+				)->save();
+			}
+		}
+	}
+
+	/**
+	 * Validates review.
+	 *
+	 * @param array  $errors Error messages.
+	 * @param object $review Review object.
+	 * @return array
+	 */
+	public function validate_review( $errors, $review ) {
+		if ( empty( $errors ) && ! get_option( 'hp_review_allow_multiple' ) ) {
+
+			// Get review ID.
+			$review_id = Models\Review::query()->filter(
+				[
+					'author'  => $review->get_author__id(),
+					'listing' => $review->get_listing__id(),
+				]
+			)->get_first_id();
+
+			// Add error.
+			if ( $review_id ) {
+				$errors[] = esc_html__( 'You\'ve already submitted a review.', 'hivepress-reviews' );
+			}
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * Deletes reviews.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	public function delete_reviews( $user_id ) {
+		Models\Review::query()->filter(
+			[
+				'author' => $user_id,
+			]
+		)->delete();
+	}
+
+	/**
+	 * Alters listing view template.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_listing_view_template( $template ) {
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => [
+					'listing_details_primary' => [
+						'blocks' => [
+							'listing_rating' => [
+								'type'   => 'part',
+								'path'   => 'listing/view/listing-rating',
+								'_order' => 30,
+							],
+						],
+					],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Alters listing view page.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_listing_view_page( $template ) {
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => [
+					'page_content'            => [
+						'blocks' => [
+							'reviews_container' => [
+								'type'   => 'section',
+								'title'  => esc_html__( 'Reviews', 'hivepress-reviews' ),
+								'_order' => 100,
+
+								'blocks' => [
+									'reviews' => [
+										'type'   => 'reviews',
+										'_order' => 10,
+									],
+								],
+							],
+						],
+					],
+
+					'listing_actions_primary' => [
+						'blocks' => [
+							'review_submit_modal' => [
+								'type'   => 'modal',
+								'model'  => 'listing',
+								'title'  => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+
+								'blocks' => [
+									'review_submit_form' => [
+										'type'       => 'review_submit_form',
+										'_order'     => 10,
+
+										'attributes' => [
+											'class' => [ 'hp-form--narrow' ],
+										],
+									],
+								],
+							],
+
+							'review_submit_link'  => [
+								'type'   => 'part',
+								'path'   => 'listing/view/page/review-submit-link',
+								'_order' => 30,
+							],
+						],
+					],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Alters vendor view template.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_vendor_view_template( $template ) {
+		return hp\merge_trees(
+			$template,
+			[
+				'blocks' => [
+					'vendor_details_primary' => [
+						'blocks' => [
+							'vendor_rating' => [
+								'type'   => 'part',
+								'path'   => 'vendor/view/vendor-rating',
+								'_order' => 20,
+							],
+						],
+					],
+				],
+			]
+		);
+	}
 }

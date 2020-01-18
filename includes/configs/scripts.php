@@ -4,7 +4,7 @@
  *
  * @package HivePress\Configs
  */
-// todo.
+
 use HivePress\Helpers as hp;
 
 // Exit if accessed directly.

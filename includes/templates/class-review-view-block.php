@@ -20,18 +20,11 @@ defined( 'ABSPATH' ) || exit;
 class Review_View_Block extends Template {
 
 	/**
-	 * Template blocks.
-	 *
-	 * @var array
-	 */
-	protected static $blocks = [];
-
-	/**
-	 * Class initializer.
+	 * Class constructor.
 	 *
 	 * @param array $args Template arguments.
 	 */
-	public static function init( $args = [] ) {
+	public function __construct( $args = [] ) {
 		$args = hp\merge_trees(
 			[
 				'blocks' => [
@@ -46,6 +39,7 @@ class Review_View_Block extends Template {
 						'blocks'     => [
 							'review_header'  => [
 								'type'       => 'container',
+								'tag'        => 'header',
 								'_order'     => 10,
 
 								'attributes' => [
@@ -89,9 +83,9 @@ class Review_View_Block extends Template {
 														'_order'    => 10,
 													],
 
-													'review_date'   => [
+													'review_created_date'   => [
 														'type'     => 'part',
-														'path' => 'review/view/review-date',
+														'path' => 'review/view/review-created-date',
 														'_order'    => 20,
 													],
 												],
@@ -124,6 +118,6 @@ class Review_View_Block extends Template {
 			$args
 		);
 
-		parent::init( $args );
+		parent::__construct( $args );
 	}
 }

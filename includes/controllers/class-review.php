@@ -90,9 +90,7 @@ final class Review extends Controller {
 			return hp\rest_error( 400 );
 		}
 
-		// todo check if review is already submitted.
 		// Add review.
-		// todo make sure that its not approved by default.
 		$review = ( new Models\Review() )->fill(
 			array_merge(
 				$form->get_values(),
@@ -100,12 +98,13 @@ final class Review extends Controller {
 					'author'               => $author->get_id(),
 					'author__display_name' => $author->get_display_name(),
 					'author__email'        => $author->get_email(),
+					'approved'             => get_option( 'hp_review_enable_moderation' ) ? 0 : 1,
 				]
 			)
 		);
 
 		if ( ! $review->save() ) {
-			return hp\rest_error( 400 );
+			return hp\rest_error( 400, $review->_get_errors() );
 		}
 
 		return hp\rest_response(
