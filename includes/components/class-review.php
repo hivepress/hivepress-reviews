@@ -160,43 +160,45 @@ final class Review extends Component {
 		// Get listing.
 		$listing = $review->get_listing();
 
-		if ( $listing ) {
-
-			// Get listing rating.
-			$listing_rating = $this->get_rating( $listing->get_id() );
-
-			// Update listing rating.
-			$listing->fill(
-				[
-					'rating'       => reset( $listing_rating ),
-					'rating_count' => end( $listing_rating ),
-				]
-			)->save();
-
-			// Get vendor.
-			$vendor = $listing->get_vendor();
-
-			if ( $vendor ) {
-
-				// Get vendor rating.
-				$vendor_rating = $this->get_rating(
-					Models\Listing::query()->filter(
-						[
-							'status' => 'publish',
-							'vendor' => $vendor->get_id(),
-						]
-					)->get_ids()
-				);
-
-				// Update vendor rating.
-				$vendor->fill(
-					[
-						'rating'       => reset( $vendor_rating ),
-						'rating_count' => end( $vendor_rating ),
-					]
-				)->save();
-			}
+		if ( empty( $listing ) ) {
+			return;
 		}
+
+		// Get listing rating.
+		$listing_rating = $this->get_rating( $listing->get_id() );
+
+		// Update listing rating.
+		$listing->fill(
+			[
+				'rating'       => reset( $listing_rating ),
+				'rating_count' => end( $listing_rating ),
+			]
+		)->save();
+
+		// Get vendor.
+		$vendor = $listing->get_vendor();
+
+		if ( empty( $vendor ) ) {
+			return;
+		}
+
+		// Get vendor rating.
+		$vendor_rating = $this->get_rating(
+			Models\Listing::query()->filter(
+				[
+					'status' => 'publish',
+					'vendor' => $vendor->get_id(),
+				]
+			)->get_ids()
+		);
+
+		// Update vendor rating.
+		$vendor->fill(
+			[
+				'rating'       => reset( $vendor_rating ),
+				'rating_count' => end( $vendor_rating ),
+			]
+		)->save();
 	}
 
 	/**

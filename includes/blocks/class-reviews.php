@@ -39,8 +39,7 @@ class Reviews extends Block {
 					'listing'  => $listing->get_id(),
 					'approved' => true,
 				]
-			)
-			->order( [ 'created_date' => 'desc' ] )
+			)->order( [ 'created_date' => 'desc' ] )
 			->get()
 			->serialize();
 		}

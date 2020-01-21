@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: HivePress Reviews\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-21 20:04+0000\n"
+"POT-Creation-Date: 2019-11-20 11:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -15,42 +15,33 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.3.0; wp-5.2.1"
 
-#: includes/components/class-review.php:72
-#: includes/components/class-review.php:77 includes/models/class-review.php:32
+#: includes/components/class-review.php:81 includes/models/class-review.php:53
 msgid "Rating"
 msgstr ""
 
-#: includes/components/class-review.php:224
-msgid "You've already submitted a review."
-msgstr ""
-
-#: includes/components/class-review.php:284 includes/configs/settings.php:15
-msgid "Reviews"
-msgstr ""
-
-#: includes/components/class-review.php:302
+#: includes/components/class-review.php:317
 #: templates/listing/view/page/review-submit-link.php:5
 msgid "Write a Review"
 msgstr ""
 
-#: includes/configs/settings.php:26
-msgid "Allow submitting multiple reviews"
+#: includes/components/class-review.php:374
+msgid "Reviews"
 msgstr ""
 
-#: includes/configs/settings.php:33
-msgid "Manually approve new reviews"
+#: includes/controllers/class-review.php:119
+msgid "You've already submitted a review."
 msgstr ""
 
-#: includes/forms/class-review-submit.php:30
-#: includes/forms/class-review-submit.php:66
+#: includes/forms/class-review-submit.php:93
+#: includes/forms/class-review-submit.php:113
 msgid "Submit Review"
 msgstr ""
 
-#: includes/forms/class-review-submit.php:48
+#: includes/forms/class-review-submit.php:94
 msgid "Your review has been submitted."
 msgstr ""
 
-#: includes/models/class-review.php:39
+#: includes/models/class-review.php:59
 msgid "Review"
 msgstr ""
 

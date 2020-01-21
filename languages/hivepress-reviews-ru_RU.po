@@ -2,10 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: HivePress Reviews\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 11:39+0000\n"
-"PO-Revision-Date: 2019-11-22 11:30+0000\n"
+"POT-Creation-Date: 2020-01-21 20:04+0000\n"
+"PO-Revision-Date: 2020-01-21 20:05+0000\n"
 "Last-Translator: admin <admin@admin.com>\n"
-"Language-Team: Русский\n"
+"Language-Team: Russian\n"
 "Language: ru_RU\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10 >= 2 && "
 "n%10<=4 &&(n%100<10||n%100 >= 20)? 1 : 2);\n"
@@ -13,35 +13,44 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.3.1; wp-5.3"
+"X-Loco-Version: 2.3.1; wp-5.3.2"
 
-#: includes/components/class-review.php:81 includes/models/class-review.php:53
+#: includes/components/class-review.php:72
+#: includes/components/class-review.php:77 includes/models/class-review.php:32
 msgid "Rating"
 msgstr "Рейтинг"
 
-#: includes/components/class-review.php:317
+#: includes/components/class-review.php:224
+msgid "You've already submitted a review."
+msgstr "Вы уже отправили отзыв."
+
+#: includes/components/class-review.php:284 includes/configs/settings.php:15
+msgid "Reviews"
+msgstr "Отзывы"
+
+#: includes/components/class-review.php:302
 #: templates/listing/view/page/review-submit-link.php:5
 msgid "Write a Review"
 msgstr "Написать отзыв"
 
-#: includes/components/class-review.php:374
-msgid "Reviews"
-msgstr "Отзывы"
+#: includes/configs/settings.php:26
+msgid "Allow submitting multiple reviews"
+msgstr "Разрешить добавление нескольких отзывов"
 
-#: includes/controllers/class-review.php:119
-msgid "You've already submitted a review."
-msgstr "Вы уже отправили отзыв."
+#: includes/configs/settings.php:33
+msgid "Manually approve new reviews"
+msgstr "Вручную одобрять новые отзывы"
 
-#: includes/forms/class-review-submit.php:93
-#: includes/forms/class-review-submit.php:113
+#: includes/forms/class-review-submit.php:30
+#: includes/forms/class-review-submit.php:66
 msgid "Submit Review"
 msgstr "Отправить отзыв"
 
-#: includes/forms/class-review-submit.php:94
+#: includes/forms/class-review-submit.php:48
 msgid "Your review has been submitted."
 msgstr "Ваш отзыв отправлен."
 
-#: includes/models/class-review.php:59
+#: includes/models/class-review.php:39
 msgid "Review"
 msgstr "Отзыв"
 
