@@ -298,7 +298,6 @@ final class Review extends Component {
 						'blocks' => [
 							'review_submit_modal' => [
 								'type'   => 'modal',
-								'model'  => 'listing',
 								'title'  => esc_html__( 'Write a Review', 'hivepress-reviews' ),
 
 								'blocks' => [
