@@ -28,19 +28,19 @@ class Review extends Comment {
 		$args = hp\merge_arrays(
 			[
 				'fields' => [
-					'rating'               => [
-						'label'     => esc_html__( 'Rating', 'hivepress-reviews' ),
-						'type'      => 'rating',
-						'required'  => true,
-						'_external' => true,
-					],
-
 					'text'                 => [
 						'label'      => esc_html__( 'Review', 'hivepress-reviews' ),
 						'type'       => 'textarea',
 						'max_length' => 2048,
 						'required'   => true,
 						'_alias'     => 'comment_content',
+					],
+
+					'rating'               => [
+						'label'    => esc_html__( 'Rating', 'hivepress-reviews' ),
+						'type'     => 'rating',
+						'required' => true,
+						'_alias'   => 'comment_karma',
 					],
 
 					'created_date'         => [

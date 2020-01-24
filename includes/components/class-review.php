@@ -127,8 +127,7 @@ final class Review extends Component {
 
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT AVG( CAST( meta_value AS DECIMAL ) ), COUNT( * ) FROM {$wpdb->comments}
-					INNER JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
+					"SELECT AVG( comment_karma ), COUNT( * ) FROM {$wpdb->comments}
 					WHERE comment_type = %s AND comment_approved = %s AND comment_post_ID IN ( {$placeholder} );",
 					array_merge( [ 'hp_review', '1' ], (array) $listing_ids )
 				),
