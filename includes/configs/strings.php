@@ -1,6 +1,6 @@
 <?php
 /**
- * Comment types configuration.
+ * Strings configuration.
  *
  * @package HivePress\Configs
  */
@@ -11,7 +11,5 @@ use HivePress\Helpers as hp;
 defined( 'ABSPATH' ) || exit;
 
 return [
-	'review' => [
-		'public' => true,
-	],
+	'you_cant_review_your_own_listings' => esc_html__( 'You can\'t review your own listings.', 'hivepress-reviews' ),
 ];

@@ -12,9 +12,9 @@ defined( 'ABSPATH' ) || exit;
 
 return [
 	'reviews_frontend' => [
-		'handle'  => 'hp-reviews-frontend',
-		'src'     => HP_REVIEWS_URL . '/assets/css/frontend.min.css',
-		'version' => HP_REVIEWS_VERSION,
+		'handle'  => 'hivepress-reviews-frontend',
+		'src'     => hivepress()->get_url( 'reviews' ) . '/assets/css/frontend.min.css',
+		'version' => hivepress()->get_version( 'reviews' ),
 		'scope'   => [ 'frontend', 'editor' ],
 	],
 ];

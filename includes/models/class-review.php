@@ -20,110 +20,75 @@ defined( 'ABSPATH' ) || exit;
 class Review extends Comment {
 
 	/**
-	 * Model name.
-	 *
-	 * @var string
-	 */
-	protected static $name;
-
-	/**
-	 * Model fields.
-	 *
-	 * @var array
-	 */
-	protected static $fields = [];
-
-	/**
-	 * Model aliases.
-	 *
-	 * @var array
-	 */
-	protected static $aliases = [];
-
-	/**
-	 * Class initializer.
+	 * Class constructor.
 	 *
 	 * @param array $args Model arguments.
 	 */
-	public static function init( $args = [] ) {
+	public function __construct( $args = [] ) {
 		$args = hp\merge_arrays(
 			[
-				'fields'  => [
-					'rating'       => [
-						'label'    => esc_html__( 'Rating', 'hivepress-reviews' ),
-						'type'     => 'rating',
-						'required' => true,
-					],
-
-					'text'         => [
+				'fields' => [
+					'text'                 => [
 						'label'      => esc_html__( 'Review', 'hivepress-reviews' ),
 						'type'       => 'textarea',
 						'max_length' => 2048,
 						'required'   => true,
+						'_alias'     => 'comment_content',
 					],
 
-					'date'         => [
-						'type'       => 'text',
-						'max_length' => 128,
+					'rating'               => [
+						'label'    => esc_html__( 'Rating', 'hivepress-reviews' ),
+						'type'     => 'rating',
+						'required' => true,
+						'_alias'   => 'comment_karma',
 					],
 
-					'approved'     => [
+					'created_date'         => [
+						'type'   => 'date',
+						'format' => 'Y-m-d H:i:s',
+						'_alias' => 'comment_date',
+					],
+
+					'approved'             => [
 						'type'      => 'number',
 						'min_value' => 0,
 						'max_value' => 1,
+						'_alias'    => 'comment_approved',
 					],
 
-					'author_name'  => [
+					'author'               => [
+						'type'      => 'number',
+						'min_value' => 1,
+						'required'  => true,
+						'_alias'    => 'user_id',
+						'_model'    => 'user',
+					],
+
+					'author__display_name' => [
 						'type'       => 'text',
 						'max_length' => 256,
 						'required'   => true,
+						'_alias'     => 'comment_author',
 					],
 
-					'author_email' => [
+					'author__email'        => [
 						'type'     => 'email',
 						'required' => true,
+						'_alias'   => 'comment_author_email',
 					],
 
-					'author_id'    => [
+					'listing'              => [
 						'type'      => 'number',
-						'min_value' => 0,
+						'min_value' => 1,
 						'required'  => true,
+						'_alias'    => 'comment_post_ID',
+						'_model'    => 'listing',
 					],
-
-					'listing_id'   => [
-						'type'      => 'number',
-						'min_value' => 0,
-						'required'  => true,
-					],
-				],
-
-				'aliases' => [
-					'comment_content'      => 'text',
-					'comment_date'         => 'date',
-					'comment_approved'     => 'approved',
-					'comment_author'       => 'author_name',
-					'comment_author_email' => 'author_email',
-					'user_id'              => 'author_id',
-					'comment_post_ID'      => 'listing_id',
 				],
 			],
 			$args
 		);
 
-		parent::init( $args );
-	}
-
-	/**
-	 * Gets date.
-	 *
-	 * @param string $format Date format.
-	 * @return string
-	 */
-	final public function get_date( $format = null ) {
-		if ( is_null( $format ) ) {
-			$format = get_option( 'date_format' );
-		}
-
-		return date_i18n( $format, strtotime( $this->attributes['date'] ) );
+		parent::__construct( $args );
 	}
 }

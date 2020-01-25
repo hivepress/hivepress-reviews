@@ -13,14 +13,14 @@ defined( 'ABSPATH' ) || exit;
 return [
 	'raty'             => [
 		'handle'  => 'raty',
-		'src'     => HP_REVIEWS_URL . '/assets/js/jquery.raty.min.js',
-		'version' => HP_REVIEWS_VERSION,
+		'src'     => hivepress()->get_url( 'reviews' ) . '/assets/js/jquery.raty.min.js',
+		'version' => hivepress()->get_version( 'reviews' ),
 	],
 
 	'reviews_frontend' => [
-		'handle'  => 'hp-reviews-frontend',
-		'src'     => HP_REVIEWS_URL . '/assets/js/frontend.min.js',
-		'version' => HP_REVIEWS_VERSION,
-		'deps'    => [ 'hp-core-frontend', 'raty' ],
+		'handle'  => 'hivepress-reviews-frontend',
+		'src'     => hivepress()->get_url( 'reviews' ) . '/assets/js/frontend.min.js',
+		'version' => hivepress()->get_version( 'reviews' ),
+		'deps'    => [ 'hivepress-core', 'raty' ],
 	],
 ];

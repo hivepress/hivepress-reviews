@@ -20,13 +20,6 @@ defined( 'ABSPATH' ) || exit;
 class Review_Submit_Form extends Form {
 
 	/**
-	 * Block type.
-	 *
-	 * @var string
-	 */
-	protected static $type;
-
-	/**
 	 * Class constructor.
 	 *
 	 * @param array $args Block arguments.
@@ -45,13 +38,15 @@ class Review_Submit_Form extends Form {
 	/**
 	 * Bootstraps block properties.
 	 */
-	protected function bootstrap() {
+	protected function boot() {
 
-		// Set listing ID.
-		if ( is_singular( 'hp_listing' ) ) {
-			$this->values['listing_id'] = get_the_ID();
+		// Get listing.
+		$listing = $this->get_context( 'listing' );
+
+		if ( hp\is_class_instance( $listing, '\HivePress\Models\Listing' ) ) {
+			$this->values['listing'] = $listing->get_id();
 		}
 
-		parent::bootstrap();
+		parent::boot();
 	}
 }
