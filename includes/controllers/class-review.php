@@ -90,6 +90,10 @@ final class Review extends Controller {
 			return hp\rest_error( 400 );
 		}
 
+		if ( $listing->get_user__id() === $author->get_id() ) {
+			return hp\rest_error( 403, hivepress()->translator->get_string( 'you_cant_review_your_own_listings' ) );
+		}
+
 		// Add review.
 		$review = ( new Models\Review() )->fill(
 			array_merge(

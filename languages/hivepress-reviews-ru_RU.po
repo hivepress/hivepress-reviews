@@ -2,10 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: HivePress Reviews\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-21 20:04+0000\n"
-"PO-Revision-Date: 2020-01-21 20:05+0000\n"
-"Last-Translator: admin <admin@admin.com>\n"
-"Language-Team: Russian\n"
+"POT-Creation-Date: 2020-01-25 21:43+0000\n"
+"PO-Revision-Date: 2020-01-25 21:44+0000\n"
+"Last-Translator: Tiesto <admin@admin.com>\n"
+"Language-Team: Русский\n"
 "Language: ru_RU\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10 >= 2 && "
 "n%10<=4 &&(n%100<10||n%100 >= 20)? 1 : 2);\n"
@@ -16,19 +16,19 @@ msgstr ""
 "X-Loco-Version: 2.3.1; wp-5.3.2"
 
 #: includes/components/class-review.php:72
-#: includes/components/class-review.php:77 includes/models/class-review.php:32
+#: includes/components/class-review.php:77 includes/models/class-review.php:40
 msgid "Rating"
 msgstr "Рейтинг"
 
-#: includes/components/class-review.php:224
+#: includes/components/class-review.php:223
 msgid "You've already submitted a review."
 msgstr "Вы уже отправили отзыв."
 
-#: includes/components/class-review.php:284 includes/configs/settings.php:15
+#: includes/components/class-review.php:283 includes/configs/settings.php:15
 msgid "Reviews"
 msgstr "Отзывы"
 
-#: includes/components/class-review.php:302
+#: includes/components/class-review.php:300
 #: templates/listing/view/page/review-submit-link.php:5
 msgid "Write a Review"
 msgstr "Написать отзыв"
@@ -41,6 +41,10 @@ msgstr "Разрешить добавление нескольких отзыв�
 msgid "Manually approve new reviews"
 msgstr "Вручную одобрять новые отзывы"
 
+#: includes/configs/strings.php:14
+msgid "You can't review your own listings."
+msgstr "Вы не можете оставлять отзывы на собственные объявления."
+
 #: includes/forms/class-review-submit.php:30
 #: includes/forms/class-review-submit.php:66
 msgid "Submit Review"
@@ -50,7 +54,7 @@ msgstr "Отправить отзыв"
 msgid "Your review has been submitted."
 msgstr "Ваш отзыв отправлен."
 
-#: includes/models/class-review.php:39
+#: includes/models/class-review.php:32
 msgid "Review"
 msgstr "Отзыв"
 
