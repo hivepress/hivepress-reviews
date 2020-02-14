@@ -1,0 +1,75 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: HivePress Reviews\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-01-25 21:43+0000\n"
+"PO-Revision-Date: 2020-02-14 21:33+0000\n"
+"Last-Translator: admin <admin@hivepress.local>\n"
+"Language-Team: Polski\n"
+"Language: pl_PL\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10 >= 2 && n%10<=4 "
+"&&(n%100<10||n%100 >= 20)? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.3.1; wp-5.3.2"
+
+#: includes/components/class-review.php:72
+#: includes/components/class-review.php:77 includes/models/class-review.php:40
+msgid "Rating"
+msgstr "Ocena"
+
+#: includes/components/class-review.php:223
+msgid "You've already submitted a review."
+msgstr "Już wysłałeś opinię."
+
+#: includes/components/class-review.php:283 includes/configs/settings.php:15
+msgid "Reviews"
+msgstr "Opinie"
+
+#: includes/components/class-review.php:300
+#: templates/listing/view/page/review-submit-link.php:5
+msgid "Write a Review"
+msgstr "Zostaw opinię"
+
+#: includes/configs/settings.php:26
+msgid "Allow submitting multiple reviews"
+msgstr "Pozwól dodawać kilka opinii"
+
+#: includes/configs/settings.php:33
+msgid "Manually approve new reviews"
+msgstr "Ręcznie zatwierdzaj nowe opinie"
+
+#: includes/configs/strings.php:14
+msgid "You can't review your own listings."
+msgstr "Nie możesz oceniać własne ogłoszenia."
+
+#: includes/forms/class-review-submit.php:30
+#: includes/forms/class-review-submit.php:66
+msgid "Submit Review"
+msgstr "Wyślij opinię"
+
+#: includes/forms/class-review-submit.php:48
+msgid "Your review has been submitted."
+msgstr "Twoja opinia została wysłana."
+
+#: includes/models/class-review.php:32
+msgid "Review"
+msgstr "Opinia"
+
+#. Name of the plugin
+msgid "HivePress Reviews"
+msgstr "HivePress Opinie"
+
+#. Description of the plugin
+msgid "Allow users to rate and review listings."
+msgstr "Pozwól użytkownikom oceniać ogłoszenia."
+
+#. Author of the plugin
+msgid "HivePress"
+msgstr "HivePress"
+
+#. Author URI of the plugin
+msgid "https://hivepress.io/"
+msgstr "https://hivepress.io/"
