@@ -2,7 +2,7 @@
 /**
  * Plugin Name: HivePress Reviews
  * Description: Allow users to rate and review listings.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: HivePress
  * Author URI: https://hivepress.io/
  * Text Domain: hivepress-reviews
