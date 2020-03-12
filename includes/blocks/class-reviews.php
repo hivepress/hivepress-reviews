@@ -46,7 +46,7 @@ class Reviews extends Block {
 
 		// Render reviews.
 		if ( $reviews ) {
-			$output .= '<div class="hp-grid">';
+			$output .= '<div class="hp-reviews hp-grid">';
 
 			foreach ( $reviews as $review ) {
 				$output .= '<div class="hp-grid__item">';
