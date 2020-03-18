@@ -5,8 +5,8 @@ msgstr ""
 "POT-Creation-Date: 2020-03-18 13:28+0000\n"
 "PO-Revision-Date: 2020-03-18 13:29+0000\n"
 "Last-Translator: admin <admin@admin.com>\n"
-"Language-Team: Russian\n"
-"Language: ru_RU\n"
+"Language-Team: Ukrainian\n"
+"Language: uk\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10 >= 2 && "
 "n%10<=4 &&(n%100<10||n%100 >= 20)? 1 : 2);\n"
 "MIME-Version: 1.0\n"
@@ -19,65 +19,77 @@ msgstr ""
 #: includes/components/class-review.php:261
 #: includes/components/class-review.php:311 includes/configs/settings.php:15
 msgid "Reviews"
-msgstr "Отзывы"
+msgstr ""
+"Відгуки\n"
 
 #: includes/blocks/class-reviews.php:86
 msgctxt "sort order"
 msgid "Rating"
-msgstr "По рейтингу"
+msgstr "За рейтингом"
 
 #: includes/components/class-review.php:75
 #: includes/components/class-review.php:80 includes/models/class-review.php:40
 msgid "Rating"
-msgstr "Рейтинг"
+msgstr ""
+"Рейтинг\n"
 
 #: includes/components/class-review.php:226
 msgid "You've already submitted a review."
-msgstr "Вы уже отправили отзыв."
+msgstr ""
+"Ви вже відправили відгук.\n"
 
 #: includes/components/class-review.php:332
 #: templates/listing/view/page/review-submit-link.php:7
 msgid "Write a Review"
-msgstr "Написать отзыв"
+msgstr ""
+"Написати відгук\n"
 
 #: includes/configs/settings.php:26
 msgid "Allow submitting multiple reviews"
-msgstr "Разрешить добавление нескольких отзывов"
+msgstr ""
+"Дозволити додавання кількох відгуків\n"
 
 #: includes/configs/settings.php:33
 msgid "Manually approve new reviews"
-msgstr "Вручную одобрять новые отзывы"
+msgstr ""
+"Вручну схвалювати нові відгуки\n"
 
 #: includes/configs/strings.php:14
 msgid "You can't review your own listings."
-msgstr "Вы не можете оставлять отзывы на собственные объявления."
+msgstr ""
+"Ви не можете залишати відгуки на власні оголошення.\n"
 
 #: includes/forms/class-review-submit.php:30
 #: includes/forms/class-review-submit.php:66
 msgid "Submit Review"
-msgstr "Отправить отзыв"
+msgstr ""
+"Відправити відгук\n"
 
 #: includes/forms/class-review-submit.php:48
 msgid "Your review has been submitted."
-msgstr "Ваш отзыв отправлен."
+msgstr "Ваш відгук відправлений."
 
 #: includes/models/class-review.php:32
 msgid "Review"
-msgstr "Отзыв"
+msgstr ""
+"Відгук\n"
 
 #. Name of the plugin
 msgid "HivePress Reviews"
-msgstr "HivePress Отзывы"
+msgstr ""
+"HivePress Відгуки\n"
 
 #. Description of the plugin
 msgid "Allow users to rate and review listings."
 msgstr ""
-"Дайте пользователям возможность оценивать и оставлять отзывы на объявления."
+"Дайте користувачам можливість оцінювати і залишати відгуки на оголошення.\n"
 
 #. Author of the plugin
 msgid "HivePress"
-msgstr "HivePress"
+msgstr ""
+"HivePress\n"
 
 #. Author URI of the plugin
 msgid "https://hivepress.io/"
-msgstr "https://hivepress.io/"
+msgstr ""
+"https://hivepress.io/\n"

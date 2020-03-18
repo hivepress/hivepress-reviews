@@ -47,6 +47,9 @@ final class Review extends Component {
 
 		if ( ! is_admin() ) {
 
+			// Alter menus.
+			add_filter( 'hivepress/v1/menus/listing_manage/items', [ $this, 'alter_listing_manage_menu' ], 100, 2 );
+
 			// Alter templates.
 			add_filter( 'hivepress/v1/templates/listing_view_block', [ $this, 'alter_listing_view_template' ] );
 			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_template' ] );
@@ -241,6 +244,31 @@ final class Review extends Component {
 	}
 
 	/**
+	 * Alters listing manage menu.
+	 *
+	 * @param array  $items Menu items.
+	 * @param object $menu Menu object.
+	 * @return array
+	 */
+	public function alter_listing_manage_menu( $items, $menu ) {
+		if ( isset( $items['listing_view'] ) ) {
+
+			// Get listing.
+			$listing = $menu->get_context( 'listing' );
+
+			if ( hp\is_class_instance( $listing, '\HivePress\Models\Listing' ) && $listing->get_rating_count() ) {
+				$items['listing_review'] = [
+					'label'  => esc_html__( 'Reviews', 'hivepress-reviews' ),
+					'url'    => $items['listing_view']['url'] . '#reviews',
+					'_order' => 20,
+				];
+			}
+		}
+
+		return $items;
+	}
+
+	/**
 	 * Alters listing view template.
 	 *
 	 * @param array $template Template arguments.
@@ -279,13 +307,17 @@ final class Review extends Component {
 					'page_content'            => [
 						'blocks' => [
 							'reviews_container' => [
-								'type'   => 'section',
-								'title'  => esc_html__( 'Reviews', 'hivepress-reviews' ),
-								'_order' => 100,
+								'type'       => 'section',
+								'title'      => esc_html__( 'Reviews', 'hivepress-reviews' ),
+								'_order'     => 100,
 
-								'blocks' => [
+								'attributes' => [
+									'id' => 'reviews',
+								],
+
+								'blocks'     => [
 									'reviews' => [
-										'type'   => 'reviews',
+										'type'   => 'related_reviews',
 										'_order' => 10,
 									],
 								],
