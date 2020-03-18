@@ -92,6 +92,10 @@
 			}
 		}
 
+		&__summary {
+			min-width: 0;
+		}
+
 		&__author,
 		&__details {
 			&:not(:last-child) {
@@ -102,10 +106,17 @@
 		&__details {
 			display: flex;
 			align-items: center;
+			flex-wrap: wrap;
+		}
+
+		&__author {
+			word-wrap: break-word;
 		}
 
 		&__created-date,
 		&__rating {
+			margin-bottom: 0.5rem;
+
 			&:not(:last-child) {
 				margin-right: 0.5rem;
 			}
@@ -113,6 +124,13 @@
 
 		&__created-date {
 			font-size: 80%;
+		}
+
+		&__listing,
+		&__text {
+			&:not(:last-child) {
+				margin-bottom: 0.5rem;
+			}
 		}
 
 		&__text {
