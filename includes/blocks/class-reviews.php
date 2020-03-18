@@ -138,7 +138,8 @@ class Reviews extends Block {
 				if ( is_array( $review_ids ) ) {
 					$query = Models\Review::query()->filter(
 						[
-							'id__in' => $review_ids,
+							'approved' => true,
+							'id__in'   => $review_ids,
 						]
 					)->order( 'id__in' )
 					->limit( count( $review_ids ) );
@@ -167,7 +168,8 @@ class Reviews extends Block {
 							'template' => 'review_view_block',
 
 							'context'  => [
-								'review' => $review,
+								'review'  => $review,
+								'listing' => $this->get_context( 'listing' ),
 							],
 						]
 					) )->render();
