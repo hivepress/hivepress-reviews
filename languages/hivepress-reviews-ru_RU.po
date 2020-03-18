@@ -2,10 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: HivePress Reviews\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-25 21:43+0000\n"
-"PO-Revision-Date: 2020-01-25 21:44+0000\n"
-"Last-Translator: Tiesto <admin@admin.com>\n"
-"Language-Team: Русский\n"
+"POT-Creation-Date: 2020-03-18 13:28+0000\n"
+"PO-Revision-Date: 2020-03-18 13:29+0000\n"
+"Last-Translator: admin <admin@admin.com>\n"
+"Language-Team: Russian\n"
 "Language: ru_RU\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10 >= 2 && "
 "n%10<=4 &&(n%100<10||n%100 >= 20)? 1 : 2);\n"
@@ -15,21 +15,28 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.3.1; wp-5.3.2"
 
-#: includes/components/class-review.php:72
-#: includes/components/class-review.php:77 includes/models/class-review.php:40
-msgid "Rating"
-msgstr "Рейтинг"
-
-#: includes/components/class-review.php:223
-msgid "You've already submitted a review."
-msgstr "Вы уже отправили отзыв."
-
-#: includes/components/class-review.php:283 includes/configs/settings.php:15
+#: includes/blocks/class-reviews.php:52
+#: includes/components/class-review.php:261
+#: includes/components/class-review.php:311 includes/configs/settings.php:15
 msgid "Reviews"
 msgstr "Отзывы"
 
-#: includes/components/class-review.php:300
-#: templates/listing/view/page/review-submit-link.php:5
+#: includes/blocks/class-reviews.php:86
+msgctxt "sort order"
+msgid "Rating"
+msgstr "По рейтингу"
+
+#: includes/components/class-review.php:75
+#: includes/components/class-review.php:80 includes/models/class-review.php:40
+msgid "Rating"
+msgstr "Рейтинг"
+
+#: includes/components/class-review.php:226
+msgid "You've already submitted a review."
+msgstr "Вы уже отправили отзыв."
+
+#: includes/components/class-review.php:332
+#: templates/listing/view/page/review-submit-link.php:7
 msgid "Write a Review"
 msgstr "Написать отзыв"
 
