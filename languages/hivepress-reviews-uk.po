@@ -20,7 +20,7 @@ msgstr ""
 #: includes/components/class-review.php:311 includes/configs/settings.php:15
 msgid "Reviews"
 msgstr ""
-"Відгуки\n"
+"Відгуки"
 
 #: includes/blocks/class-reviews.php:86
 msgctxt "sort order"
@@ -31,39 +31,39 @@ msgstr "За рейтингом"
 #: includes/components/class-review.php:80 includes/models/class-review.php:40
 msgid "Rating"
 msgstr ""
-"Рейтинг\n"
+"Рейтинг"
 
 #: includes/components/class-review.php:226
 msgid "You've already submitted a review."
 msgstr ""
-"Ви вже відправили відгук.\n"
+"Ви вже відправили відгук."
 
 #: includes/components/class-review.php:332
 #: templates/listing/view/page/review-submit-link.php:7
 msgid "Write a Review"
 msgstr ""
-"Написати відгук\n"
+"Написати відгук"
 
 #: includes/configs/settings.php:26
 msgid "Allow submitting multiple reviews"
 msgstr ""
-"Дозволити додавання кількох відгуків\n"
+"Дозволити додавання кількох відгуків"
 
 #: includes/configs/settings.php:33
 msgid "Manually approve new reviews"
 msgstr ""
-"Вручну схвалювати нові відгуки\n"
+"Вручну схвалювати нові відгуки"
 
 #: includes/configs/strings.php:14
 msgid "You can't review your own listings."
 msgstr ""
-"Ви не можете залишати відгуки на власні оголошення.\n"
+"Ви не можете залишати відгуки на власні оголошення."
 
 #: includes/forms/class-review-submit.php:30
 #: includes/forms/class-review-submit.php:66
 msgid "Submit Review"
 msgstr ""
-"Відправити відгук\n"
+"Відправити відгук"
 
 #: includes/forms/class-review-submit.php:48
 msgid "Your review has been submitted."
@@ -72,24 +72,24 @@ msgstr "Ваш відгук відправлений."
 #: includes/models/class-review.php:32
 msgid "Review"
 msgstr ""
-"Відгук\n"
+"Відгук"
 
 #. Name of the plugin
 msgid "HivePress Reviews"
 msgstr ""
-"HivePress Відгуки\n"
+"HivePress Відгуки"
 
 #. Description of the plugin
 msgid "Allow users to rate and review listings."
 msgstr ""
-"Дайте користувачам можливість оцінювати і залишати відгуки на оголошення.\n"
+"Дайте користувачам можливість оцінювати і залишати відгуки на оголошення."
 
 #. Author of the plugin
 msgid "HivePress"
 msgstr ""
-"HivePress\n"
+"HivePress"
 
 #. Author URI of the plugin
 msgid "https://hivepress.io/"
 msgstr ""
-"https://hivepress.io/\n"
+"https://hivepress.io/"
