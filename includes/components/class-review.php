@@ -257,8 +257,8 @@ final class Review extends Component {
 			$listing = $menu->get_context( 'listing' );
 
 			if ( hp\is_class_instance( $listing, '\HivePress\Models\Listing' ) && $listing->get_rating_count() ) {
-				$items['listing_review'] = [
-					'label'  => esc_html__( 'Reviews', 'hivepress-reviews' ),
+				$items['listing_reviews'] = [
+					'label'  => hivepress()->translator->get_string( 'reviews' ),
 					'url'    => $items['listing_view']['url'] . '#reviews',
 					'_order' => 20,
 				];
@@ -308,7 +308,7 @@ final class Review extends Component {
 						'blocks' => [
 							'reviews_container' => [
 								'type'       => 'section',
-								'title'      => esc_html__( 'Reviews', 'hivepress-reviews' ),
+								'title'      => hivepress()->translator->get_string( 'reviews' ),
 								'_order'     => 100,
 
 								'attributes' => [

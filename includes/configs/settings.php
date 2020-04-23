@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 
 return [
 	'reviews' => [
-		'title'    => esc_html__( 'Reviews', 'hivepress-reviews' ),
+		'title'    => hivepress()->translator->get_string( 'reviews' ),
 		'_order'   => 40,
 
 		'sections' => [

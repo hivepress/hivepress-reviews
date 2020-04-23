@@ -49,7 +49,7 @@ class Reviews extends Block {
 	public static function init( $meta = [] ) {
 		$meta = hp\merge_arrays(
 			[
-				'label'    => esc_html__( 'Reviews', 'hivepress-reviews' ),
+				'label'    => hivepress()->translator->get_string( 'reviews' ),
 
 				'settings' => [
 					'columns' => [
