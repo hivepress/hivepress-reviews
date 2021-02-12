@@ -128,12 +128,7 @@ class Reviews extends Block {
 		if ( $this->number ) {
 
 			// Get column width.
-			$columns      = absint( $this->columns );
-			$column_width = 12;
-
-			if ( $columns > 0 && $columns <= 12 ) {
-				$column_width = round( $column_width / $columns );
-			}
+			$column_width = hp\get_column_width( $this->columns );
 
 			// Get review query.
 			$query = $this->get_context( 'review_query' );
@@ -141,7 +136,7 @@ class Reviews extends Block {
 			// Get IDs.
 			$review_ids = [];
 
-			if ( empty( $query ) ) {
+			if ( ! $query ) {
 				$query = Models\Review::query()->filter(
 					[
 						'approved' => true,
