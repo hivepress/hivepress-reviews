@@ -43,7 +43,7 @@ class Review_Submit_Form extends Form {
 		// Get listing.
 		$listing = $this->get_context( 'listing' );
 
-		if ( hp\is_class_instance( $listing, '\HivePress\Models\Listing' ) ) {
+		if ( $listing ) {
 			$this->values['listing'] = $listing->get_id();
 		}
 

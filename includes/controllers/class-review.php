@@ -74,7 +74,7 @@ final class Review extends Controller {
 
 		$author = Models\User::query()->get_by_id( $author_id );
 
-		if ( empty( $author ) ) {
+		if ( ! $author ) {
 			return hp\rest_error( 400 );
 		}
 
@@ -86,7 +86,7 @@ final class Review extends Controller {
 		// Get listing.
 		$listing = Models\Listing::query()->get_by_id( $form->get_value( 'listing' ) );
 
-		if ( empty( $listing ) || $listing->get_status() !== 'publish' ) {
+		if ( ! $listing || $listing->get_status() !== 'publish' ) {
 			return hp\rest_error( 400 );
 		}
 

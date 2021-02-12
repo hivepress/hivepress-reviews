@@ -68,7 +68,7 @@ class Related_Reviews extends Reviews {
 		// Get listing.
 		$listing = $this->get_context( 'listing' );
 
-		if ( hp\is_class_instance( $listing, '\HivePress\Models\Listing' ) ) {
+		if ( $listing ) {
 
 			// Set listing ID.
 			$review_query->filter( [ 'listing' => $listing->get_id() ] );
