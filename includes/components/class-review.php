@@ -35,9 +35,9 @@ final class Review extends Component {
 		add_filter( 'hivepress/v1/models/vendor', [ $this, 'add_model_fields' ] );
 
 		// Update rating.
-		add_action( 'hivepress/v1/models/review/create', [ $this, 'update_rating' ] );
-		add_action( 'hivepress/v1/models/review/update_status', [ $this, 'update_rating' ] );
-		add_action( 'hivepress/v1/models/review/delete', [ $this, 'update_rating' ] );
+		add_action( 'hivepress/v1/models/review/create', [ $this, 'update_rating' ], 10, 2 );
+		add_action( 'hivepress/v1/models/review/update_status', [ $this, 'update_rating' ], 10, 2 );
+		add_action( 'hivepress/v1/models/review/delete', [ $this, 'update_rating' ], 10, 2 );
 
 		// Validate review.
 		add_filter( 'hivepress/v1/models/review/errors', [ $this, 'validate_review' ], 10, 2 );
@@ -54,6 +54,7 @@ final class Review extends Component {
 			add_filter( 'hivepress/v1/templates/listing_view_block', [ $this, 'alter_listing_view_template' ] );
 			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_template' ] );
 			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_page' ] );
+
 			add_filter( 'hivepress/v1/templates/vendor_view_block', [ $this, 'alter_vendor_view_template' ] );
 			add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_template' ] );
 		}
@@ -139,7 +140,7 @@ final class Review extends Component {
 				function( $value ) {
 					return empty( $value ) ? null : floatval( $value );
 				},
-				reset( $results )
+				hp\get_first_array_value( $results )
 			);
 		}
 
@@ -149,17 +150,20 @@ final class Review extends Component {
 	/**
 	 * Updates rating.
 	 *
-	 * @param int $review_id Review ID.
+	 * @param int    $review_id Review ID.
+	 * @param object $review Review object.
 	 */
-	public function update_rating( $review_id ) {
+	public function update_rating( $review_id, $review ) {
 
 		// Get review.
-		$review = Models\Review::query()->get_by_id( $review_id );
+		if ( ! is_object( $review ) ) {
+			$review = Models\Review::query()->get_by_id( $review_id );
+		}
 
 		// Get listing.
 		$listing = $review->get_listing();
 
-		if ( empty( $listing ) ) {
+		if ( ! $listing ) {
 			return;
 		}
 
@@ -169,15 +173,15 @@ final class Review extends Component {
 		// Update listing rating.
 		$listing->fill(
 			[
-				'rating'       => reset( $listing_rating ),
-				'rating_count' => end( $listing_rating ),
+				'rating'       => hp\get_first_array_value( $listing_rating ),
+				'rating_count' => hp\get_last_array_value( $listing_rating ),
 			]
-		)->save();
+		)->save( [ 'rating', 'rating_count' ] );
 
 		// Get vendor.
 		$vendor = $listing->get_vendor();
 
-		if ( empty( $vendor ) ) {
+		if ( ! $vendor ) {
 			return;
 		}
 
@@ -194,10 +198,10 @@ final class Review extends Component {
 		// Update vendor rating.
 		$vendor->fill(
 			[
-				'rating'       => reset( $vendor_rating ),
-				'rating_count' => end( $vendor_rating ),
+				'rating'       => hp\get_first_array_value( $vendor_rating ),
+				'rating_count' => hp\get_last_array_value( $vendor_rating ),
 			]
-		)->save();
+		)->save( [ 'rating', 'rating_count' ] );
 	}
 
 	/**
@@ -253,7 +257,7 @@ final class Review extends Component {
 			// Get listing.
 			$listing = $menu->get_context( 'listing' );
 
-			if ( hp\is_class_instance( $listing, '\HivePress\Models\Listing' ) && $listing->get_rating_count() ) {
+			if ( $listing && $listing->get_rating_count() ) {
 				$items['listing_reviews'] = [
 					'label'  => hivepress()->translator->get_string( 'reviews' ),
 					'url'    => $items['listing_view']['url'] . '#reviews',
