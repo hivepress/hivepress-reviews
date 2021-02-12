@@ -63,54 +63,6 @@ final class Review extends Component {
 	}
 
 	/**
-	 * Adds attributes.
-	 *
-	 * @param array $attributes Attributes.
-	 * @return array
-	 */
-	public function add_attributes( $attributes ) {
-		$attributes['rating'] = [
-			'label'      => esc_html__( 'Rating', 'hivepress-reviews' ),
-			'protected'  => true,
-			'sortable'   => true,
-
-			'edit_field' => [
-				'label' => esc_html__( 'Rating', 'hivepress-reviews' ),
-				'type'  => 'rating',
-			],
-		];
-
-		return $attributes;
-	}
-
-	/**
-	 * Adds model fields.
-	 *
-	 * @param array $model Model arguments.
-	 * @return array
-	 */
-	public function add_model_fields( $model ) {
-		$model['fields'] = array_merge(
-			[
-				'rating' => [
-					'type'      => 'rating',
-					'_external' => true,
-				],
-			],
-			$model['fields'],
-			[
-				'rating_count' => [
-					'type'      => 'number',
-					'min_value' => 0,
-					'_external' => true,
-				],
-			]
-		);
-
-		return $model;
-	}
-
-	/**
 	 * Gets rating.
 	 *
 	 * @param array $listing_ids Listing IDs.
@@ -145,6 +97,53 @@ final class Review extends Component {
 		}
 
 		return $rating;
+	}
+
+	/**
+	 * Adds attributes.
+	 *
+	 * @param array $attributes Attributes.
+	 * @return array
+	 */
+	public function add_attributes( $attributes ) {
+		$attributes['rating'] = [
+			'label'      => esc_html__( 'Rating', 'hivepress-reviews' ),
+			'protected'  => true,
+			'sortable'   => true,
+
+			'edit_field' => [
+				'label' => esc_html__( 'Rating', 'hivepress-reviews' ),
+				'type'  => 'rating',
+			],
+		];
+
+		return $attributes;
+	}
+
+	/**
+	 * Adds model fields.
+	 *
+	 * @param array $model Model arguments.
+	 * @return array
+	 */
+	public function add_model_fields( $model ) {
+		$model['fields'] = array_merge(
+			$model['fields'],
+			[
+				'rating'       => [
+					'type'      => 'rating',
+					'_external' => true,
+				],
+
+				'rating_count' => [
+					'type'      => 'number',
+					'min_value' => 0,
+					'_external' => true,
+				],
+			]
+		);
+
+		return $model;
 	}
 
 	/**
