@@ -68,21 +68,18 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function add_attributes( $attributes ) {
-		return array_merge(
-			$attributes,
-			[
-				'rating' => [
-					'label'      => esc_html__( 'Rating', 'hivepress-reviews' ),
-					'protected'  => true,
-					'sortable'   => true,
+		$attributes['rating'] = [
+			'label'      => esc_html__( 'Rating', 'hivepress-reviews' ),
+			'protected'  => true,
+			'sortable'   => true,
 
-					'edit_field' => [
-						'label' => esc_html__( 'Rating', 'hivepress-reviews' ),
-						'type'  => 'rating',
-					],
-				],
-			]
-		);
+			'edit_field' => [
+				'label' => esc_html__( 'Rating', 'hivepress-reviews' ),
+				'type'  => 'rating',
+			],
+		];
+
+		return $attributes;
 	}
 
 	/**
