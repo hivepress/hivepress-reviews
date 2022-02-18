@@ -107,7 +107,6 @@ final class Review extends Component {
 	 */
 	public function add_attributes( $attributes ) {
 		$attributes['rating'] = [
-			'label'      => esc_html__( 'Rating', 'hivepress-reviews' ),
 			'protected'  => true,
 			'sortable'   => true,
 
@@ -328,10 +327,12 @@ final class Review extends Component {
 					'listing_actions_primary' => [
 						'blocks' => [
 							'review_submit_modal' => [
-								'type'   => 'modal',
-								'title'  => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+								'type'        => 'modal',
+								'title'       => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+								'_capability' => 'read',
+								'_order'      => 5,
 
-								'blocks' => [
+								'blocks'      => [
 									'review_submit_form' => [
 										'type'       => 'review_submit_form',
 										'_order'     => 10,
