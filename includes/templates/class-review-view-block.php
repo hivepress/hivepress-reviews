@@ -117,14 +117,11 @@ class Review_View_Block extends Template {
 									],
 
 									'review_reply_modal' => [
-										'type'    => 'modal',
-										'title'   => esc_html__( 'Add Reply', 'hivepress-reviews' ),
-										'context' => [
-											'review' => null,
-										],
-										'_order'  => 5,
+										'type'   => 'modal',
+										'title'  => esc_html__( 'Add Reply', 'hivepress-reviews' ),
+										'_order' => 5,
 
-										'blocks'  => [
+										'blocks' => [
 											'review_reply_form' => [
 												'type'   => 'review_reply_form',
 												'_order' => 10,

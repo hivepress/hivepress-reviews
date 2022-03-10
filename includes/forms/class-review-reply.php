@@ -54,6 +54,10 @@ class Review_Reply extends Model_Form {
 						'_order' => 20,
 					],
 
+					'parent'  => [
+						'display_type' => 'hidden',
+					],
+
 					'listing' => [
 						'display_type' => 'hidden',
 					],

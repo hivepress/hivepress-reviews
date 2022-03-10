@@ -75,6 +75,11 @@ class Review extends Comment {
 						'_alias'   => 'comment_author_email',
 					],
 
+					'parent'               => [
+						'type'   => 'id',
+						'_alias' => 'comment_parent',
+					],
+
 					'listing'              => [
 						'type'     => 'id',
 						'required' => true,

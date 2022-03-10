@@ -40,6 +40,13 @@ class Review_Reply_Form extends Form {
 	 */
 	protected function boot() {
 
+		$review = $this->get_context( 'review' );
+
+		if ( $review ) {
+			$this->values['parent']  = $review->get_id();
+			$this->context['review'] = null;
+		}
+
 		// Get listing.
 		$listing = $this->get_context( 'listing' );
 
