@@ -104,16 +104,40 @@ class Review_View_Block extends Template {
 								],
 
 								'blocks'     => [
-									'review_text'    => [
+									'review_text'        => [
 										'type'   => 'part',
 										'path'   => 'review/view/review-text',
 										'_order' => 10,
 									],
 
-									'review_listing' => [
+									'review_listing'     => [
 										'type'   => 'part',
 										'path'   => 'review/view/review-listing',
 										'_order' => 20,
+									],
+
+									'review_reply_modal' => [
+										'type'   => 'modal',
+										'title'  => esc_html__( 'Add Reply', 'hivepress-reviews' ),
+										'_order' => 5,
+
+										'blocks' => [
+											'order_deliver_form' => [
+												'type'    => 'content',
+												'content' => 'test',
+												'_order'  => 10,
+
+												'attributes' => [
+													'class' => [ 'hp-form--narrow' ],
+												],
+											],
+										],
+									],
+
+									'review_reply_link'  => [
+										'type'   => 'part',
+										'path'   => 'review/view/review-reply-link',
+										'_order' => 30,
 									],
 								],
 							],
