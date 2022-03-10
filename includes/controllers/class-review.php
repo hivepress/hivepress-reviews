@@ -37,6 +37,7 @@ final class Review extends Controller {
 
 					'review_submit_action' => [
 						'base'   => 'reviews_resource',
+						'path'   => '/submit',
 						'method' => 'POST',
 						'action' => [ $this, 'submit_review' ],
 						'rest'   => true,
@@ -44,6 +45,7 @@ final class Review extends Controller {
 
 					'review_reply_action'  => [
 						'base'   => 'reviews_resource',
+						'path'   => '/reply',
 						'method' => 'POST',
 						'action' => [ $this, 'submit_reply' ],
 						'rest'   => true,
