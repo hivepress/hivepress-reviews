@@ -122,10 +122,10 @@ class Review_View_Block extends Template {
 										'_order' => 5,
 
 										'blocks' => [
-											'order_deliver_form' => [
-												'type'    => 'content',
-												'content' => 'test',
-												'_order'  => 10,
+											'review_reply_form' => [
+												'type'   => 'form',
+												'form'   => 'review_reply',
+												'_order' => 10,
 
 												'attributes' => [
 													'class' => [ 'hp-form--narrow' ],
