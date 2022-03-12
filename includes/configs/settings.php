@@ -37,18 +37,18 @@ return [
 					],
 				],
 			],
-		],
 
-		'features' => [
-			'title'  => esc_html__( 'Features', 'hivepress-reviews' ),
-			'_order' => 10,
+			'features'   => [
+				'title'  => esc_html__( 'Features', 'hivepress-reviews' ),
+				'_order' => 20,
 
-			'fields' => [
-				'review_allow_replies' => [
-					'label'   => esc_html__( 'Replies', 'hivepress-reviews' ),
-					'caption' => esc_html__( 'Allow replying to reviews', 'hivepress-reviews' ),
-					'type'    => 'checkbox',
-					'_order'  => 10,
+				'fields' => [
+					'review_allow_replies' => [
+						'label'   => esc_html__( 'Replies', 'hivepress-reviews' ),
+						'caption' => esc_html__( 'Allow replying to reviews', 'hivepress-reviews' ),
+						'type'    => 'checkbox',
+						'_order'  => 10,
+					],
 				],
 			],
 		],

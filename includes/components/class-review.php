@@ -55,6 +55,8 @@ final class Review extends Component {
 			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_template' ] );
 			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_page' ] );
 
+			add_filter( 'hivepress/v1/templates/review_view_block', [ $this, 'alter_review_view_block' ] );
+
 			add_filter( 'hivepress/v1/templates/vendor_view_block', [ $this, 'alter_vendor_view_template' ] );
 			add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_template' ] );
 		}
@@ -379,5 +381,53 @@ final class Review extends Component {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Alters review view block.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_review_view_block( $template ) {
+
+		if ( get_option( 'hp_review_allow_replies' ) ) {
+			$template = hp\merge_trees(
+				$template,
+				[
+					'blocks' => [
+						'review_content' => [
+							'blocks' => [
+								'review_reply_modal' => [
+									'type'   => 'modal',
+									'model'  => 'review',
+									'title'  => esc_html__( 'Add Reply', 'hivepress-reviews' ),
+									'_order' => 5,
+
+									'blocks' => [
+										'review_reply_form' => [
+											'type'       => 'review_reply_form',
+											'_order'     => 10,
+
+											'attributes' => [
+												'class' => [ 'hp-form--narrow' ],
+											],
+										],
+									],
+								],
+
+								'review_reply_link'  => [
+									'type'   => 'part',
+									'path'   => 'review/view/review-reply-link',
+									'_order' => 30,
+								],
+							],
+						],
+					],
+				]
+			);
+		}
+
+		return $template;
 	}
 }

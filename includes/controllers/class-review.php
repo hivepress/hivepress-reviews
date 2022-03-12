@@ -37,7 +37,6 @@ final class Review extends Controller {
 
 					'review_submit_action' => [
 						'base'   => 'reviews_resource',
-						'path'   => '/submit',
 						'method' => 'POST',
 						'action' => [ $this, 'submit_review' ],
 						'rest'   => true,
@@ -141,11 +140,28 @@ final class Review extends Controller {
 			return hp\rest_error( 401 );
 		}
 
+		// Check option.
+		if ( ! get_option( 'hp_review_allow_replies' ) ) {
+			return hp\rest_error( 400 );
+		}
+
+		// Check parent review id.
+		if ( ! $request->get_param( 'parent' ) ) {
+			return hp\rest_error( 400 );
+		}
+
 		// Validate form.
 		$form = ( new Forms\Review_Reply() )->set_values( $request->get_params() );
 
 		if ( ! $form->validate() ) {
 			return hp\rest_error( 400, $form->get_errors() );
+		}
+
+		// Get parent review.
+		$parent_review = Models\Review::query()->get_by_id( $form->get_value( 'parent' ) );
+
+		if ( $parent_review->get_parent() ) {
+			return hp\rest_error( 400 );
 		}
 
 		// Get author.
@@ -160,7 +176,7 @@ final class Review extends Controller {
 		// Get listing.
 		$listing = Models\Listing::query()->get_by_id( $form->get_value( 'listing' ) );
 
-		if ( ! $listing || $listing->get_status() !== 'publish' ) {
+		if ( ! $listing || $listing->get_status() !== 'publish' || $listing->get_vendor()->get_user__id() !== $author_id ) {
 			return hp\rest_error( 400 );
 		}
 
@@ -172,7 +188,8 @@ final class Review extends Controller {
 					'author'               => $author->get_id(),
 					'author__display_name' => $author->get_display_name(),
 					'author__email'        => $author->get_email(),
-					'approved'             => 1,
+					'approved'             => get_option( 'hp_review_enable_moderation' ) ? 0 : 1,
+					'parent'               => $form->get_value( 'parent' ),
 				]
 			)
 		);

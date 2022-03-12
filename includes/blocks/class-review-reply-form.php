@@ -40,6 +40,7 @@ class Review_Reply_Form extends Form {
 	 */
 	protected function boot() {
 
+		// Get review.
 		$review = $this->get_context( 'review' );
 
 		if ( $review ) {
