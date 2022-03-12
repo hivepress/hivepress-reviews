@@ -29,6 +29,7 @@ final class Review extends Component {
 
 		// Add attributes.
 		add_filter( 'hivepress/v1/models/listing/attributes', [ $this, 'add_attributes' ] );
+		add_filter( 'hivepress/v1/models/vendor/attributes', [ $this, 'add_attributes' ] );
 
 		// Add model fields.
 		add_filter( 'hivepress/v1/models/listing', [ $this, 'add_model_fields' ] );
@@ -131,11 +132,6 @@ final class Review extends Component {
 		$model['fields'] = array_merge(
 			$model['fields'],
 			[
-				'rating'       => [
-					'type'      => 'rating',
-					'_external' => true,
-				],
-
 				'rating_count' => [
 					'type'      => 'number',
 					'min_value' => 0,
