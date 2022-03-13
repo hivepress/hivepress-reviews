@@ -175,6 +175,9 @@ class Reviews extends Block {
 			// Render reviews.
 			if ( $reviews->count() ) {
 
+				// Parent reviews ids.
+				$reviews_parent_ids = $reviews->get_ids();
+
 				// Children reviews ids.
 				$reviews_children_ids = [];
 
@@ -188,13 +191,16 @@ class Reviews extends Block {
 
 					if ( $parent ) {
 						// Review parent array position.
-						$key = intval( array_search( $parent, $reviews->get_ids(), true ) ) + 1;
+						$key = intval( array_search( $parent, $reviews_parent_ids, true ) ) + 1;
 
 						// Save review child id.
 						$reviews_children_ids[] = $parent;
 
 						// Save review child after its parent.
 						$reviews_sorted = array_merge( array_slice( $reviews_sorted, 0, $key ), [ $review ], array_slice( $reviews_sorted, $key ) );
+
+						// Save review child after its parent.
+						$reviews_parent_ids = array_merge( array_slice( $reviews_parent_ids, 0, $key ), [ 0 ], array_slice( $reviews_parent_ids, $key ) );
 					} else {
 						$reviews_sorted[] = $review;
 					}
