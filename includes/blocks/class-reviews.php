@@ -175,12 +175,25 @@ class Reviews extends Block {
 			// Render reviews.
 			if ( $reviews->count() ) {
 
+				// Children reviews ids.
+				$reviews_children_ids = [];
+
 				// Sort reviews.
 				$reviews_sorted = [];
 
 				foreach ( $reviews as $review ) {
-					if ( $review->get_parent() ) {
-						$key            = intval( array_search( $review->get_parent(), $reviews->get_ids(), true ) ) + 1;
+
+					// Get parent review id.
+					$parent = $review->get_parent();
+
+					if ( $parent ) {
+						// Review parent array position.
+						$key = intval( array_search( $parent, $reviews->get_ids(), true ) ) + 1;
+
+						// Save review child id.
+						$reviews_children_ids[] = $parent;
+
+						// Save review child after its parent.
 						$reviews_sorted = array_merge( array_slice( $reviews_sorted, 0, $key ), [ $review ], array_slice( $reviews_sorted, $key ) );
 					} else {
 						$reviews_sorted[] = $review;
@@ -192,7 +205,11 @@ class Reviews extends Block {
 
 				foreach ( $reviews_sorted as $review ) {
 
-					$output .= '<div class="hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12">';
+					if ( in_array( $review->get_parent(), $reviews_children_ids, true ) ) {
+						$output .= '<div class="hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12 hp-ml-comment-child">';
+					} else {
+						$output .= '<div class="hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12">';
+					}
 
 					// Render review.
 					$output .= ( new Template(
