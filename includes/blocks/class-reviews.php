@@ -174,10 +174,24 @@ class Reviews extends Block {
 
 			// Render reviews.
 			if ( $reviews->count() ) {
+
+				// Sort reviews.
+				$reviews_sorted = [];
+
+				foreach ( $reviews as $review ) {
+					if ( $review->get_parent() ) {
+						$key            = intval( array_search( $review->get_parent(), $reviews->get_ids(), true ) ) + 1;
+						$reviews_sorted = array_merge( array_slice( $reviews_sorted, 0, $key ), [ $review ], array_slice( $reviews_sorted, $key ) );
+					} else {
+						$reviews_sorted[] = $review;
+					}
+				}
+
 				$output  = '<div ' . hp\html_attributes( $this->attributes ) . '>';
 				$output .= '<div class="hp-row">';
 
-				foreach ( $reviews as $review ) {
+				foreach ( $reviews_sorted as $review ) {
+
 					$output .= '<div class="hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12">';
 
 					// Render review.
