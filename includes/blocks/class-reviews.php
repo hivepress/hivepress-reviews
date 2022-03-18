@@ -175,62 +175,34 @@ class Reviews extends Block {
 			// Render reviews.
 			if ( $reviews->count() ) {
 
-				// Parent reviews ids.
-				$reviews_parent_ids = $reviews->get_ids();
-
-				// Children reviews ids.
-				$reviews_children_ids = [];
-
-				// Sort reviews.
-				$reviews_sorted = [];
-
-				foreach ( $reviews as $review ) {
-
-					// Get parent review id.
-					$parent = $review->get_parent();
-
-					if ( $parent ) {
-						// Review parent array position.
-						$key = intval( array_search( $parent, $reviews_parent_ids, true ) ) + 1;
-
-						// Save review child id.
-						$reviews_children_ids[] = $parent;
-
-						// Save review child after its parent.
-						$reviews_sorted = array_merge( array_slice( $reviews_sorted, 0, $key ), [ $review ], array_slice( $reviews_sorted, $key ) );
-
-						// Save review child after its parent.
-						$reviews_parent_ids = array_merge( array_slice( $reviews_parent_ids, 0, $key ), [ 0 ], array_slice( $reviews_parent_ids, $key ) );
-					} else {
-						$reviews_sorted[] = $review;
-					}
-				}
-
 				$output  = '<div ' . hp\html_attributes( $this->attributes ) . '>';
 				$output .= '<div class="hp-row">';
 
-				foreach ( $reviews_sorted as $review ) {
+				$output .= wp_list_comments(
+					[
+						'callback' => function( $comment ) {
+							$review = Models\Review::query()->get_by_id( $comment->comment_ID );
+							echo '<div class="hp-grid__item hp-col-sm-' . esc_attr(
+								hp\get_column_width( $this->columns )
+							) . ' hp-col-xs-12">';
 
-					if ( in_array( $review->get_parent(), $reviews_children_ids, true ) ) {
-						$output .= '<div class="hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12 hp-ml-comment-child">';
-					} else {
-						$output .= '<div class="hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12">';
-					}
+							echo ( new Template(
+								[
+									'template' => 'review_view_block',
 
-					// Render review.
-					$output .= ( new Template(
-						[
-							'template' => 'review_view_block',
+									'context'  => [
+										'review'  => $review,
+										'listing' => $this->get_context( 'listing' ),
+									],
+								]
+							) )->render();
 
-							'context'  => [
-								'review'  => $review,
-								'listing' => $this->get_context( 'listing' ),
-							],
-						]
-					) )->render();
-
-					$output .= '</div>';
-				}
+							echo '</div>';
+						},
+						'echo'     => false,
+					],
+					get_comments( $reviews->get_args() ),
+				);
 
 				$output .= '</div>';
 				$output .= '</div>';

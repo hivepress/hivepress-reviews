@@ -77,6 +77,7 @@ class Review extends Comment {
 
 					'parent'               => [
 						'type'   => 'id',
+						'_model' => 'review',
 						'_alias' => 'comment_parent',
 					],
 

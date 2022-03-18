@@ -135,19 +135,14 @@ final class Review extends Controller {
 	 */
 	public function submit_reply( $request ) {
 
-		// Check authentication.
-		if ( ! is_user_logged_in() ) {
-			return hp\rest_error( 401 );
-		}
-
 		// Check option.
 		if ( ! get_option( 'hp_review_allow_replies' ) ) {
 			return hp\rest_error( 400 );
 		}
 
-		// Check parent review id.
-		if ( ! $request->get_param( 'parent' ) ) {
-			return hp\rest_error( 400 );
+		// Check authentication.
+		if ( ! is_user_logged_in() ) {
+			return hp\rest_error( 401 );
 		}
 
 		// Validate form.
@@ -155,13 +150,6 @@ final class Review extends Controller {
 
 		if ( ! $form->validate() ) {
 			return hp\rest_error( 400, $form->get_errors() );
-		}
-
-		// Get parent review.
-		$parent_review = Models\Review::query()->get_by_id( $form->get_value( 'parent' ) );
-
-		if ( $parent_review->get_parent() ) {
-			return hp\rest_error( 400 );
 		}
 
 		// Get author.
@@ -176,7 +164,14 @@ final class Review extends Controller {
 		// Get listing.
 		$listing = Models\Listing::query()->get_by_id( $form->get_value( 'listing' ) );
 
-		if ( ! $listing || $listing->get_status() !== 'publish' || $listing->get_vendor()->get_user__id() !== $author_id ) {
+		if ( ! $listing || $listing->get_status() !== 'publish' || $listing->get_user__id() !== $author_id ) {
+			return hp\rest_error( 400 );
+		}
+
+		// Get parent review.
+		$parent_review = Models\Review::query()->get_by_id( $form->get_value( 'parent' ) );
+
+		if ( ! $parent_review ) {
 			return hp\rest_error( 400 );
 		}
 
@@ -189,7 +184,7 @@ final class Review extends Controller {
 					'author__display_name' => $author->get_display_name(),
 					'author__email'        => $author->get_email(),
 					'approved'             => get_option( 'hp_review_enable_moderation' ) ? 0 : 1,
-					'parent'               => $form->get_value( 'parent' ),
+					'parent'               => $parent_review->get_id(),
 				]
 			)
 		);
