@@ -395,12 +395,13 @@ final class Review extends Component {
 						'review_content' => [
 							'blocks' => [
 								'review_reply_modal' => [
-									'type'   => 'modal',
-									'model'  => 'review',
-									'title'  => esc_html__( 'Add Reply', 'hivepress-reviews' ),
-									'_order' => 5,
+									'type'        => 'modal',
+									'model'       => 'review',
+									'title'       => esc_html__( 'Add Reply', 'hivepress-reviews' ),
+									'_capability' => 'edit_posts',
+									'_order'      => 5,
 
-									'blocks' => [
+									'blocks'      => [
 										'review_reply_form' => [
 											'type'       => 'review_reply_form',
 											'_order'     => 10,

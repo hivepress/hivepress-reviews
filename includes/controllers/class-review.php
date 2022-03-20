@@ -161,17 +161,17 @@ final class Review extends Controller {
 			return hp\rest_error( 400 );
 		}
 
-		// Get listing.
-		$listing = Models\Listing::query()->get_by_id( $form->get_value( 'listing' ) );
-
-		if ( ! $listing || $listing->get_status() !== 'publish' || $listing->get_user__id() !== $author_id ) {
-			return hp\rest_error( 400 );
-		}
-
 		// Get parent review.
 		$parent_review = Models\Review::query()->get_by_id( $form->get_value( 'parent' ) );
 
-		if ( ! $parent_review ) {
+		if ( ! $parent_review || ! $parent_review->get_approved() ) {
+			return hp\rest_error( 400 );
+		}
+
+		// Get listing.
+		$listing = $parent_review->get_listing();
+
+		if ( ! $listing || $listing->get_status() !== 'publish' || $listing->get_user__id() !== $author_id ) {
 			return hp\rest_error( 400 );
 		}
 
@@ -184,6 +184,7 @@ final class Review extends Controller {
 					'author__display_name' => $author->get_display_name(),
 					'author__email'        => $author->get_email(),
 					'approved'             => get_option( 'hp_review_enable_moderation' ) ? 0 : 1,
+					'listing'              => $listing->get_id(),
 					'parent'               => $parent_review->get_id(),
 				]
 			)

@@ -27,9 +27,7 @@ class Review_Reply extends Model_Form {
 	public static function init( $meta = [] ) {
 		$meta = hp\merge_arrays(
 			[
-				'label'   => esc_html__( 'Submit Reply', 'hivepress-reviews' ),
-				'captcha' => false,
-				'model'   => 'review',
+				'model' => 'review',
 			],
 			$meta
 		);
@@ -49,16 +47,11 @@ class Review_Reply extends Model_Form {
 				'action'  => hivepress()->router->get_url( 'review_reply_action' ),
 
 				'fields'  => [
-
-					'text'    => [
-						'_order' => 20,
+					'text'   => [
+						'_order' => 10,
 					],
 
-					'parent'  => [
-						'display_type' => 'hidden',
-					],
-
-					'listing' => [
+					'parent' => [
 						'display_type' => 'hidden',
 					],
 				],

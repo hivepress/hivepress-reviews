@@ -174,37 +174,62 @@ class Reviews extends Block {
 
 			// Render reviews.
 			if ( $reviews->count() ) {
+				$output = '<div ' . hp\html_attributes( $this->attributes ) . '>';
 
-				$output  = '<div ' . hp\html_attributes( $this->attributes ) . '>';
-				$output .= '<div class="hp-row">';
+				if ( is_singular( 'hp_listing' ) ) {
 
-				$output .= wp_list_comments(
-					[
-						'callback' => function( $comment ) {
-							$review = Models\Review::query()->get_by_id( $comment->comment_ID );
-							echo '<div class="hp-grid__item hp-col-sm-' . esc_attr(
-								hp\get_column_width( $this->columns )
-							) . ' hp-col-xs-12">';
+					$output .= wp_list_comments(
+						[
+							'callback' => function( $comment ) {
+								$review = Models\Review::query()->get_by_id( $comment->comment_ID );
 
-							echo ( new Template(
-								[
-									'template' => 'review_view_block',
+								$output = '<div class="hp-grid__item hp-col-sm-' . esc_attr( hp\get_column_width( $this->columns ) ) . ' hp-col-xs-12">';
 
-									'context'  => [
-										'review'  => $review,
-										'listing' => $this->get_context( 'listing' ),
-									],
-								]
-							) )->render();
+								$output .= ( new Template(
+									[
+										'template' => 'review_view_block',
 
-							echo '</div>';
-						},
-						'echo'     => false,
-					],
-					get_comments( $reviews->get_args() ),
-				);
+										'context'  => [
+											'review'  => $review,
+											'listing' => $this->get_context( 'listing' ),
+										],
+									]
+								) )->render();
 
-				$output .= '</div>';
+								$output .= '</div>';
+
+								echo $output;
+							},
+							'echo'     => false,
+						],
+						get_comments( $reviews->get_args() ),
+					);
+
+				} else {
+					$output .= '<div class="hp-row">';
+
+					foreach ( $reviews as $review ) {
+
+						$output .= '<div class="hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12">';
+
+						// Render review.
+						$output .= ( new Template(
+							[
+								'template' => 'review_view_block',
+
+								'context'  => [
+									'review'  => $review,
+									'listing' => $this->get_context( 'listing' ),
+								],
+							]
+						) )->render();
+
+						$output .= '</div>';
+					}
+
+					$output .= '</div>';
+				}
+
 				$output .= '</div>';
 			}
 		}

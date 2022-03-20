@@ -62,7 +62,7 @@ class Related_Reviews extends Reviews {
 			[
 				'approved' => true,
 			]
-		)->order( [ 'parent' => 0 ] )
+		)->order( [ 'created_date' => 'asc' ] )
 		->limit( $this->number );
 
 		// Get listing.
