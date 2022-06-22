@@ -50,7 +50,8 @@ class Review_Submit extends Model_Form {
 
 				'fields'  => [
 					'rating'  => [
-						'_order' => 10,
+						'required' => true,
+						'_order'   => 10,
 					],
 
 					'text'    => [
