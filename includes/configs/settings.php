@@ -35,6 +35,13 @@ return [
 						'default' => true,
 						'_order'  => 20,
 					],
+
+					'review_allow_replies'     => [
+						'label'   => esc_html__( 'Replies', 'hivepress-reviews' ),
+						'caption' => esc_html__( 'Allow replying to reviews', 'hivepress-reviews' ),
+						'type'    => 'checkbox',
+						'_order'  => 30,
+					],
 				],
 			],
 		],
