@@ -37,10 +37,9 @@ class Review extends Comment {
 					],
 
 					'rating'               => [
-						'label'    => esc_html__( 'Rating', 'hivepress-reviews' ),
-						'type'     => 'rating',
-						'required' => true,
-						'_alias'   => 'comment_karma',
+						'label'  => esc_html__( 'Rating', 'hivepress-reviews' ),
+						'type'   => 'rating',
+						'_alias' => 'comment_karma',
 					],
 
 					'created_date'         => [
@@ -74,6 +73,12 @@ class Review extends Comment {
 						'type'     => 'email',
 						'required' => true,
 						'_alias'   => 'comment_author_email',
+					],
+
+					'parent'               => [
+						'type'   => 'id',
+						'_alias' => 'comment_parent',
+						'_model' => 'review',
 					],
 
 					'listing'              => [

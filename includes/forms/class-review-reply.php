@@ -1,6 +1,6 @@
 <?php
 /**
- * Review submit form.
+ * Review reply form.
  *
  * @package HivePress\Forms
  */
@@ -13,11 +13,11 @@ use HivePress\Helpers as hp;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Review submit form class.
+ * Review reply form class.
  *
- * @class Review_Submit
+ * @class Review_Reply
  */
-class Review_Submit extends Model_Form {
+class Review_Reply extends Model_Form {
 
 	/**
 	 * Class initializer.
@@ -27,9 +27,7 @@ class Review_Submit extends Model_Form {
 	public static function init( $meta = [] ) {
 		$meta = hp\merge_arrays(
 			[
-				'label'   => esc_html__( 'Submit Review', 'hivepress-reviews' ),
-				'captcha' => false,
-				'model'   => 'review',
+				'model' => 'review',
 			],
 			$meta
 		);
@@ -45,26 +43,21 @@ class Review_Submit extends Model_Form {
 	public function __construct( $args = [] ) {
 		$args = hp\merge_arrays(
 			[
-				'message' => esc_html__( 'Your review has been submitted.', 'hivepress-reviews' ),
+				'message' => esc_html__( 'Your reply has been submitted.', 'hivepress-reviews' ),
 				'action'  => hivepress()->router->get_url( 'review_submit_action' ),
 
 				'fields'  => [
-					'rating'  => [
-						'required' => true,
-						'_order'   => 10,
+					'text'   => [
+						'_order' => 10,
 					],
 
-					'text'    => [
-						'_order' => 20,
-					],
-
-					'listing' => [
+					'parent' => [
 						'display_type' => 'hidden',
 					],
 				],
 
 				'button'  => [
-					'label' => esc_html__( 'Submit Review', 'hivepress-reviews' ),
+					'label' => esc_html__( 'Submit Reply', 'hivepress-reviews' ),
 				],
 			],
 			$args
