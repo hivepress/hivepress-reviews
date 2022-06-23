@@ -284,6 +284,7 @@ final class Review extends Component {
 							'listing_rating' => [
 								'type'   => 'part',
 								'path'   => 'listing/view/listing-rating',
+								'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
 								'_order' => 30,
 							],
 						],
@@ -317,8 +318,10 @@ final class Review extends Component {
 
 								'blocks'     => [
 									'reviews' => [
-										'type'   => 'related_reviews',
-										'_order' => 10,
+										'type'      => 'related_reviews',
+										'_label'    => hivepress()->translator->get_string( 'reviews' ) . ' (' . hivepress()->translator->get_string( 'related_plural' ) . ')',
+										'_settings' => [ 'columns' ],
+										'_order'    => 10,
 									],
 								],
 							],
@@ -371,6 +374,7 @@ final class Review extends Component {
 							'vendor_rating' => [
 								'type'   => 'part',
 								'path'   => 'vendor/view/vendor-rating',
+								'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
 								'_order' => 20,
 							],
 						],
