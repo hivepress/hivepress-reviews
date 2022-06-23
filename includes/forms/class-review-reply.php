@@ -44,7 +44,7 @@ class Review_Reply extends Model_Form {
 		$args = hp\merge_arrays(
 			[
 				'message' => esc_html__( 'Your reply has been submitted.', 'hivepress-reviews' ),
-				'action'  => hivepress()->router->get_url( 'review_reply_action' ),
+				'action'  => hivepress()->router->get_url( 'review_submit_action' ),
 
 				'fields'  => [
 					'text'   => [
