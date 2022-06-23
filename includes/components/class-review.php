@@ -29,6 +29,7 @@ final class Review extends Component {
 
 		// Add attributes.
 		add_filter( 'hivepress/v1/models/listing/attributes', [ $this, 'add_attributes' ] );
+		add_filter( 'hivepress/v1/models/vendor/attributes', [ $this, 'add_attributes' ] );
 
 		// Add model fields.
 		add_filter( 'hivepress/v1/models/listing', [ $this, 'add_model_fields' ] );
@@ -57,6 +58,8 @@ final class Review extends Component {
 
 			add_filter( 'hivepress/v1/templates/vendor_view_block', [ $this, 'alter_vendor_view_template' ] );
 			add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_template' ] );
+
+			add_filter( 'hivepress/v1/templates/review_view_block', [ $this, 'alter_review_view_block' ] );
 		}
 
 		parent::__construct( $args );
@@ -107,7 +110,6 @@ final class Review extends Component {
 	 */
 	public function add_attributes( $attributes ) {
 		$attributes['rating'] = [
-			'label'      => esc_html__( 'Rating', 'hivepress-reviews' ),
 			'protected'  => true,
 			'sortable'   => true,
 
@@ -130,11 +132,6 @@ final class Review extends Component {
 		$model['fields'] = array_merge(
 			$model['fields'],
 			[
-				'rating'       => [
-					'type'      => 'rating',
-					'_external' => true,
-				],
-
 				'rating_count' => [
 					'type'      => 'number',
 					'min_value' => 0,
@@ -331,17 +328,15 @@ final class Review extends Component {
 					'listing_actions_primary' => [
 						'blocks' => [
 							'review_submit_modal' => [
-								'type'   => 'modal',
-								'title'  => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+								'type'        => 'modal',
+								'title'       => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+								'_capability' => 'read',
+								'_order'      => 5,
 
-								'blocks' => [
+								'blocks'      => [
 									'review_submit_form' => [
-										'type'       => 'review_submit_form',
-										'_order'     => 10,
-
-										'attributes' => [
-											'class' => [ 'hp-form--narrow' ],
-										],
+										'type'   => 'review_submit_form',
+										'_order' => 10,
 									],
 								],
 							],
@@ -382,5 +377,49 @@ final class Review extends Component {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Alters review view block.
+	 *
+	 * @param array $template Template arguments.
+	 * @return array
+	 */
+	public function alter_review_view_block( $template ) {
+		if ( get_option( 'hp_review_allow_replies' ) ) {
+			$template = hp\merge_trees(
+				$template,
+				[
+					'blocks' => [
+						'review_content' => [
+							'blocks' => [
+								'review_reply_modal' => [
+									'type'        => 'modal',
+									'model'       => 'review',
+									'title'       => esc_html__( 'Add Reply', 'hivepress-reviews' ),
+									'_capability' => 'edit_posts',
+									'_order'      => 5,
+
+									'blocks'      => [
+										'review_reply_form' => [
+											'type'   => 'review_reply_form',
+											'_order' => 10,
+										],
+									],
+								],
+
+								'review_reply_link'  => [
+									'type'   => 'part',
+									'path'   => 'review/view/review-reply-link',
+									'_order' => 30,
+								],
+							],
+						],
+					],
+				]
+			);
+		}
+
+		return $template;
 	}
 }
