@@ -1,10 +1,10 @@
 (function($) {
 	'use strict';
 
-	$(document).ready(function() {
+	$(document).on('hivepress:init', function(event, container) {
 
 		// Rating
-		hivepress.getComponent('rating').each(function() {
+		container.find(hivepress.getSelector('rating')).each(function() {
 			var field = $(this);
 
 			field.raty({
