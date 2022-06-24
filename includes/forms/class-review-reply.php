@@ -53,6 +53,7 @@ class Review_Reply extends Model_Form {
 
 					'parent' => [
 						'display_type' => 'hidden',
+						'required'     => true,
 					],
 				],
 
