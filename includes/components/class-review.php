@@ -81,7 +81,7 @@ final class Review extends Component {
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT AVG( comment_karma ), COUNT( * ) FROM {$wpdb->comments}
-					WHERE comment_type = %s AND comment_approved = %s AND comment_post_ID IN ( {$placeholder} );",
+					WHERE comment_type = %s AND comment_approved = %s AND comment_parent = 0 AND comment_post_ID IN ( {$placeholder} );",
 					array_merge( [ 'hp_review', '1' ], (array) $listing_ids )
 				),
 				ARRAY_A
