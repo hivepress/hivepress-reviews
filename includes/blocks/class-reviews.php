@@ -149,7 +149,7 @@ class Reviews extends Block {
 						$review = Models\Review::query()->get_by_id( $comment );
 
 						// Get class.
-						$class = 'hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12';
+						$class = 'hp-grid__item hp-col-sm-' . $column_width . ' hp-col-xs-12';
 
 						if ( $depth > 1 ) {
 							$class = 'hp-review__reply';
@@ -218,7 +218,6 @@ class Reviews extends Block {
 			foreach ( $reviews as $review ) {
 				$output .= '<div class="hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12">';
 
-				// Render review.
 				$output .= ( new Template(
 					[
 						'template' => 'review_view_block',
