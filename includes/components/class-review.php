@@ -205,7 +205,7 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function validate_review( $errors, $review ) {
-		if ( ! $review->get_id() && empty( $errors ) && ! get_option( 'hp_review_allow_multiple' ) ) {
+		if ( ! $review->get_id() && ! $review->get_parent__id() && empty( $errors ) && ! get_option( 'hp_review_allow_multiple' ) ) {
 
 			// Get review ID.
 			$review_id = Models\Review::query()->filter(
