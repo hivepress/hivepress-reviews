@@ -81,7 +81,7 @@ final class Review extends Component {
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT AVG( comment_karma ), COUNT( * ) FROM {$wpdb->comments}
-					WHERE comment_type = %s AND comment_approved = %s AND comment_post_ID IN ( {$placeholder} );",
+					WHERE comment_type = %s AND comment_approved = %s AND comment_parent = 0 AND comment_post_ID IN ( {$placeholder} );",
 					array_merge( [ 'hp_review', '1' ], (array) $listing_ids )
 				),
 				ARRAY_A
@@ -205,7 +205,7 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function validate_review( $errors, $review ) {
-		if ( ! $review->get_id() && empty( $errors ) && ! get_option( 'hp_review_allow_multiple' ) ) {
+		if ( ! $review->get_id() && ! $review->get_parent__id() && empty( $errors ) && ! get_option( 'hp_review_allow_multiple' ) ) {
 
 			// Get review ID.
 			$review_id = Models\Review::query()->filter(
@@ -302,16 +302,12 @@ final class Review extends Component {
 					'page_content'            => [
 						'blocks' => [
 							'reviews_container' => [
-								'type'       => 'section',
-								'title'      => hivepress()->translator->get_string( 'reviews' ),
-								'_order'     => 100,
+								'type'   => 'section',
+								'title'  => hivepress()->translator->get_string( 'reviews' ),
+								'_order' => 100,
 
-								'attributes' => [
-									'id' => 'reviews',
-								],
-
-								'blocks'     => [
-									'reviews' => [
+								'blocks' => [
+									'listing_reviews' => [
 										'type'      => 'related_reviews',
 										'_label'    => hivepress()->translator->get_string( 'reviews' ) . ' (' . hivepress()->translator->get_string( 'related_plural' ) . ')',
 										'_settings' => [ 'columns' ],
@@ -393,7 +389,7 @@ final class Review extends Component {
 								'review_reply_modal' => [
 									'type'        => 'modal',
 									'model'       => 'review',
-									'title'       => esc_html__( 'Add Reply', 'hivepress-reviews' ),
+									'title'       => esc_html__( 'Reply to Review', 'hivepress-reviews' ),
 									'_capability' => 'edit_posts',
 									'_order'      => 5,
 

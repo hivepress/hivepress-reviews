@@ -27,7 +27,7 @@ class Review_Submit extends Model_Form {
 	public static function init( $meta = [] ) {
 		$meta = hp\merge_arrays(
 			[
-				'label'   => esc_html__( 'Submit Review', 'hivepress-reviews' ),
+				'label'   => esc_html__( 'Write a Review', 'hivepress-reviews' ),
 				'captcha' => false,
 				'model'   => 'review',
 			],
