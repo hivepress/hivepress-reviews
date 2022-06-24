@@ -125,10 +125,51 @@ class Reviews extends Block {
 	public function render() {
 		$output = '';
 
-		if ( $this->number ) {
+		if ( ! $this->number ) {
+			return $output;
+		}
 
-			// Get column width.
-			$column_width = hp\get_column_width( $this->columns );
+		// Get column width.
+		$column_width = hp\get_column_width( $this->columns );
+
+		if ( isset( $this->context['reviews'] ) ) {
+
+			// Render reviews.
+			$output = wp_list_comments(
+				[
+					'style'             => 'div',
+					'type'              => 'hp_review',
+					'per_page'          => $this->number,
+					'reverse_top_level' => true,
+					'echo'              => false,
+
+					'callback'          => function( $comment, $args, $depth ) use ( $column_width ) {
+
+						// Get review.
+						$review = Models\Review::query()->get_by_id( $comment );
+
+						// Get class.
+						$class = 'hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12';
+
+						if ( $depth > 1 ) {
+							$class = 'hp-review__reply';
+						}
+
+						// Render review.
+						echo '<div class="' . esc_attr( $class ) . '">' . ( new Template(
+							[
+								'template' => 'review_view_block',
+
+								'context'  => [
+									'review'  => $review,
+									'listing' => $this->get_context( 'listing' ),
+								],
+							]
+						) )->render();
+					},
+				]
+			);
+		} else {
 
 			// Get review query.
 			$query = $this->get_context( 'review_query' );
@@ -140,6 +181,7 @@ class Reviews extends Block {
 				$query = Models\Review::query()->filter(
 					[
 						'approved' => true,
+						'parent'   => null,
 					]
 				)->limit( $this->number );
 
@@ -173,31 +215,28 @@ class Reviews extends Block {
 			}
 
 			// Render reviews.
-			if ( $reviews->count() ) {
-				$output  = '<div ' . hp\html_attributes( $this->attributes ) . '>';
-				$output .= '<div class="hp-row">';
+			foreach ( $reviews as $review ) {
+				$output .= '<div class="hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12">';
 
-				foreach ( $reviews as $review ) {
-					$output .= '<div class="hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12">';
+				// Render review.
+				$output .= ( new Template(
+					[
+						'template' => 'review_view_block',
 
-					// Render review.
-					$output .= ( new Template(
-						[
-							'template' => 'review_view_block',
+						'context'  => [
+							'review'  => $review,
+							'listing' => $this->get_context( 'listing' ),
+						],
+					]
+				) )->render();
 
-							'context'  => [
-								'review'  => $review,
-								'listing' => $this->get_context( 'listing' ),
-							],
-						]
-					) )->render();
-
-					$output .= '</div>';
-				}
-
-				$output .= '</div>';
 				$output .= '</div>';
 			}
+		}
+
+		// Add wrapper.
+		if ( $output ) {
+			$output = '<div ' . hp\html_attributes( $this->attributes ) . '><div class="hp-row">' . $output . '</div></div>';
 		}
 
 		return $output;
