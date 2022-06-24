@@ -302,16 +302,12 @@ final class Review extends Component {
 					'page_content'            => [
 						'blocks' => [
 							'reviews_container' => [
-								'type'       => 'section',
-								'title'      => hivepress()->translator->get_string( 'reviews' ),
-								'_order'     => 100,
+								'type'   => 'section',
+								'title'  => hivepress()->translator->get_string( 'reviews' ),
+								'_order' => 100,
 
-								'attributes' => [
-									'id' => 'reviews',
-								],
-
-								'blocks'     => [
-									'reviews' => [
+								'blocks' => [
+									'listing_reviews' => [
 										'type'      => 'related_reviews',
 										'_label'    => hivepress()->translator->get_string( 'reviews' ) . ' (' . hivepress()->translator->get_string( 'related_plural' ) . ')',
 										'_settings' => [ 'columns' ],
@@ -393,7 +389,7 @@ final class Review extends Component {
 								'review_reply_modal' => [
 									'type'        => 'modal',
 									'model'       => 'review',
-									'title'       => esc_html__( 'Add Reply', 'hivepress-reviews' ),
+									'title'       => esc_html__( 'Reply to Review', 'hivepress-reviews' ),
 									'_capability' => 'edit_posts',
 									'_order'      => 5,
 
