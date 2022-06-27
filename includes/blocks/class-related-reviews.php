@@ -8,7 +8,6 @@
 namespace HivePress\Blocks;
 
 use HivePress\Helpers as hp;
-use HivePress\Models;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -57,25 +56,11 @@ class Related_Reviews extends Reviews {
 	 */
 	protected function boot() {
 
-		// Set query.
-		$review_query = Models\Review::query()->filter(
-			[
-				'approved' => true,
-			]
-		)->order( [ 'created_date' => 'asc' ] )
-		->limit( $this->number );
-
-		// Get listing.
-		$listing = $this->get_context( 'listing' );
-
-		if ( $listing ) {
-
-			// Set listing ID.
-			$review_query->filter( [ 'listing' => $listing->get_id() ] );
-		}
+		// Set attributes.
+		$this->attributes['id'] = 'reviews';
 
 		// Set context.
-		$this->context['review_query'] = $review_query;
+		$this->context['reviews'] = [];
 
 		parent::boot();
 	}

@@ -71,6 +71,11 @@
 	Reviews
 	--------------------------------------------------------------*/
 	&-review {
+		&__reply {
+			padding-left: 2rem;
+			margin-top: 2rem;
+		}
+
 		&__content,
 		&__header {
 			&:not(:last-child) {
@@ -127,6 +132,10 @@
 
 		&__created-date {
 			font-size: 80%;
+		}
+
+		&__reply &__rating {
+			display: none;
 		}
 
 		&__listing,

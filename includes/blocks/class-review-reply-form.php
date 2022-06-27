@@ -44,15 +44,12 @@ class Review_Reply_Form extends Form {
 		$review = $this->get_context( 'review' );
 
 		if ( $review ) {
-			$this->values['parent']  = $review->get_id();
-			$this->context['review'] = null;
-		}
 
-		// Get listing.
-		$listing = $this->get_context( 'listing' );
+			// Set parent ID.
+			$this->values['parent'] = $review->get_id();
 
-		if ( $listing ) {
-			$this->values['listing'] = $listing->get_id();
+			// Clear context.
+			unset( $this->context['review'] );
 		}
 
 		parent::boot();

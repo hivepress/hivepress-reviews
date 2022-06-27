@@ -46,21 +46,18 @@ final class Review extends Component {
 		// Delete reviews.
 		add_action( 'hivepress/v1/models/user/delete', [ $this, 'delete_reviews' ] );
 
-		if ( ! is_admin() ) {
+		// Alter menus.
+		add_filter( 'hivepress/v1/menus/listing_manage/items', [ $this, 'alter_listing_manage_menu' ], 100, 2 );
 
-			// Alter menus.
-			add_filter( 'hivepress/v1/menus/listing_manage/items', [ $this, 'alter_listing_manage_menu' ], 100, 2 );
+		// Alter templates.
+		add_filter( 'hivepress/v1/templates/listing_view_block', [ $this, 'alter_listing_view_template' ] );
+		add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_template' ] );
+		add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_page' ] );
 
-			// Alter templates.
-			add_filter( 'hivepress/v1/templates/listing_view_block', [ $this, 'alter_listing_view_template' ] );
-			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_template' ] );
-			add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_page' ] );
+		add_filter( 'hivepress/v1/templates/vendor_view_block', [ $this, 'alter_vendor_view_template' ] );
+		add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_template' ] );
 
-			add_filter( 'hivepress/v1/templates/review_view_block', [ $this, 'alter_review_view_block' ] );
-
-			add_filter( 'hivepress/v1/templates/vendor_view_block', [ $this, 'alter_vendor_view_template' ] );
-			add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_template' ] );
-		}
+		add_filter( 'hivepress/v1/templates/review_view_block', [ $this, 'alter_review_view_block' ] );
 
 		parent::__construct( $args );
 	}
@@ -84,7 +81,7 @@ final class Review extends Component {
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT AVG( comment_karma ), COUNT( * ) FROM {$wpdb->comments}
-					WHERE comment_type = %s AND comment_approved = %s AND comment_post_ID IN ( {$placeholder} );",
+					WHERE comment_type = %s AND comment_approved = %s AND comment_parent = 0 AND comment_post_ID IN ( {$placeholder} );",
 					array_merge( [ 'hp_review', '1' ], (array) $listing_ids )
 				),
 				ARRAY_A
@@ -208,7 +205,7 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function validate_review( $errors, $review ) {
-		if ( ! $review->get_id() && empty( $errors ) && ! get_option( 'hp_review_allow_multiple' ) ) {
+		if ( ! $review->get_id() && ! $review->get_parent__id() && empty( $errors ) && ! get_option( 'hp_review_allow_multiple' ) ) {
 
 			// Get review ID.
 			$review_id = Models\Review::query()->filter(
@@ -281,6 +278,7 @@ final class Review extends Component {
 							'listing_rating' => [
 								'type'   => 'part',
 								'path'   => 'listing/view/listing-rating',
+								'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
 								'_order' => 30,
 							],
 						],
@@ -304,18 +302,16 @@ final class Review extends Component {
 					'page_content'            => [
 						'blocks' => [
 							'reviews_container' => [
-								'type'       => 'section',
-								'title'      => hivepress()->translator->get_string( 'reviews' ),
-								'_order'     => 100,
+								'type'   => 'section',
+								'title'  => hivepress()->translator->get_string( 'reviews' ),
+								'_order' => 100,
 
-								'attributes' => [
-									'id' => 'reviews',
-								],
-
-								'blocks'     => [
-									'reviews' => [
-										'type'   => 'related_reviews',
-										'_order' => 10,
+								'blocks' => [
+									'listing_reviews' => [
+										'type'      => 'related_reviews',
+										'_label'    => hivepress()->translator->get_string( 'reviews' ) . ' (' . hivepress()->translator->get_string( 'related_plural' ) . ')',
+										'_settings' => [ 'columns' ],
+										'_order'    => 10,
 									],
 								],
 							],
@@ -332,12 +328,8 @@ final class Review extends Component {
 
 								'blocks'      => [
 									'review_submit_form' => [
-										'type'       => 'review_submit_form',
-										'_order'     => 10,
-
-										'attributes' => [
-											'class' => [ 'hp-form--narrow' ],
-										],
+										'type'   => 'review_submit_form',
+										'_order' => 10,
 									],
 								],
 							],
@@ -370,6 +362,7 @@ final class Review extends Component {
 							'vendor_rating' => [
 								'type'   => 'part',
 								'path'   => 'vendor/view/vendor-rating',
+								'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
 								'_order' => 20,
 							],
 						],
@@ -386,7 +379,6 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function alter_review_view_block( $template ) {
-
 		if ( get_option( 'hp_review_allow_replies' ) ) {
 			$template = hp\merge_trees(
 				$template,
@@ -397,18 +389,14 @@ final class Review extends Component {
 								'review_reply_modal' => [
 									'type'        => 'modal',
 									'model'       => 'review',
-									'title'       => esc_html__( 'Add Reply', 'hivepress-reviews' ),
+									'title'       => esc_html__( 'Reply to Review', 'hivepress-reviews' ),
 									'_capability' => 'edit_posts',
 									'_order'      => 5,
 
 									'blocks'      => [
 										'review_reply_form' => [
-											'type'       => 'review_reply_form',
-											'_order'     => 10,
-
-											'attributes' => [
-												'class' => [ 'hp-form--narrow' ],
-											],
+											'type'   => 'review_reply_form',
+											'_order' => 10,
 										],
 									],
 								],
