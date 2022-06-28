@@ -3,6 +3,9 @@
 defined( 'ABSPATH' ) || exit;
 
 $display = get_option( 'hp_user_enable_display' );
+
+// Get author id.
+$author_id = $review->get_anonymous() ? null : $review->get_author__id();
 ?>
 <div class="hp-review__image">
 	<?php if ( $display ) : ?>
@@ -10,7 +13,7 @@ $display = get_option( 'hp_user_enable_display' );
 		<?php
 	endif;
 
-	echo get_avatar( $review->get_author__id(), 150 ); 
+	echo get_avatar( $author_id, 150, 'mystery' ); 
 
 	if ( $display ) :
 		?>
