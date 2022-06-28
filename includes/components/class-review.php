@@ -162,22 +162,28 @@ final class Review extends Component {
 		}
 
 		// Get user.
-		$user = $listing->get_user();
+		$user = $review->get_parent() ? $review->get_parent__author() : $listing->get_user();
 
 		if ( $user && $review->get_approved() ) {
-			( new Emails\Review_Submit_Vendor(
-				[
-					'recipient' => $user->get_email(),
 
-					'tokens'    => [
-						'user'          => $user,
-						'user_name'     => $user->get_display_name(),
-						'listing'       => $listing,
-						'listing_url'   => get_permalink( $listing->get_id() ),
-						'listing_title' => $listing->get_title(),
-					],
-				]
-			) )->send();
+			// Set email arguments.
+			$email_args = [
+				'recipient' => $user->get_email(),
+
+				'tokens'    => [
+					'user'          => $user,
+					'user_name'     => $user->get_display_name(),
+					'listing'       => $listing,
+					'listing_url'   => get_permalink( $listing->get_id() ),
+					'listing_title' => $listing->get_title(),
+				],
+			];
+
+			if ( $review->get_parent() ) {
+				( new Emails\Review_Reply( $email_args ) )->send();
+			} else {
+				( new Emails\Review_Submit_Vendor( $email_args ) )->send();
+			}
 		}
 
 		// Get listing rating.
