@@ -9,6 +9,7 @@ namespace HivePress\Components;
 
 use HivePress\Helpers as hp;
 use HivePress\Models;
+use HivePress\Emails;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -158,6 +159,25 @@ final class Review extends Component {
 
 		if ( ! $listing ) {
 			return;
+		}
+
+		// Get user.
+		$user = $listing->get_user();
+
+		if ( $user && $review->get_approved() ) {
+			( new Emails\Review_Submit_Vendor(
+				[
+					'recipient' => $user->get_email(),
+
+					'tokens'    => [
+						'user'          => $user,
+						'user_name'     => $user->get_display_name(),
+						'listing'       => $listing,
+						'listing_url'   => get_permalink( $listing->get_id() ),
+						'listing_title' => $listing->get_title(),
+					],
+				]
+			) )->send();
 		}
 
 		// Get listing rating.
