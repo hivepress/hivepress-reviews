@@ -9,6 +9,7 @@ namespace HivePress\Components;
 
 use HivePress\Helpers as hp;
 use HivePress\Models;
+use HivePress\Emails;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -59,7 +60,133 @@ final class Review extends Component {
 
 		add_filter( 'hivepress/v1/templates/review_view_block', [ $this, 'alter_review_view_block' ] );
 
+		// Send request feedback email.
+		add_action( 'hivepress/v1/models/booking/update_status', [ $this, 'send_request_feedback_email' ], 10, 4 );
+		add_action( 'hivepress/v1/models/order/update_status', [ $this, 'send_request_feedback_email' ], 10, 4 );
+
 		parent::__construct( $args );
+	}
+
+	/**
+	 * Send request feedback email.
+	 *
+	 * @param int    $model_id Model ID.
+	 * @param string $new_status New status.
+	 * @param string $old_status Old status.
+	 * @param object $model Model.
+	 */
+	public function send_request_feedback_email( $model_id, $new_status, $old_status, $model ) {
+
+		// Get model type.
+		$type = $model::_get_meta( 'name' );
+
+		if ( ! $type || ! in_array( $new_status, [ 'wc-completed', 'publish' ] ) ) {
+			return;
+		}
+
+		// Get listing url.
+		$listing_url = null;
+
+		// Get user.
+		$user = null;
+
+		// Get model id.
+		$model_number = $model->get_id();
+
+		if ( 'booking' === $type ) {
+			if ( hivepress()->get_version( 'marketplace' ) ) {
+
+				// Get order.
+				$order = hp\get_first_array_value(
+					wc_get_orders(
+						[
+							'limit'      => 1,
+							'meta_key'   => 'hp_booking',
+							'meta_value' => $model_number,
+						]
+					)
+				);
+
+				if ( $order && $order->get_status() !== 'completed' ) {
+					return;
+				}
+			}
+
+			// Set user.
+			$user = $model->get_user();
+
+			if ( ! $user ) {
+				return;
+			}
+
+			// Get listing.
+			$listing = $model->get_listing();
+
+			if ( ! $listing ) {
+				return;
+			}
+
+			// Set listing url.
+			$listing_url = get_permalink( $listing->get_id() );
+
+		} else {
+
+			// Get order.
+			$order = wc_get_order( $model->get_id() );
+
+			if ( ! $order ) {
+				return;
+			}
+
+			// Get item.
+			$item = hp\get_first_array_value( $order->get_items() );
+
+			if ( ! $item || ! $item->get_product_id() ) {
+				return;
+			}
+
+			// Get listing.
+			$listing = hivepress()->marketplace->get_product_listing( $item->get_product() );
+
+			if ( ! $listing ) {
+				return;
+			}
+
+			if ( $order->get_meta( 'hp_booking' ) ) {
+
+				// Set model type.
+				$type = 'booking';
+
+				// Set model id.
+				$model_number = absint( $order->get_meta( 'hp_booking' ) );
+			}
+
+			// Set listing url.
+			$listing_url = get_permalink( $listing->get_id() );
+
+			// Set user.
+			$user = $model->get_buyer();
+		}
+
+		if ( ! $listing_url ) {
+			return;
+		}
+
+		// Send email.
+		( new Emails\Request_Feedback(
+			[
+				'recipient' => $user->get_email(),
+
+				'tokens'    => [
+					'listing_url'  => $listing_url,
+					'user_name'    => $user->get_username(),
+					'model_type'   => $type,
+					'model_number' => $model_number,
+					'model'        => $model,
+					'user'         => $user,
+				],
+			]
+		) )->send();
 	}
 
 	/**
