@@ -134,6 +134,17 @@ class Reviews extends Block {
 
 		if ( isset( $this->context['reviews'] ) ) {
 
+			// Get total review number.
+			$total = Models\Review::query()->filter(
+				[
+					'listing' => $this->get_context( 'listing' )->get_id(),
+					'parent'  => null,
+				]
+			)->get_count();
+
+			// Get current review page number.
+			$current_page = isset( $_GET['comment_page'] ) ? absint( $_GET['comment_page'] ) : 1;
+
 			// Render reviews.
 			$output = wp_list_comments(
 				[
@@ -142,6 +153,7 @@ class Reviews extends Block {
 					'per_page'          => $this->number,
 					'reverse_top_level' => true,
 					'echo'              => false,
+					'page'              => $current_page,
 
 					'callback'          => function( $comment, $args, $depth ) use ( $column_width ) {
 
@@ -169,6 +181,19 @@ class Reviews extends Block {
 					},
 				]
 			);
+
+			$output .= '<nav class="pagination">';
+			$output .= paginate_comments_links(
+				[
+					'base'         => add_query_arg( 'comment_page', '%#%' ),
+					'format'       => null,
+					'total'        => ceil( $total / $this->number ),
+					'current'      => $current_page,
+					'echo'         => false,
+					'add_fragment' => null,
+				]
+			);
+			$output .= '</nav>';
 		} else {
 
 			// Get review query.
