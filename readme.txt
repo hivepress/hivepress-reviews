@@ -1,9 +1,8 @@
 === HivePress Reviews ===
 Contributors: hivepress
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7785WBVGMNB44&source=url
 Tags: hivepress, reviews, directory, listings, classifieds
 Requires at least: 5.0
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 7.0
 Stable tag: 1.3.0
 License: GPLv3
