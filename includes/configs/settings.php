@@ -42,6 +42,13 @@ return [
 						'type'    => 'checkbox',
 						'_order'  => 30,
 					],
+
+					'review_allow_anonymous'   => [
+						'label'   => hivepress()->translator->get_string( 'reviews' ),
+						'caption' => esc_html__( 'Allow anonymous reviews', 'hivepress-reviews' ),
+						'type'    => 'checkbox',
+						'_order'  => 40,
+					],
 				],
 			],
 		],

@@ -9,6 +9,7 @@ namespace HivePress\Components;
 
 use HivePress\Helpers as hp;
 use HivePress\Models;
+use HivePress\Emails;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -34,6 +35,10 @@ final class Review extends Component {
 		// Add model fields.
 		add_filter( 'hivepress/v1/models/listing', [ $this, 'add_model_fields' ] );
 		add_filter( 'hivepress/v1/models/vendor', [ $this, 'add_model_fields' ] );
+
+		// Add review fields.
+		add_filter( 'hivepress/v1/models/review', [ $this, 'add_review_fields' ] );
+		add_filter( 'hivepress/v1/forms/review_submit', [ $this, 'add_review_fields' ] );
 
 		// Update rating.
 		add_action( 'hivepress/v1/models/review/create', [ $this, 'update_rating' ], 10, 2 );
@@ -158,6 +163,31 @@ final class Review extends Component {
 
 		if ( ! $listing ) {
 			return;
+		}
+
+		// Get user.
+		$user = $review->get_parent() ? $review->get_parent__author() : $listing->get_user();
+
+		if ( $user && $review->get_approved() ) {
+
+			// Set email arguments.
+			$email_args = [
+				'recipient' => $user->get_email(),
+
+				'tokens'    => [
+					'user'          => $user,
+					'user_name'     => $user->get_display_name(),
+					'listing'       => $listing,
+					'listing_url'   => get_permalink( $listing->get_id() ),
+					'listing_title' => $listing->get_title(),
+				],
+			];
+
+			if ( $review->get_parent() ) {
+				( new Emails\Review_Reply( $email_args ) )->send();
+			} else {
+				( new Emails\Review_Submit_Vendor( $email_args ) )->send();
+			}
 		}
 
 		// Get listing rating.
@@ -414,5 +444,30 @@ final class Review extends Component {
 		}
 
 		return $template;
+	}
+
+	/**
+	 * Adds review fields.
+	 *
+	 * @param array $model Model arguments.
+	 * @return array
+	 */
+	public function add_review_fields( $model ) {
+		if ( get_option( 'hp_review_allow_anonymous' ) ) {
+
+			// Add anonymous checkbox.
+			$model['fields']['anonymous'] = [
+				'caption'   => esc_html__( 'Anonymous review', 'hivepress-reviews' ),
+				'type'      => 'checkbox',
+				'_external' => true,
+				'_order'    => 1000,
+			];
+
+			if ( strpos( current_filter(), 'model' ) !== false ) {
+				$model['fields']['author__email']['required'] = false;
+			}
+		}
+
+		return $model;
 	}
 }

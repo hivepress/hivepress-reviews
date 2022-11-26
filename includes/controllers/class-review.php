@@ -127,17 +127,30 @@ final class Review extends Controller {
 			return hp\rest_error( 403, hivepress()->translator->get_string( 'you_cant_review_your_own_listings' ) );
 		}
 
+		// Set review arguments.
+		$review_args = [
+			'listing'              => $listing->get_id(),
+			'author'               => $author->get_id(),
+			'author__display_name' => $author->get_display_name(),
+			'author__email'        => $author->get_email(),
+			'approved'             => get_option( 'hp_review_enable_moderation' ) ? 0 : 1,
+		];
+
+		if ( $form->get_value( 'anonymous' ) ) {
+			$review_args = array_merge(
+				$review_args,
+				[
+					'author__display_name' => esc_html__( 'Anonymous', 'hivepress-reviews' ),
+					'author__email'        => null,
+				]
+			);
+		}
+
 		// Add review.
 		$review = ( new Models\Review() )->fill(
 			array_merge(
 				$form->get_values(),
-				[
-					'listing'              => $listing->get_id(),
-					'author'               => $author->get_id(),
-					'author__display_name' => $author->get_display_name(),
-					'author__email'        => $author->get_email(),
-					'approved'             => get_option( 'hp_review_enable_moderation' ) ? 0 : 1,
-				]
+				$review_args
 			)
 		);
 
