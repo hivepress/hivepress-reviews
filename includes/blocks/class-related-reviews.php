@@ -56,9 +56,6 @@ class Related_Reviews extends Reviews {
 	 */
 	protected function boot() {
 
-		// Set attributes.
-		$this->attributes['id'] = 'reviews';
-
 		// Set context.
 		$this->context['reviews'] = [];
 

@@ -306,6 +306,10 @@ final class Review extends Component {
 								'title'  => hivepress()->translator->get_string( 'reviews' ),
 								'_order' => 100,
 
+								'attributes' => [
+									'id' => 'reviews',
+								],
+
 								'blocks' => [
 									'listing_reviews' => [
 										'type'      => 'related_reviews',
