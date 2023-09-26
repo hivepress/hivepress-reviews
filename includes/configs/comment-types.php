@@ -14,4 +14,8 @@ return [
 	'review' => [
 		'public' => true,
 	],
+
+	'review_user' => [
+		'public' => true,
+	],
 ];
