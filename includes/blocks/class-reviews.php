@@ -134,19 +134,55 @@ class Reviews extends Block {
 
 		if ( isset( $this->context['reviews'] ) ) {
 
-			// Render reviews.
-			$output = wp_list_comments(
-				[
-					'style'             => 'div',
-					'type'              => 'hp_review',
-					'per_page'          => $this->number,
-					'reverse_top_level' => true,
-					'echo'              => false,
+			$review_args = [
+				'style'             => 'div',
+				'type'              => 'hp_review',
+				'per_page'          => $this->number,
+				'reverse_top_level' => true,
+				'echo'              => false,
 
-					'callback'          => function( $comment, $args, $depth ) use ( $column_width ) {
+				'callback'          => function( $comment, $args, $depth ) use ( $column_width ) {
+
+					// Get review.
+					$review = Models\Review::query()->get_by_id( $comment );
+
+					// Get class.
+					$class = 'hp-grid__item hp-col-sm-' . $column_width . ' hp-col-xs-12';
+
+					if ( $depth > 1 ) {
+						$class = 'hp-review__reply';
+					}
+
+					// Render review.
+					echo '<div class="' . esc_attr( $class ) . '">' . ( new Template(
+						[
+							'template' => 'review_view_block',
+
+							'context'  => [
+								'review'  => $review,
+								'listing' => $this->get_context( 'listing' ),
+							],
+						]
+					) )->render();
+				},
+			];
+
+			// Get user.
+			$user = $this->get_context( 'user' );
+
+			if ( get_option( 'hp_review_allow_users' ) && $user ) {
+
+				// Get user post ID.
+				$user_post_id = Models\Review_User_Post::query()->filter( [ 'user' => $user->get_id() ] )->get_first_id();
+
+				if ( $user_post_id ) {
+
+					// Change review arguments.
+					$review_args['type']     = 'hp_review_user';
+					$review_args['callback'] = function( $comment, $args, $depth ) use ( $column_width, $user ) {
 
 						// Get review.
-						$review = Models\Review::query()->get_by_id( $comment );
+						$review = Models\Review_User::query()->get_by_id( $comment );
 
 						// Get class.
 						$class = 'hp-grid__item hp-col-sm-' . $column_width . ' hp-col-xs-12';
@@ -161,14 +197,25 @@ class Reviews extends Block {
 								'template' => 'review_view_block',
 
 								'context'  => [
-									'review'  => $review,
-									'listing' => $this->get_context( 'listing' ),
+									'review' => $review,
+									'review_user' => $review,
+									'user'   => $user,
 								],
 							]
 						) )->render();
-					},
-				]
-			);
+					};
+
+					// Render reviews.
+					$output = wp_list_comments(
+						$review_args,
+						get_comments( [ 'post_id' => $user_post_id ] )
+					);
+				}
+			} else {
+
+				// Render reviews.
+				$output = wp_list_comments( $review_args );
+			}
 		} else {
 
 			// Get review query.
