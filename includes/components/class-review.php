@@ -59,6 +59,9 @@ final class Review extends Component {
 
 		add_filter( 'hivepress/v1/templates/review_view_block', [ $this, 'alter_review_view_block' ] );
 
+		// Clear review cache.
+		add_action( 'transition_comment_status', [ $this, 'clear_review_cache' ], 10, 3 );
+
 		parent::__construct( $args );
 	}
 
@@ -251,9 +254,35 @@ final class Review extends Component {
 			$listing = $menu->get_context( 'listing' );
 
 			if ( $listing && $listing->get_rating_count() ) {
+
+				// Set query arguments.
+				$query_args = [
+					'type'           => hp\prefix( 'review' ),
+					'status'         => 'approve',
+					'posts_per_page' => -1,
+					'count'          => true,
+					'post_id'        => $listing->get_id(),
+				];
+
+				// Get cache group.
+				$cache_group = hivepress()->model->get_cache_group( 'comment', hp\prefix( 'review' ) );
+
+				// Get cached review count.
+				$review_count = hivepress()->cache->get_cache( array_merge( $query_args, [ 'format' => 'reviews' ] ), $cache_group );
+
+				if ( is_null( $review_count ) ) {
+
+					// Get review count.
+					$review_count = get_comments( $query_args );
+
+					// Set cached review count.
+					hivepress()->cache->set_cache( array_merge( $query_args, [ 'format' => 'reviews' ] ), $cache_group, $review_count );
+				}
+
 				$items['listing_reviews'] = [
 					'label'  => hivepress()->translator->get_string( 'reviews' ),
 					'url'    => $items['listing_view']['url'] . '#reviews',
+					'meta'   => $review_count,
 					'_order' => 20,
 				];
 			}
@@ -414,5 +443,24 @@ final class Review extends Component {
 		}
 
 		return $template;
+	}
+
+	/**
+	 * Clear review cache.
+	 *
+	 * @param string     $new_status New comment status.
+	 * @param string     $old_status Old comment status.
+	 * @param WP_Comment $comment Comment object.
+	 */
+	public function clear_review_cache( $new_status, $old_status, $comment ) {
+		if ( 'hp_review' !== $comment->comment_type ) {
+			return;
+		}
+
+		// Get cache group.
+		$group = hivepress()->model->get_cache_group( 'comment', hp\prefix( 'review' ) );
+
+		// Delete transient cache.
+		hivepress()->cache->delete_cache( null, $group );
 	}
 }
