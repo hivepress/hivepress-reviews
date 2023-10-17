@@ -16,9 +16,23 @@ return [
 		'_order'   => 40,
 
 		'sections' => [
+			'display'    => [
+				'title'  => hivepress()->translator->get_string( 'display_noun' ),
+				'_order' => 10,
+
+				'fields' => [
+					'review_display_vendor_page' => [
+						'label'   => hivepress()->translator->get_string( 'display_noun' ),
+						'caption' => esc_html__( 'Display review on the vendor page', 'hivepress-reviews' ),
+						'type'    => 'checkbox',
+						'_order'  => 10,
+					],
+				],
+			],
+
 			'submission' => [
 				'title'  => hivepress()->translator->get_string( 'submission' ),
-				'_order' => 10,
+				'_order' => 20,
 
 				'fields' => [
 					'review_allow_multiple'    => [
