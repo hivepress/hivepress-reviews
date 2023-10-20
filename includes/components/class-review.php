@@ -54,8 +54,8 @@ final class Review extends Component {
 		add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_template' ] );
 		add_filter( 'hivepress/v1/templates/listing_view_page', [ $this, 'alter_listing_view_page' ] );
 
-		add_filter( 'hivepress/v1/templates/vendor_view_block', [ $this, 'alter_vendor_view_template' ] );
-		add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_template' ] );
+		add_filter( 'hivepress/v1/templates/vendor_view_block', [ $this, 'alter_vendor_view_template' ], 10, 2 );
+		add_filter( 'hivepress/v1/templates/vendor_view_page/blocks', [ $this, 'alter_vendor_view_template' ], 10, 2 );
 
 		add_filter( 'hivepress/v1/templates/review_view_block', [ $this, 'alter_review_view_block' ] );
 
@@ -349,27 +349,78 @@ final class Review extends Component {
 	/**
 	 * Alters vendor view template.
 	 *
-	 * @param array $template Template arguments.
+	 * @param array  $blocks Template arguments.
+	 * @param object $template Template object.
 	 * @return array
 	 */
-	public function alter_vendor_view_template( $template ) {
-		return hp\merge_trees(
-			$template,
-			[
+	public function alter_vendor_view_template( $blocks, $template ) {
+
+		// Set new template blocks.
+		$new_blocks = [
+			'vendor_details_primary' => [
 				'blocks' => [
-					'vendor_details_primary' => [
-						'blocks' => [
-							'vendor_rating' => [
-								'type'   => 'part',
-								'path'   => 'vendor/view/vendor-rating',
-								'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
-								'_order' => 20,
-							],
-						],
+					'vendor_rating' => [
+						'type'   => 'part',
+						'path'   => 'vendor/view/vendor-rating',
+						'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
+						'_order' => 20,
 					],
 				],
-			]
-		);
+			],
+		];
+
+		if ( get_option( 'hp_review_display_vendor_page' ) && strpos( current_filter(), 'vendor_view_page' ) !== false ) {
+
+			// Get vendor.
+			$vendor = $template->get_context( 'vendor' );
+
+			if ( $vendor ) {
+
+				// Get vendor listings id.
+				$vendor_listing_ids = Models\Listing::query()->filter(
+					[
+						'vendor' => $vendor->get_id(),
+						'status' => 'publish',
+					]
+				)->get_ids();
+
+				if ( $vendor_listing_ids ) {
+
+					// Set review query in context.
+					$template->set_context(
+						'review_query',
+						Models\Review::query()->filter(
+							[
+								'listing__in' => $vendor_listing_ids,
+							]
+						)->order( [ 'created_date' => 'desc' ] )->limit( 5 )
+					);
+
+					// Add review block.
+					$new_blocks['page_content'] = [
+						'blocks' => [
+							'reviews_container' => [
+								'type'   => 'section',
+								'title'  => hivepress()->translator->get_string( 'reviews' ),
+								'_order' => 100,
+
+								'blocks' => [
+									'vendor_reviews' => [
+										'type'      => 'reviews',
+										'number'    => 5,
+										'_label'    => hivepress()->translator->get_string( 'reviews' ),
+										'_settings' => [ 'columns' ],
+										'_order'    => 10,
+									],
+								],
+							],
+						],
+					];
+				}
+			}
+		}
+
+		return hivepress()->template->merge_blocks( $blocks, $new_blocks );
 	}
 
 	/**
