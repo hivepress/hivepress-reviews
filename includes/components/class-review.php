@@ -255,28 +255,22 @@ final class Review extends Component {
 
 			if ( $listing && $listing->get_rating_count() ) {
 
-				// Set query arguments.
-				$query_args = [
-					'type'           => hp\prefix( 'review' ),
-					'status'         => 'approve',
-					'posts_per_page' => -1,
-					'count'          => true,
-					'post_id'        => $listing->get_id(),
-				];
-
-				// Get cache group.
-				$cache_group = hivepress()->model->get_cache_group( 'comment', hp\prefix( 'review' ) );
-
 				// Get cached review count.
-				$review_count = hivepress()->cache->get_cache( array_merge( $query_args, [ 'format' => 'reviews' ] ), $cache_group );
+				$review_count = hivepress()->cache->get_post_cache( $listing->get_id(), 'review_count', 'models/review' );
 
 				if ( is_null( $review_count ) ) {
 
 					// Get review count.
-					$review_count = get_comments( $query_args );
+					$review_count = Models\Review::query()->filter(
+						[
+							'listing'  => $listing->get_id(),
+							'parent'   => null,
+							'approved' => true,
+						]
+					)->get_count();
 
 					// Set cached review count.
-					hivepress()->cache->set_cache( array_merge( $query_args, [ 'format' => 'reviews' ] ), $cache_group, $review_count );
+					hivepress()->cache->set_post_cache( $listing->get_id(), 'review_count', 'models/review', $review_count );
 				}
 
 				$items['listing_reviews'] = [
@@ -453,14 +447,11 @@ final class Review extends Component {
 	 * @param WP_Comment $comment Comment object.
 	 */
 	public function clear_review_cache( $new_status, $old_status, $comment ) {
-		if ( 'hp_review' !== $comment->comment_type ) {
+		if ( 'hp_review' !== $comment->comment_type || $comment->comment_parent ) {
 			return;
 		}
 
-		// Get cache group.
-		$group = hivepress()->model->get_cache_group( 'comment', hp\prefix( 'review' ) );
-
-		// Delete transient cache.
-		hivepress()->cache->delete_cache( null, $group );
+		// Delete post cache.
+		hivepress()->cache->delete_post_cache( $comment->comment_post_ID, 'review_count', 'models/review' );
 	}
 }
