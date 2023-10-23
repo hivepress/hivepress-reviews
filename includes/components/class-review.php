@@ -9,6 +9,7 @@ namespace HivePress\Components;
 
 use HivePress\Helpers as hp;
 use HivePress\Models;
+use HivePress\Emails;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -58,6 +59,9 @@ final class Review extends Component {
 		add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_template' ] );
 
 		add_filter( 'hivepress/v1/templates/review_view_block', [ $this, 'alter_review_view_block' ] );
+
+		// Send approved review reply user email.
+		add_action( 'transition_comment_status', [ $this, 'send_approved_reply_email' ], 10, 3 );
 
 		parent::__construct( $args );
 	}
@@ -414,5 +418,51 @@ final class Review extends Component {
 		}
 
 		return $template;
+	}
+
+	/**
+	 * Send approved review reply user email.
+	 *
+	 * @param string     $new_status New comment status.
+	 * @param string     $old_status Old comment status.
+	 * @param WP_Comment $comment Comment object.
+	 */
+	public function send_approved_reply_email( $new_status, $old_status, $comment ) {
+		if ( ! get_option( 'hp_review_enable_moderation' ) || 'hp_review' !== $comment->comment_type || ! $comment->comment_parent || 'approved' !== $new_status ) {
+			return;
+		}
+
+		// Get review.
+		$review = Models\Review::query()->get_by_id( $comment->comment_ID );
+
+		if ( ! $review ) {
+			return;
+		}
+
+		// Get parent review user.
+		$parent_review_user = $review->get_parent__author();
+
+		// Get listing.
+		$listing = $review->get_listing();
+
+		if ( ! $parent_review_user || ! $listing ) {
+			return;
+		}
+
+		// Send email.
+		( new Emails\Review_Reply_Approve_User(
+			[
+				'recipient' => $parent_review_user->get_email(),
+
+				'tokens'    => [
+					'user'          => $parent_review_user,
+					'listing'       => $listing,
+					'review'        => $review,
+					'user_name'     => $parent_review_user->get_display_name(),
+					'listing_title' => $listing->get_title(),
+					'listing_url'   => hivepress()->router->get_url( 'listing_view_page', [ 'listing_id' => $listing->get_id() ] ),
+				],
+			]
+		) )->send();
 	}
 }
