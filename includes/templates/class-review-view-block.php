@@ -110,10 +110,16 @@ class Review_View_Block extends Template {
 										'_order' => 10,
 									],
 
+									'review_attachment' => [
+										'type'   => 'part',
+										'path'   => 'review/view/review-attachment',
+										'_order' => 20,
+									],
+
 									'review_listing' => [
 										'type'   => 'part',
 										'path'   => 'review/view/review-listing',
-										'_order' => 20,
+										'_order' => 30,
 									],
 								],
 							],

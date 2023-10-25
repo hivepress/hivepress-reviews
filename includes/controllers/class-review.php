@@ -141,6 +141,28 @@ final class Review extends Controller {
 			)
 		);
 
+		if ( get_option( 'hp_review_allow_attachment' ) ) {
+
+			// Get review draft.
+			$review_draft = hivepress()->review->get_review_draft();
+
+			if ( $review_draft && $review_draft->get_attachment__id() ) {
+
+				// Get attachments.
+				$attachments = $review_draft->get_attachment();
+
+				if ( ! is_array( $attachments ) ) {
+					$attachments = [ $attachments ];
+				}
+
+				if ( $attachments ) {
+
+					// Set attachment.
+					$review->set_attachment( $review_draft->get_attachment__id() );
+				}
+			}
+		}
+
 		if ( ! $review->save() ) {
 			return hp\rest_error( 400, $review->_get_errors() );
 		}

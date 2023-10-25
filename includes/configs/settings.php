@@ -42,6 +42,22 @@ return [
 						'type'    => 'checkbox',
 						'_order'  => 30,
 					],
+
+					'review_allow_attachment'  => [
+						'label'   => esc_html__( 'Attachments', 'hivepress-reviews' ),
+						'caption' => esc_html__( 'Allow file attachments', 'hivepress-reviews' ),
+						'type'    => 'checkbox',
+						'_order'  => 40,
+					],
+
+					'review_attachment_types'  => [
+						'label'    => esc_html__( 'Allowed File Types', 'hivepress-reviews' ),
+						'type'     => 'select',
+						'options'  => 'mime_types',
+						'multiple' => true,
+						'_parent'  => 'review_allow_attachment',
+						'_order'   => 50,
+					],
 				],
 			],
 		],
