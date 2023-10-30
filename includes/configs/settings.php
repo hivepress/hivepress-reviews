@@ -42,6 +42,29 @@ return [
 						'type'    => 'checkbox',
 						'_order'  => 30,
 					],
+
+					'review_allow_criteria'    => [
+						'label'   => esc_html__( 'Review criterias', 'hivepress-reviews' ),
+						'caption' => esc_html__( 'Allow adding multiple rating criterias', 'hivepress-reviews' ),
+						'type'    => 'checkbox',
+						'_order'  => 40,
+					],
+
+					'review_criteria_options'  => [
+						'type'     => 'repeater',
+						'statuses' => [ 'optional' => null ],
+						'fields'   => [
+							'name' => [
+								'placeholder' => hivepress()->translator->get_string( 'title' ),
+								'type'        => 'text',
+								'max_length'  => 256,
+								'required'    => true,
+								'_order'      => 10,
+							],
+						],
+						'_parent'  => 'review_allow_criteria',
+						'_order'   => 50,
+					],
 				],
 			],
 		],
