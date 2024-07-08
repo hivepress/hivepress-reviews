@@ -34,6 +34,7 @@ final class Review extends Component {
 		// Add model fields.
 		add_filter( 'hivepress/v1/models/listing', [ $this, 'add_model_fields' ] );
 		add_filter( 'hivepress/v1/models/vendor', [ $this, 'add_model_fields' ] );
+		add_filter( 'hivepress/v1/models/review', [ $this, 'add_review_fields' ] );
 
 		// Update rating.
 		add_action( 'hivepress/v1/models/review/create', [ $this, 'update_rating' ], 10, 2 );
@@ -59,7 +60,28 @@ final class Review extends Component {
 
 		add_filter( 'hivepress/v1/templates/review_view_block', [ $this, 'alter_review_view_block' ] );
 
+		// Alter review submit form.
+		add_filter( 'hivepress/v1/forms/review_submit', [ $this, 'alter_review_submit_form' ] );
+
 		parent::__construct( $args );
+	}
+
+	public function get_critearias_names() {
+		$result    = [];
+		$criterias = get_option( 'hp_review_criteria_options' );
+
+		if ( ! get_option( 'hp_review_allow_criteria' ) || ! $criterias ) {
+			return $result;
+		}
+
+		foreach ( $criterias as $criteria ) {
+			$result[] = [
+				'name' => hp\get_array_value( $criteria, 'name' ),
+				'key'  => hp\sanitize_key( hp\get_array_value( $criteria, 'name' ) ),
+			];
+		}
+
+		return array_filter( $result );
 	}
 
 	/**
@@ -413,6 +435,88 @@ final class Review extends Component {
 			);
 		}
 
+		if ( get_option( 'hp_review_allow_criteria' ) && get_option( 'hp_review_criteria_options' ) ) {
+			$template = hivepress()->template->merge_blocks(
+				$template,
+				[
+					'review_content' => [
+						'blocks' => [
+							'review_criterias' => [
+								'type'   => 'part',
+								'path'   => 'review/view/review-criterias',
+								'_order' => 5,
+							],
+						],
+					],
+				]
+			);
+		}
+
 		return $template;
+	}
+
+	/**
+	 * Adds model fields.
+	 *
+	 * @param array $model Model arguments.
+	 * @return array
+	 */
+	public function add_review_fields( $model ) {
+		if ( ! get_option( 'hp_review_allow_criteria' ) || ! get_option( 'hp_review_criteria_options' ) ) {
+			return $model;
+		}
+
+		$model['fields']['criterias'] = [
+			'label'     => esc_html__( 'Rating', 'hivepress-reviews' ),
+			'type'      => 'repeater',
+			'fields'    => [
+				'name'   => [
+					'type'       => 'text',
+					'max_length' => 256,
+					'required'   => true,
+					'_order'     => 10,
+				],
+				'rating' => [
+					'type'     => 'rating',
+					'required' => true,
+					'_order'   => 20,
+				],
+			],
+			'_external' => true,
+		];
+
+		return $model;
+	}
+
+	/**
+	 * Alter review submit form.
+	 *
+	 * @param array $args Form arguments.
+	 * @return array
+	 */
+	public function alter_review_submit_form( $args ) {
+		if ( ! get_option( 'hp_review_allow_criteria' ) || ! get_option( 'hp_review_criteria_options' ) ) {
+			return $args;
+		}
+
+		foreach ( $this->get_critearias_names() as $criteria ) {
+			$key = hp\get_array_value( $criteria, 'key' );
+
+			if ( ! $key ) {
+				continue;
+			}
+
+			$args['fields'][ $key . '_criterias' ] = [
+				'label'     => hp\get_array_value( $criteria, 'name' ),
+				'type'      => 'rating',
+				'required'  => true,
+				'_separate' => true,
+				'_order'    => 10,
+			];
+		}
+
+		unset( $args['fields']['rating'] );
+
+		return $args;
 	}
 }

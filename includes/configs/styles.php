@@ -17,4 +17,11 @@ return [
 		'version' => hivepress()->get_version( 'reviews' ),
 		'scope'   => [ 'frontend', 'editor' ],
 	],
+
+	'reviews_backend'  => [
+		'handle'  => 'hivepress-reviews-backend',
+		'src'     => hivepress()->get_url( 'reviews' ) . '/assets/css/backend.min.css',
+		'version' => hivepress()->get_version( 'reviews' ),
+		'scope'   => [ 'backend' ],
+	],
 ];
