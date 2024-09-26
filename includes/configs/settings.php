@@ -28,19 +28,25 @@ return [
 						'_order'  => 10,
 					],
 
+					'review_allow_users'    => [
+						'caption' => esc_html__( 'Allow submitting reviews for users', 'hivepress-reviews' ),
+						'type'    => 'checkbox',
+						'_order'  => 20,
+					],
+
 					'review_enable_moderation' => [
 						'label'   => hivepress()->translator->get_string( 'moderation' ),
 						'caption' => esc_html__( 'Manually approve new reviews', 'hivepress-reviews' ),
 						'type'    => 'checkbox',
 						'default' => true,
-						'_order'  => 20,
+						'_order'  => 30,
 					],
 
 					'review_allow_replies'     => [
 						'label'   => esc_html__( 'Replies', 'hivepress-reviews' ),
 						'caption' => esc_html__( 'Allow replying to reviews', 'hivepress-reviews' ),
 						'type'    => 'checkbox',
-						'_order'  => 30,
+						'_order'  => 40,
 					],
 				],
 			],
