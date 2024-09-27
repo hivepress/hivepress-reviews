@@ -47,6 +47,13 @@ class Review_Submit_Form extends Form {
 			$this->values['listing'] = $listing->get_id();
 		}
 
+		// Set draft.
+		if ( get_option( 'hp_review_allow_attachment' ) ) {
+			$this->context['review'] = hivepress()->review->get_review_draft();
+
+			$this->attributes['data-reset'] = 'true';
+		}
+
 		parent::boot();
 	}
 }

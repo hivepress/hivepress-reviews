@@ -94,4 +94,13 @@ class Review extends Comment {
 
 		parent::__construct( $args );
 	}
+
+	/**
+	 * Gets user ID.
+	 *
+	 * @return mixed
+	 */
+	final public function get_user__id() {
+		return $this->get_author__id();
+	}
 }
