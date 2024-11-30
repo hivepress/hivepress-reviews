@@ -59,6 +59,9 @@ final class Review extends Component {
 
 		add_filter( 'hivepress/v1/templates/review_view_block', [ $this, 'alter_review_view_block' ] );
 
+		// Clear review cache.
+		add_action( 'transition_comment_status', [ $this, 'clear_review_cache' ], 10, 3 );
+
 		parent::__construct( $args );
 	}
 
@@ -251,9 +254,29 @@ final class Review extends Component {
 			$listing = $menu->get_context( 'listing' );
 
 			if ( $listing && $listing->get_rating_count() ) {
+
+				// Get cached review count.
+				$review_count = hivepress()->cache->get_post_cache( $listing->get_id(), 'review_count', 'models/review' );
+
+				if ( is_null( $review_count ) ) {
+
+					// Get review count.
+					$review_count = Models\Review::query()->filter(
+						[
+							'listing'  => $listing->get_id(),
+							'parent'   => null,
+							'approved' => true,
+						]
+					)->get_count();
+
+					// Set cached review count.
+					hivepress()->cache->set_post_cache( $listing->get_id(), 'review_count', 'models/review', $review_count );
+				}
+
 				$items['listing_reviews'] = [
 					'label'  => hivepress()->translator->get_string( 'reviews' ),
 					'url'    => $items['listing_view']['url'] . '#reviews',
+					'meta'   => $review_count,
 					'_order' => 20,
 				];
 			}
@@ -414,5 +437,21 @@ final class Review extends Component {
 		}
 
 		return $template;
+	}
+
+	/**
+	 * Clear review cache.
+	 *
+	 * @param string     $new_status New comment status.
+	 * @param string     $old_status Old comment status.
+	 * @param WP_Comment $comment Comment object.
+	 */
+	public function clear_review_cache( $new_status, $old_status, $comment ) {
+		if ( 'hp_review' !== $comment->comment_type || $comment->comment_parent ) {
+			return;
+		}
+
+		// Delete post cache.
+		hivepress()->cache->delete_post_cache( $comment->comment_post_ID, 'review_count', 'models/review' );
 	}
 }
