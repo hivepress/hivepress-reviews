@@ -30,7 +30,7 @@ class Review_Reply extends Email {
 				'label'       => esc_html__( 'Review Replied', 'hivepress-reviews' ),
 				'description' => esc_html__( 'This email is sent to users when a new review reply is received.', 'hivepress-reviews' ),
 				'recipient'   => hivepress()->translator->get_string( 'user' ),
-				'tokens'      => [ 'user_name', 'reply_url', 'reply_text', 'reply', 'listing', 'user' ],
+				'tokens'      => [ 'user_name', 'listing_title', 'review_url', 'reply_text', 'user', 'listing', 'review', 'reply' ],
 			],
 			$meta
 		);
@@ -47,7 +47,7 @@ class Review_Reply extends Email {
 		$args = hp\merge_arrays(
 			[
 				'subject' => esc_html__( 'New reply to review', 'hivepress-reviews' ),
-				'body'    => hp\sanitize_html( __( "Hi, %user_name%! You've received a new reply to your review, click on the following link to view it: %reply_url%", 'hivepress-reviews' ) ),
+				'body'    => hp\sanitize_html( __( 'Hi, %user_name%! You\'ve received a new reply to your review of "%listing_title%", click on the following link to view it: %review_url%', 'hivepress-reviews' ) ),
 			],
 			$args
 		);

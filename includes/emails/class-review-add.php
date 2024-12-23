@@ -30,7 +30,7 @@ class Review_Add extends Email {
 				'label'       => esc_html__( 'Review Added', 'hivepress-reviews' ),
 				'description' => esc_html__( 'This email is sent to vendors when a new review is added.', 'hivepress-reviews' ),
 				'recipient'   => hivepress()->translator->get_string( 'vendor' ),
-				'tokens'      => [ 'user_name', 'review_url', 'listing_title', 'review', 'listing', 'user' ],
+				'tokens'      => [ 'user_name', 'listing_title', 'review_url', 'user', 'listing', 'review' ],
 			],
 			$meta
 		);
