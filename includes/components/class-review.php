@@ -261,7 +261,7 @@ final class Review extends Component {
 									'reply'      => $review,
 									'user'       => $user,
 									'user_name'  => $user->get_display_name(),
-									'reply_text' => $review->get_text(),
+									'reply_text' => $review->display_text(),
 								],
 							]
 						)
