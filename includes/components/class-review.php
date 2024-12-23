@@ -389,18 +389,16 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function alter_listing_view_template( $template ) {
-		return hp\merge_trees(
+		return hivepress()->template->merge_blocks(
 			$template,
 			[
-				'blocks' => [
-					'listing_details_primary' => [
-						'blocks' => [
-							'listing_rating' => [
-								'type'   => 'part',
-								'path'   => 'listing/view/listing-rating',
-								'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
-								'_order' => 30,
-							],
+				'listing_details_primary' => [
+					'blocks' => [
+						'listing_rating' => [
+							'type'   => 'part',
+							'path'   => 'listing/view/listing-rating',
+							'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
+							'_order' => 30,
 						],
 					],
 				],
@@ -415,50 +413,48 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function alter_listing_view_page( $template ) {
-		return hp\merge_trees(
+		return hivepress()->template->merge_blocks(
 			$template,
 			[
-				'blocks' => [
-					'page_content'            => [
-						'blocks' => [
-							'reviews_container' => [
-								'type'   => 'section',
-								'title'  => hivepress()->translator->get_string( 'reviews' ),
-								'_order' => 100,
+				'page_content'            => [
+					'blocks' => [
+						'reviews_container' => [
+							'type'   => 'section',
+							'title'  => hivepress()->translator->get_string( 'reviews' ),
+							'_order' => 100,
 
-								'blocks' => [
-									'listing_reviews' => [
-										'type'      => 'related_reviews',
-										'_label'    => hivepress()->translator->get_string( 'reviews' ) . ' (' . hivepress()->translator->get_string( 'related_plural' ) . ')',
-										'_settings' => [ 'columns' ],
-										'_order'    => 10,
-									],
+							'blocks' => [
+								'listing_reviews' => [
+									'type'      => 'related_reviews',
+									'_label'    => hivepress()->translator->get_string( 'reviews' ) . ' (' . hivepress()->translator->get_string( 'related_plural' ) . ')',
+									'_settings' => [ 'columns' ],
+									'_order'    => 10,
 								],
 							],
 						],
 					],
+				],
 
-					'listing_actions_primary' => [
-						'blocks' => [
-							'review_submit_modal' => [
-								'type'        => 'modal',
-								'title'       => esc_html__( 'Write a Review', 'hivepress-reviews' ),
-								'_capability' => 'read',
-								'_order'      => 5,
+				'listing_actions_primary' => [
+					'blocks' => [
+						'review_submit_modal' => [
+							'type'        => 'modal',
+							'title'       => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+							'_capability' => 'read',
+							'_order'      => 5,
 
-								'blocks'      => [
-									'review_submit_form' => [
-										'type'   => 'review_submit_form',
-										'_order' => 10,
-									],
+							'blocks'      => [
+								'review_submit_form' => [
+									'type'   => 'review_submit_form',
+									'_order' => 10,
 								],
 							],
+						],
 
-							'review_submit_link'  => [
-								'type'   => 'part',
-								'path'   => 'listing/view/page/review-submit-link',
-								'_order' => 30,
-							],
+						'review_submit_link'  => [
+							'type'   => 'part',
+							'path'   => 'listing/view/page/review-submit-link',
+							'_order' => 30,
 						],
 					],
 				],
@@ -473,18 +469,16 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function alter_vendor_view_template( $template ) {
-		return hp\merge_trees(
+		return hivepress()->template->merge_blocks(
 			$template,
 			[
-				'blocks' => [
-					'vendor_details_primary' => [
-						'blocks' => [
-							'vendor_rating' => [
-								'type'   => 'part',
-								'path'   => 'vendor/view/vendor-rating',
-								'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
-								'_order' => 20,
-							],
+				'vendor_details_primary' => [
+					'blocks' => [
+						'vendor_rating' => [
+							'type'   => 'part',
+							'path'   => 'vendor/view/vendor-rating',
+							'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
+							'_order' => 20,
 						],
 					],
 				],
