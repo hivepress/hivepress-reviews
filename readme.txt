@@ -14,7 +14,7 @@ Allow users to rate and review listings.
 
 HivePress Reviews is an extension for [HivePress](https://wordpress.org/plugins/hivepress/) plugin. It allows users to rate and review listings.
 
-[Demo](https://listinghive.hivepress.io/) | [Docs](https://help.hivepress.io/category/40-reviews) | [Support](https://community.hivepress.io/)
+[Demo](https://listinghive.hivepress.io/) | [Docs](https://help.hivepress.io/) | [Support](https://community.hivepress.io/)
 
 == Changelog ==
 
