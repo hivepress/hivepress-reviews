@@ -110,7 +110,8 @@ class Reviews extends Block {
 		$this->attributes = hp\merge_arrays(
 			$this->attributes,
 			[
-				'class' => [ 'hp-reviews', 'hp-block', 'hp-grid' ],
+				'class'      => [ 'hp-reviews', 'hp-block', 'hp-grid' ],
+				'data-block' => $this->name,
 			]
 		);
 
@@ -235,7 +236,13 @@ class Reviews extends Block {
 
 		// Add wrapper.
 		if ( $output ) {
-			$output = '<div ' . hp\html_attributes( $this->attributes ) . '><div class="hp-row">' . $output . '</div></div>';
+			$output = '<div ' . hp\html_attributes( $this->attributes ) . '><div class="hp-row">' . $output . '</div>';
+
+			if ( isset( $this->context['reviews'] ) ) {
+
+			}
+
+			$output .= '</div>';
 		}
 
 		return $output;
