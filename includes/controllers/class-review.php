@@ -10,6 +10,7 @@ namespace HivePress\Controllers;
 use HivePress\Helpers as hp;
 use HivePress\Models;
 use HivePress\Forms;
+use HivePress\Blocks;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -31,8 +32,10 @@ final class Review extends Controller {
 			[
 				'routes' => [
 					'reviews_resource'     => [
-						'path' => '/reviews',
-						'rest' => true,
+						'path'   => '/reviews',
+						'method' => 'GET',
+						'action' => [ $this, 'get_reviews' ],
+						'rest'   => true,
 					],
 
 					'review_submit_action' => [
@@ -47,6 +50,76 @@ final class Review extends Controller {
 		);
 
 		parent::__construct( $args );
+	}
+
+	/**
+	 * Gets reviews.
+	 *
+	 * @param WP_REST_Request $request API request.
+	 * @return WP_Rest_Response
+	 */
+	public function get_reviews( $request ) {
+		global $post;
+
+		// Get listing.
+		$listing_id = absint( $request->get_param( 'listing' ) );
+
+		if ( ! $listing_id ) {
+			return hp\rest_error( 400 );
+		}
+
+		$listing = Models\Listing::query()->get_by_id( $listing_id );
+
+		if ( ! $listing || $listing->get_status() !== 'publish' ) {
+			return hp\rest_error( 404 );
+		}
+
+		$post = get_post( $listing->get_id() );
+		setup_postdata( $post );
+
+		// Get reviews.
+		$reviews = Models\Review::query()->filter(
+			[
+				'listing' => $listing->get_id(),
+			]
+		)->order( [ 'created_date' => 'desc' ] )
+		->get()
+		->serialize();
+
+		// Set response.
+		$response = [
+			'results' => [],
+		];
+
+		if ( $reviews ) {
+			foreach ( $reviews as $review ) {
+
+				// Add result.
+				$response['results'][] = [
+					'id' => $review->get_id(),
+				];
+			}
+
+			if ( $request->get_param( '_render' ) ) {
+
+				// Render reviews.
+				$response['html'] = '';
+
+				$response['html'] .= ( new Blocks\Reviews(
+					[
+						'number'  => 3,
+						'context' => [
+							'reviews' => [],
+							'listing' => $listing,
+						],
+					]
+				) )->render();
+			}
+		}
+
+		wp_reset_postdata();
+
+		return hp\rest_response( 200, $response );
 	}
 
 	/**
