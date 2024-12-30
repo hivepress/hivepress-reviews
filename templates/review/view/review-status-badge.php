@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 if ( ! $review->is_approved() ) :
 	$status = 'pending';
 	$label  = _x( 'Pending', 'review', 'hivepress-reviews' );
-elseif ( $review->get_author__id() === $listing->get_user__id() ) :
+elseif ( isset( $listing ) && $listing->get_user__id() === $review->get_author__id() ) :
 	$status = 'vendor';
 	$label  = hivepress()->translator->get_string( 'vendor' );
 endif;
