@@ -28,6 +28,12 @@ return [
 						'_order'  => 10,
 					],
 
+					'review_allow_anonymous'   => [
+						'caption' => esc_html__( 'Allow making reviews anonymous', 'hivepress-reviews' ),
+						'type'    => 'checkbox',
+						'_order'  => 15,
+					],
+
 					'review_enable_moderation' => [
 						'label'   => hivepress()->translator->get_string( 'moderation' ),
 						'caption' => esc_html__( 'Manually approve new reviews', 'hivepress-reviews' ),
@@ -41,13 +47,6 @@ return [
 						'caption' => esc_html__( 'Allow replying to reviews', 'hivepress-reviews' ),
 						'type'    => 'checkbox',
 						'_order'  => 30,
-					],
-
-					'review_allow_anonymous'   => [
-						'label'   => hivepress()->translator->get_string( 'reviews' ),
-						'caption' => esc_html__( 'Allow anonymous reviews', 'hivepress-reviews' ),
-						'type'    => 'checkbox',
-						'_order'  => 40,
 					],
 				],
 			],

@@ -2,10 +2,7 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-$display = get_option( 'hp_user_enable_display' );
-
-// Get author id.
-$author_id = $review->get_anonymous() ? null : $review->get_author__id();
+$display = get_option( 'hp_user_enable_display' ) && ! $review->is_anonymous();
 ?>
 <div class="hp-review__image">
 	<?php if ( $display ) : ?>
@@ -13,7 +10,7 @@ $author_id = $review->get_anonymous() ? null : $review->get_author__id();
 		<?php
 	endif;
 
-	echo get_avatar( $author_id, 150, 'mystery' ); 
+	echo get_avatar( $review->get_author__id(), 150 );
 
 	if ( $display ) :
 		?>

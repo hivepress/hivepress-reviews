@@ -36,14 +36,14 @@ final class Review extends Component {
 		add_filter( 'hivepress/v1/models/listing', [ $this, 'add_model_fields' ] );
 		add_filter( 'hivepress/v1/models/vendor', [ $this, 'add_model_fields' ] );
 
-		// Add review fields.
-		add_filter( 'hivepress/v1/models/review', [ $this, 'add_review_fields' ] );
-		add_filter( 'hivepress/v1/forms/review_submit', [ $this, 'add_review_fields' ] );
-
 		// Update rating.
 		add_action( 'hivepress/v1/models/review/create', [ $this, 'update_rating' ], 10, 2 );
 		add_action( 'hivepress/v1/models/review/update_status', [ $this, 'update_rating' ], 10, 2 );
 		add_action( 'hivepress/v1/models/review/delete', [ $this, 'update_rating' ], 10, 2 );
+
+		// Add review fields.
+		add_filter( 'hivepress/v1/models/review', [ $this, 'add_review_fields' ] );
+		add_filter( 'hivepress/v1/forms/review_submit', [ $this, 'add_review_fields' ] );
 
 		// Update review status.
 		add_action( 'hivepress/v1/models/review/create', [ $this, 'update_review_status' ], 10, 2 );
@@ -204,6 +204,25 @@ final class Review extends Component {
 				'rating_count' => hp\get_last_array_value( $vendor_rating ),
 			]
 		)->save( [ 'rating', 'rating_count' ] );
+	}
+
+	/**
+	 * Adds review fields.
+	 *
+	 * @param array $model Model arguments.
+	 * @return array
+	 */
+	public function add_review_fields( $model ) {
+		if ( get_option( 'hp_review_allow_anonymous' ) ) {
+			$model['fields']['anonymous'] = [
+				'caption'   => esc_html__( 'todo', 'hivepress-reviews' ),
+				'type'      => 'checkbox',
+				'_external' => true,
+				'_order'    => 1000,
+			];
+		}
+
+		return $model;
 	}
 
 	/**
@@ -548,30 +567,5 @@ final class Review extends Component {
 		}
 
 		return $blocks;
-	}
-
-	/**
-	 * Adds review fields.
-	 *
-	 * @param array $model Model arguments.
-	 * @return array
-	 */
-	public function add_review_fields( $model ) {
-		if ( get_option( 'hp_review_allow_anonymous' ) ) {
-
-			// Add anonymous checkbox.
-			$model['fields']['anonymous'] = [
-				'caption'   => esc_html__( 'Anonymous review', 'hivepress-reviews' ),
-				'type'      => 'checkbox',
-				'_external' => true,
-				'_order'    => 1000,
-			];
-
-			if ( strpos( current_filter(), 'model' ) !== false ) {
-				$model['fields']['author__email']['required'] = false;
-			}
-		}
-
-		return $model;
 	}
 }

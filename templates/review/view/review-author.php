@@ -2,7 +2,7 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-$display = get_option( 'hp_user_enable_display' );
+$display = get_option( 'hp_user_enable_display' ) && ! $review->is_anonymous();
 
 if ( $display ) :
 	?>
