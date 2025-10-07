@@ -213,13 +213,20 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function add_review_fields( $model ) {
-		if ( get_option( 'hp_review_allow_anonymous' ) ) {
-			$model['fields']['anonymous'] = [
-				'caption'   => esc_html__( 'todo', 'hivepress-reviews' ),
-				'type'      => 'checkbox',
-				'_external' => true,
-				'_order'    => 1000,
-			];
+
+		// Check hook.
+		$is_model = strpos( current_filter(), 'model' );
+
+		// Add field.
+		$field_args = [
+			'caption'   => esc_html__( 'Hide my identity', 'hivepress-reviews' ),
+			'type'      => 'checkbox',
+			'_external' => true,
+			'_order'    => 1000,
+		];
+
+		if ( $is_model || get_option( 'hp_review_allow_anonymous' ) ) {
+			$model['fields']['anonymous'] = $field_args;
 		}
 
 		return $model;

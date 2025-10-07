@@ -10,7 +10,11 @@ if ( $display ) :
 	<?php
 endif;
 
-echo esc_html( $review->get_author__display_name() );
+if ( ! $review->is_anonymous() ) :
+	echo esc_html( $review->get_author__display_name() );
+else :
+	esc_html_e( 'Anonymous', 'hivepress-reviews' );
+endif;
 
 if ( $display ) :
 	?>
