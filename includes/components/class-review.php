@@ -41,6 +41,10 @@ final class Review extends Component {
 		add_action( 'hivepress/v1/models/review/update_status', [ $this, 'update_rating' ], 10, 2 );
 		add_action( 'hivepress/v1/models/review/delete', [ $this, 'update_rating' ], 10, 2 );
 
+		// Add review fields.
+		add_filter( 'hivepress/v1/models/review', [ $this, 'add_review_fields' ] );
+		add_filter( 'hivepress/v1/forms/review_submit', [ $this, 'add_review_fields' ] );
+
 		// Update review status.
 		add_action( 'hivepress/v1/models/review/create', [ $this, 'update_review_status' ], 10, 2 );
 		add_action( 'hivepress/v1/models/review/update_status', [ $this, 'update_review_status' ], 10, 4 );
@@ -200,6 +204,32 @@ final class Review extends Component {
 				'rating_count' => hp\get_last_array_value( $vendor_rating ),
 			]
 		)->save( [ 'rating', 'rating_count' ] );
+	}
+
+	/**
+	 * Adds review fields.
+	 *
+	 * @param array $model Model arguments.
+	 * @return array
+	 */
+	public function add_review_fields( $model ) {
+
+		// Check hook.
+		$is_model = strpos( current_filter(), 'model' );
+
+		// Add field.
+		$field_args = [
+			'caption'   => esc_html__( 'Hide my identity', 'hivepress-reviews' ),
+			'type'      => 'checkbox',
+			'_external' => true,
+			'_order'    => 1000,
+		];
+
+		if ( $is_model || get_option( 'hp_review_allow_anonymous' ) ) {
+			$model['fields']['anonymous'] = $field_args;
+		}
+
+		return $model;
 	}
 
 	/**
