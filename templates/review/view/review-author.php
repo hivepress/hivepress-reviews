@@ -2,7 +2,7 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-$display = get_option( 'hp_user_enable_display' );
+$display = get_option( 'hp_user_enable_display' ) && ! $review->is_anonymous();
 
 if ( $display ) :
 	?>
@@ -10,7 +10,11 @@ if ( $display ) :
 	<?php
 endif;
 
-echo esc_html( $review->get_author__display_name() );
+if ( ! $review->is_anonymous() ) :
+	echo esc_html( $review->get_author__display_name() );
+else :
+	esc_html_e( 'Anonymous', 'hivepress-reviews' );
+endif;
 
 if ( $display ) :
 	?>
