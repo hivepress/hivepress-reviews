@@ -63,9 +63,26 @@ class Review_View_Block extends Template {
 
 										'blocks'     => [
 											'review_author' => [
-												'type'   => 'part',
-												'path'   => 'review/view/review-author',
+												'type'   => 'container',
 												'_order' => 10,
+
+												'attributes' => [
+													'class' => [ 'hp-review__author' ],
+												],
+
+												'blocks' => [
+													'review_author_text'           => [
+														'type'   => 'part',
+														'path'   => 'review/view/review-author',
+														'_order' => 10,
+													],
+
+													'review_status_badge' => [
+														'type' => 'part',
+														'path' => 'review/view/review-status-badge',
+														'_order' => 20,
+													],
+												],
 											],
 
 											'review_details' => [

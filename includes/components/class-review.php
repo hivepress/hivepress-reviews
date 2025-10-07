@@ -9,6 +9,7 @@ namespace HivePress\Components;
 
 use HivePress\Helpers as hp;
 use HivePress\Models;
+use HivePress\Emails;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -44,6 +45,10 @@ final class Review extends Component {
 		add_action( 'hivepress/v1/models/review/update_status', [ $this, 'update_rating' ], 10, 2 );
 		add_action( 'hivepress/v1/models/review/delete', [ $this, 'update_rating' ], 10, 2 );
 
+		// Update review status.
+		add_action( 'hivepress/v1/models/review/create', [ $this, 'update_review_status' ], 10, 2 );
+		add_action( 'hivepress/v1/models/review/update_status', [ $this, 'update_review_status' ], 10, 4 );
+
 		// Validate review.
 		add_filter( 'hivepress/v1/models/review/errors', [ $this, 'validate_review' ], 10, 2 );
 
@@ -61,7 +66,7 @@ final class Review extends Component {
 		add_filter( 'hivepress/v1/templates/vendor_view_block', [ $this, 'alter_vendor_view_template' ] );
 		add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_template' ] );
 
-		add_filter( 'hivepress/v1/templates/review_view_block', [ $this, 'alter_review_view_block' ] );
+		add_filter( 'hivepress/v1/templates/review_view_block/blocks', [ $this, 'alter_review_view_blocks' ], 10, 2 );
 
 		parent::__construct( $args );
 	}
@@ -202,6 +207,121 @@ final class Review extends Component {
 	}
 
 	/**
+	 * Updates review status.
+	 *
+	 * @param int    $review_id Review ID.
+	 * @param string $new_status New status.
+	 * @param string $old_status Old status.
+	 * @param object $review Review object.
+	 */
+	public function update_review_status( $review_id, $new_status, $old_status = null, $review = null ) {
+
+		// Get review.
+		if ( is_null( $review ) ) {
+			$review = $new_status;
+		}
+
+		if ( ! $review->get_listing__id() ) {
+			return;
+		}
+
+		// Get moderation flag.
+		$moderate = get_option( 'hp_review_enable_moderation' );
+
+		if ( ( $moderate && 'approve' === $new_status ) || ( ! $moderate && is_object( $new_status ) ) ) {
+
+			// Get listing.
+			$listing = $review->get_listing();
+
+			// Set email arguments.
+			$email_args = [
+				'tokens' => [
+					'review'        => $review,
+					'listing'       => $listing,
+					'listing_title' => $listing->get_title(),
+					'review_url'    => hivepress()->router->get_url( 'listing_view_page', [ 'listing_id' => $listing->get_id() ] ) . '#review-' . $review->get_id(),
+				],
+			];
+
+			// Get parent review.
+			$parent_review = $review->get_parent();
+
+			if ( $parent_review ) {
+
+				// Get user.
+				$user = $parent_review->get_author();
+
+				if ( $user ) {
+
+					// Send email.
+					( new Emails\Review_Reply(
+						hp\merge_arrays(
+							$email_args,
+							[
+								'recipient' => $user->get_email(),
+
+								'tokens'    => [
+									'review'     => $parent_review,
+									'reply'      => $review,
+									'user'       => $user,
+									'user_name'  => $user->get_display_name(),
+									'reply_text' => $review->display_text(),
+								],
+							]
+						)
+					) )->send();
+				}
+			} else {
+
+				// Get vendor.
+				$vendor = $listing->get_user();
+
+				if ( $vendor ) {
+
+					// Send email.
+					( new Emails\Review_Add(
+						hp\merge_arrays(
+							$email_args,
+							[
+								'recipient' => $vendor->get_email(),
+
+								'tokens'    => [
+									'user'      => $vendor,
+									'user_name' => $vendor->get_display_name(),
+								],
+							]
+						)
+					) )->send();
+				}
+
+				if ( $moderate ) {
+
+					// Get user.
+					$user = $review->get_author();
+
+					if ( $user ) {
+
+						// Send email.
+						( new Emails\Review_Approve(
+							hp\merge_arrays(
+								$email_args,
+								[
+									'recipient' => $user->get_email(),
+
+									'tokens'    => [
+										'user'      => $user,
+										'user_name' => $user->get_display_name(),
+									],
+								]
+							)
+						) )->send();
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * Validates review.
 	 *
 	 * @param array  $errors Error messages.
@@ -273,18 +393,16 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function alter_listing_view_template( $template ) {
-		return hp\merge_trees(
+		return hivepress()->template->merge_blocks(
 			$template,
 			[
-				'blocks' => [
-					'listing_details_primary' => [
-						'blocks' => [
-							'listing_rating' => [
-								'type'   => 'part',
-								'path'   => 'listing/view/listing-rating',
-								'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
-								'_order' => 30,
-							],
+				'listing_details_primary' => [
+					'blocks' => [
+						'listing_rating' => [
+							'type'   => 'part',
+							'path'   => 'listing/view/listing-rating',
+							'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
+							'_order' => 30,
 						],
 					],
 				],
@@ -299,50 +417,48 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function alter_listing_view_page( $template ) {
-		return hp\merge_trees(
+		return hivepress()->template->merge_blocks(
 			$template,
 			[
-				'blocks' => [
-					'page_content'            => [
-						'blocks' => [
-							'reviews_container' => [
-								'type'   => 'section',
-								'title'  => hivepress()->translator->get_string( 'reviews' ),
-								'_order' => 100,
+				'page_content'            => [
+					'blocks' => [
+						'reviews_container' => [
+							'type'   => 'section',
+							'title'  => hivepress()->translator->get_string( 'reviews' ),
+							'_order' => 100,
 
-								'blocks' => [
-									'listing_reviews' => [
-										'type'      => 'related_reviews',
-										'_label'    => hivepress()->translator->get_string( 'reviews' ) . ' (' . hivepress()->translator->get_string( 'related_plural' ) . ')',
-										'_settings' => [ 'columns' ],
-										'_order'    => 10,
-									],
+							'blocks' => [
+								'listing_reviews' => [
+									'type'      => 'related_reviews',
+									'_label'    => hivepress()->translator->get_string( 'reviews' ) . ' (' . hivepress()->translator->get_string( 'related_plural' ) . ')',
+									'_settings' => [ 'columns' ],
+									'_order'    => 10,
 								],
 							],
 						],
 					],
+				],
 
-					'listing_actions_primary' => [
-						'blocks' => [
-							'review_submit_modal' => [
-								'type'        => 'modal',
-								'title'       => esc_html__( 'Write a Review', 'hivepress-reviews' ),
-								'_capability' => 'read',
-								'_order'      => 5,
+				'listing_actions_primary' => [
+					'blocks' => [
+						'review_submit_modal' => [
+							'type'        => 'modal',
+							'title'       => esc_html__( 'Write a Review', 'hivepress-reviews' ),
+							'_capability' => 'read',
+							'_order'      => 5,
 
-								'blocks'      => [
-									'review_submit_form' => [
-										'type'   => 'review_submit_form',
-										'_order' => 10,
-									],
+							'blocks'      => [
+								'review_submit_form' => [
+									'type'   => 'review_submit_form',
+									'_order' => 10,
 								],
 							],
+						],
 
-							'review_submit_link'  => [
-								'type'   => 'part',
-								'path'   => 'listing/view/page/review-submit-link',
-								'_order' => 30,
-							],
+						'review_submit_link'  => [
+							'type'   => 'part',
+							'path'   => 'listing/view/page/review-submit-link',
+							'_order' => 30,
 						],
 					],
 				],
@@ -357,18 +473,16 @@ final class Review extends Component {
 	 * @return array
 	 */
 	public function alter_vendor_view_template( $template ) {
-		return hp\merge_trees(
+		return hivepress()->template->merge_blocks(
 			$template,
 			[
-				'blocks' => [
-					'vendor_details_primary' => [
-						'blocks' => [
-							'vendor_rating' => [
-								'type'   => 'part',
-								'path'   => 'vendor/view/vendor-rating',
-								'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
-								'_order' => 20,
-							],
+				'vendor_details_primary' => [
+					'blocks' => [
+						'vendor_rating' => [
+							'type'   => 'part',
+							'path'   => 'vendor/view/vendor-rating',
+							'_label' => esc_html__( 'Rating', 'hivepress-reviews' ),
+							'_order' => 20,
 						],
 					],
 				],
@@ -377,39 +491,55 @@ final class Review extends Component {
 	}
 
 	/**
-	 * Alters review view block.
+	 * Alters review view blocks.
 	 *
-	 * @param array $template Template arguments.
+	 * @param array  $blocks Block arguments.
+	 * @param object $template Template object.
 	 * @return array
 	 */
-	public function alter_review_view_block( $template ) {
-		if ( get_option( 'hp_review_allow_replies' ) ) {
-			$template = hp\merge_trees(
-				$template,
-				[
-					'blocks' => [
-						'review_content' => [
-							'blocks' => [
-								'review_reply_modal' => [
-									'type'        => 'modal',
-									'model'       => 'review',
-									'title'       => esc_html__( 'Reply to Review', 'hivepress-reviews' ),
-									'_capability' => 'edit_posts',
-									'_order'      => 5,
+	public function alter_review_view_blocks( $blocks, $template ) {
 
-									'blocks'      => [
-										'review_reply_form' => [
-											'type'   => 'review_reply_form',
-											'_order' => 10,
-										],
+		// Get review.
+		$review = $template->get_context( 'review' );
+
+		if ( $review && ! $review->get_parent__id() ) {
+			$blocks = hivepress()->template->merge_blocks(
+				$blocks,
+				[
+					'review_container' => [
+						'attributes' => [
+							'id' => 'review-' . $review->get_id(),
+						],
+					],
+				]
+			);
+		}
+
+		if ( get_option( 'hp_review_allow_replies' ) ) {
+			$blocks = hivepress()->template->merge_blocks(
+				$blocks,
+				[
+					'review_content' => [
+						'blocks' => [
+							'review_reply_modal' => [
+								'type'        => 'modal',
+								'model'       => 'review',
+								'title'       => esc_html__( 'Reply to Review', 'hivepress-reviews' ),
+								'_capability' => 'edit_posts',
+								'_order'      => 5,
+
+								'blocks'      => [
+									'review_reply_form' => [
+										'type'   => 'review_reply_form',
+										'_order' => 10,
 									],
 								],
+							],
 
-								'review_reply_link'  => [
-									'type'   => 'part',
-									'path'   => 'review/view/review-reply-link',
-									'_order' => 30,
-								],
+							'review_reply_link'  => [
+								'type'   => 'part',
+								'path'   => 'review/view/review-reply-link',
+								'_order' => 30,
 							],
 						],
 					],
@@ -417,7 +547,7 @@ final class Review extends Component {
 			);
 		}
 
-		return $template;
+		return $blocks;
 	}
 
 	/**

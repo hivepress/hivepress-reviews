@@ -131,6 +131,21 @@
 			}
 		}
 
+		&__status-badge {
+			display: inline-block;
+			vertical-align: middle;
+
+			&--pending::before {
+				content: "\f017";
+				color: #ffcb00;
+			}
+
+			&--vendor::before {
+				content: "\f058";
+				color: #15cd72;
+			}
+		}
+
 		&__created-date,
 		&__rating {
 			margin-bottom: 0.5rem;

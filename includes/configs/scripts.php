@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 return [
 	'raty'             => [
 		'handle'  => 'raty',
-		'src'     => hivepress()->get_url( 'reviews' ) . '/assets/js/jquery.raty.min.js',
+		'src'     => hivepress()->get_url( 'reviews' ) . '/node_modules/raty-js/lib/jquery.raty.js',
 		'version' => hivepress()->get_version( 'reviews' ),
 	],
 
