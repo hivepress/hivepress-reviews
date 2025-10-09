@@ -151,7 +151,7 @@ final class Review extends Controller {
 			}
 
 			// Get rating.
-			$review_args['rating'] = round( array_sum( array_column( $review_args['criteria'], 'rating' ) ) / count( $review_args['criteria'] ), 1 );
+			$review_args['rating'] = round( array_sum( array_column( $review_args['criteria'], 'rating' ) ) / count( $review_args['criteria'] ) );
 		}
 
 		// Add review.
