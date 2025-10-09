@@ -17,7 +17,6 @@ return [
 
 		'sections' => [
 			'submission' => [
-				'title'  => hivepress()->translator->get_string( 'submission' ),
 				'_order' => 10,
 
 				'fields' => [
@@ -47,6 +46,23 @@ return [
 						'caption' => esc_html__( 'Allow replying to reviews', 'hivepress-reviews' ),
 						'type'    => 'checkbox',
 						'_order'  => 30,
+					],
+
+					'review_criteria'          => [
+						'label'       => esc_html__( 'Criteria', 'hivepress-reviews' ),
+						'description' => esc_html__( 'Add review criteria to enable multiple ratings per review.', 'hivepress-reviews' ),
+						'type'        => 'repeater',
+						'_order'      => 40,
+
+						'fields'      => [
+							'name' => [
+								'placeholder' => hivepress()->translator->get_string( 'name' ),
+								'type'        => 'text',
+								'max_length'  => 256,
+								'required'    => true,
+								'_order'      => 10,
+							],
+						],
 					],
 				],
 			],

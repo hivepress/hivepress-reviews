@@ -214,10 +214,10 @@ final class Review extends Component {
 	 */
 	public function add_review_fields( $model ) {
 
-		// Check hook.
+		// Check current hook.
 		$is_model = strpos( current_filter(), 'model' );
 
-		// Add field.
+		// Add anonymous field.
 		$field_args = [
 			'caption'   => esc_html__( 'Hide my identity', 'hivepress-reviews' ),
 			'type'      => 'checkbox',
@@ -227,6 +227,45 @@ final class Review extends Component {
 
 		if ( $is_model || get_option( 'hp_review_allow_anonymous' ) ) {
 			$model['fields']['anonymous'] = $field_args;
+		}
+
+		if ( get_option( 'hp_review_criteria' ) ) {
+			if ( $is_model ) {
+
+				// Add criteria field.
+				$model['fields']['criteria'] = [
+					'type'      => 'repeater',
+					'_external' => true,
+
+					'fields'    => [
+						'name'   => [
+							'type'       => 'text',
+							'max_length' => 256,
+							'required'   => true,
+						],
+
+						'rating' => [
+							'type'     => 'rating',
+							'required' => true,
+						],
+					],
+				];
+			} else {
+
+				// Remove rating field.
+				unset( $model['fields']['rating'] );
+
+				// Add rating fields.
+				foreach ( (array) get_option( 'hp_review_criteria' ) as $criterion ) {
+					$model['fields'][ '_rating_' . hp\sanitize_key( $criterion['name'] ) ] = [
+						'label'     => $criterion['name'],
+						'type'      => 'rating',
+						'required'  => true,
+						'_separate' => true,
+						'_order'    => 10,
+					];
+				}
+			}
 		}
 
 		return $model;
@@ -529,6 +568,8 @@ final class Review extends Component {
 		$review = $template->get_context( 'review' );
 
 		if ( $review && ! $review->get_parent__id() ) {
+
+			// Add review ID.
 			$blocks = hivepress()->template->merge_blocks(
 				$blocks,
 				[
@@ -542,6 +583,8 @@ final class Review extends Component {
 		}
 
 		if ( get_option( 'hp_review_allow_replies' ) ) {
+
+			// Add reply form.
 			$blocks = hivepress()->template->merge_blocks(
 				$blocks,
 				[
@@ -566,6 +609,25 @@ final class Review extends Component {
 								'type'   => 'part',
 								'path'   => 'review/view/review-reply-link',
 								'_order' => 30,
+							],
+						],
+					],
+				]
+			);
+		}
+
+		if ( get_option( 'hp_review_criteria' ) ) {
+
+			// Add review criteria.
+			$blocks = hivepress()->template->merge_blocks(
+				$blocks,
+				[
+					'review_content' => [
+						'blocks' => [
+							'review_criteria' => [
+								'type'   => 'part',
+								'path'   => 'review/view/review-criteria',
+								'_order' => 5,
 							],
 						],
 					],
