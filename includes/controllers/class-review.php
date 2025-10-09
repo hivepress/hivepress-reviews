@@ -127,19 +127,35 @@ final class Review extends Controller {
 			return hp\rest_error( 403, hivepress()->translator->get_string( 'you_cant_review_your_own_listings' ) );
 		}
 
+		// Set defaults.
+		$review_args = [
+			'listing'              => $listing->get_id(),
+			'author'               => $author->get_id(),
+			'author__display_name' => $author->get_display_name(),
+			'author__email'        => $author->get_email(),
+			'approved'             => get_option( 'hp_review_enable_moderation' ) ? 0 : 1,
+		];
+
+		if ( get_option( 'hp_review_criteria' ) ) {
+
+			// Get criteria.
+			$review_args['criteria'] = [];
+
+			foreach ( (array) get_option( 'hp_review_criteria' ) as $criterion ) {
+				$review_args['criteria'][] = array_merge(
+					$criterion,
+					[
+						'rating' => $form->get_value( '_rating_' . hp\sanitize_key( $criterion['name'] ) ),
+					]
+				);
+			}
+
+			// Get rating.
+			$review_args['rating'] = round( array_sum( array_column( $review_args['criteria'], 'rating' ) ) / count( $review_args['criteria'] ), 1 );
+		}
+
 		// Add review.
-		$review = ( new Models\Review() )->fill(
-			array_merge(
-				$form->get_values(),
-				[
-					'listing'              => $listing->get_id(),
-					'author'               => $author->get_id(),
-					'author__display_name' => $author->get_display_name(),
-					'author__email'        => $author->get_email(),
-					'approved'             => get_option( 'hp_review_enable_moderation' ) ? 0 : 1,
-				]
-			)
-		);
+		$review = ( new Models\Review() )->fill( array_merge( $form->get_values(), $review_args ) );
 
 		if ( ! $review->save() ) {
 			return hp\rest_error( 400, $review->_get_errors() );
