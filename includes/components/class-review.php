@@ -54,6 +54,7 @@ final class Review extends Component {
 
 		// Delete reviews.
 		add_action( 'hivepress/v1/models/user/delete', [ $this, 'delete_reviews' ] );
+		add_action( 'hivepress/v1/events/daily', [ $this, 'delete_review_drafts' ] );
 
 		// Alter menus.
 		add_filter( 'hivepress/v1/menus/listing_manage/items', [ $this, 'alter_listing_manage_menu' ], 100, 2 );
@@ -67,8 +68,6 @@ final class Review extends Component {
 		add_filter( 'hivepress/v1/templates/vendor_view_page', [ $this, 'alter_vendor_view_template' ] );
 
 		add_filter( 'hivepress/v1/templates/review_view_block/blocks', [ $this, 'alter_review_view_blocks' ], 10, 2 );
-
-		// todo cleanup image drafts hourly, also restrict file types
 
 		parent::__construct( $args );
 	}
@@ -329,6 +328,7 @@ final class Review extends Component {
 			// Add images field.
 			$model['fields']['images'] = [
 				'label'     => hivepress()->translator->get_string( 'image' ),
+				'caption'   => hivepress()->translator->get_string( 'select_image' ),
 				'type'      => 'attachment_upload',
 				'formats'   => [ 'jpg', 'jpeg', 'png' ],
 				'protected' => true,
@@ -492,6 +492,24 @@ final class Review extends Component {
 		Models\Review::query()->filter(
 			[
 				'author' => $user_id,
+			]
+		)->delete();
+	}
+
+	/**
+	 * Deletes review drafts.
+	 */
+	public function delete_review_drafts() {
+
+		// Check settings.
+		if ( ! get_option( 'hp_review_allow_images' ) ) {
+			return;
+		}
+
+		// Delete drafts.
+		Models\Review::query()->filter(
+			[
+				'listing__in' => [ 0 ],
 			]
 		)->delete();
 	}
