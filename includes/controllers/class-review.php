@@ -157,6 +157,24 @@ final class Review extends Controller {
 		// Add review.
 		$review = ( new Models\Review() )->fill( array_merge( $form->get_values(), $review_args ) );
 
+		if ( get_option( 'hp_review_allow_images' ) ) {
+
+			// Get review draft.
+			$review_draft = hivepress()->review->get_review_draft();
+
+			if ( $review_draft && $review_draft->get_images__id() ) {
+
+				// Get images.
+				$images = $review_draft->get_images();
+
+				if ( $images ) {
+
+					// Set images.
+					$review->set_images( $images->get_id() );
+				}
+			}
+		}
+
 		if ( ! $review->save() ) {
 			return hp\rest_error( 400, $review->_get_errors() );
 		}
