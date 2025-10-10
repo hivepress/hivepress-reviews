@@ -180,8 +180,9 @@ class Reviews extends Block {
 			if ( ! $query ) {
 				$query = Models\Review::query()->filter(
 					[
-						'approved' => true,
-						'parent'   => null,
+						'approved'        => true,
+						'parent'          => null,
+						'listing__not_in' => [ 0 ],
 					]
 				)->limit( $this->number );
 

@@ -54,6 +54,7 @@ final class Review extends Component {
 
 		// Delete reviews.
 		add_action( 'hivepress/v1/models/user/delete', [ $this, 'delete_reviews' ] );
+		add_action( 'hivepress/v1/events/daily', [ $this, 'delete_review_drafts' ] );
 
 		// Alter menus.
 		add_filter( 'hivepress/v1/menus/listing_manage/items', [ $this, 'alter_listing_manage_menu' ], 100, 2 );
@@ -69,6 +70,60 @@ final class Review extends Component {
 		add_filter( 'hivepress/v1/templates/review_view_block/blocks', [ $this, 'alter_review_view_blocks' ], 10, 2 );
 
 		parent::__construct( $args );
+	}
+
+	/**
+	 * Gets review draft.
+	 *
+	 * @return object
+	 */
+	public function get_review_draft() {
+		$draft = hivepress()->request->get_context( 'review_draft' );
+
+		if ( ! $draft ) {
+
+			// Get cached draft ID.
+			$draft_id = hivepress()->cache->get_user_cache( get_current_user_id(), 'draft_id', 'models/review' );
+
+			if ( is_null( $draft_id ) ) {
+
+				// Get draft ID.
+				$draft_id = Models\Review::query()->filter(
+					[
+						'author'      => get_current_user_id(),
+						'listing__in' => [ 0 ],
+					]
+				)->get_first_id();
+
+				if ( ! $draft_id ) {
+
+					// Add draft.
+					$draft_id = (int) wp_insert_comment(
+						[
+							'comment_type'    => 'hp_review',
+							'user_id'         => get_current_user_id(),
+							'comment_post_ID' => 0,
+						]
+					);
+				}
+
+				// Cache draft ID.
+				if ( $draft_id ) {
+					hivepress()->cache->set_user_cache( get_current_user_id(), 'draft_id', 'models/review', $draft_id );
+				}
+			}
+
+			if ( $draft_id ) {
+
+				// Get draft.
+				$draft = Models\Review::query()->get_by_id( $draft_id );
+
+				// Set request context.
+				hivepress()->request->set_context( 'review_draft', $draft );
+			}
+		}
+
+		return $draft;
 	}
 
 	/**
@@ -268,6 +323,21 @@ final class Review extends Component {
 			}
 		}
 
+		if ( get_option( 'hp_review_allow_images' ) ) {
+
+			// Add images field.
+			$model['fields']['images'] = [
+				'label'     => hivepress()->translator->get_string( 'image' ),
+				'caption'   => hivepress()->translator->get_string( 'select_image' ),
+				'type'      => 'attachment_upload',
+				'formats'   => [ 'jpg', 'jpeg', 'png' ],
+				'protected' => true,
+				'_model'    => 'attachment',
+				'_external' => true,
+				'_order'    => 30,
+			];
+		}
+
 		return $model;
 	}
 
@@ -422,6 +492,24 @@ final class Review extends Component {
 		Models\Review::query()->filter(
 			[
 				'author' => $user_id,
+			]
+		)->delete();
+	}
+
+	/**
+	 * Deletes review drafts.
+	 */
+	public function delete_review_drafts() {
+
+		// Check settings.
+		if ( ! get_option( 'hp_review_allow_images' ) ) {
+			return;
+		}
+
+		// Delete drafts.
+		Models\Review::query()->filter(
+			[
+				'listing__in' => [ 0 ],
 			]
 		)->delete();
 	}

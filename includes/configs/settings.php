@@ -30,7 +30,13 @@ return [
 					'review_allow_anonymous'   => [
 						'caption' => esc_html__( 'Allow making reviews anonymous', 'hivepress-reviews' ),
 						'type'    => 'checkbox',
-						'_order'  => 15,
+						'_order'  => 20,
+					],
+
+					'review_allow_images'      => [
+						'caption' => hivepress()->translator->get_string( 'allow_attaching_images' ),
+						'type'    => 'checkbox',
+						'_order'  => 30,
 					],
 
 					'review_enable_moderation' => [
@@ -38,21 +44,21 @@ return [
 						'caption' => esc_html__( 'Manually approve new reviews', 'hivepress-reviews' ),
 						'type'    => 'checkbox',
 						'default' => true,
-						'_order'  => 20,
+						'_order'  => 40,
 					],
 
 					'review_allow_replies'     => [
 						'label'   => esc_html__( 'Replies', 'hivepress-reviews' ),
 						'caption' => esc_html__( 'Allow replying to reviews', 'hivepress-reviews' ),
 						'type'    => 'checkbox',
-						'_order'  => 30,
+						'_order'  => 50,
 					],
 
 					'review_criteria'          => [
 						'label'       => esc_html__( 'Criteria', 'hivepress-reviews' ),
 						'description' => esc_html__( 'Add review criteria to enable multiple ratings per review.', 'hivepress-reviews' ),
 						'type'        => 'repeater',
-						'_order'      => 40,
+						'_order'      => 60,
 
 						'fields'      => [
 							'name' => [

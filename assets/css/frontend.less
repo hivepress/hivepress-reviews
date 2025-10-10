@@ -163,23 +163,6 @@
 			display: none;
 		}
 
-		&__listing,
-		&__text {
-			&:not(:last-child) {
-				margin-bottom: 0.5rem;
-			}
-		}
-
-		&__text {
-			p {
-				margin-bottom: 0.5rem;
-
-				&:last-child {
-					margin-bottom: 0;
-				}
-			}
-		}
-
 		&__criteria {
 			display: flex;
 			flex-wrap: wrap;
@@ -194,6 +177,24 @@
 
 			&:not(:last-child) {
 				margin-right: 0.75rem;
+			}
+		}
+
+		&__listing,
+		&__images,
+		&__text {
+			&:not(:last-child) {
+				margin-bottom: 0.5rem;
+			}
+		}
+
+		&__text {
+			p {
+				margin-bottom: 0.5rem;
+
+				&:last-child {
+					margin-bottom: 0;
+				}
 			}
 		}
 	}
