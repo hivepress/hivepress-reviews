@@ -181,6 +181,7 @@
 		}
 
 		&__listing,
+		&__images,
 		&__text {
 			&:not(:last-child) {
 				margin-bottom: 0.5rem;
@@ -194,21 +195,6 @@
 				&:last-child {
 					margin-bottom: 0;
 				}
-			}
-		}
-
-		&__images {
-			max-width: 100%;
-			display: flex;
-
-			&:not(:last-child) {
-				margin-bottom: 0.5rem;
-			}
-
-			span {
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
 			}
 		}
 	}
