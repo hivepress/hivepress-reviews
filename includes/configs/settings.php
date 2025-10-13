@@ -16,7 +16,24 @@ return [
 		'_order'   => 40,
 
 		'sections' => [
+			'display'    => [
+				'title'  => hivepress()->translator->get_string( 'display_noun' ),
+				'_order' => 10,
+
+				'fields' => [
+					'reviews_per_page' => [
+						'label'     => esc_html__( 'Reviews per Page', 'hivepress-reviews' ),
+						'type'      => 'number',
+						'default'   => 3,
+						'min_value' => 1,
+						'required'  => true,
+						'_order'    => 10,
+					],
+				],
+			],
+
 			'submission' => [
+				'title'  => hivepress()->translator->get_string( 'submission' ),
 				'_order' => 10,
 
 				'fields' => [
