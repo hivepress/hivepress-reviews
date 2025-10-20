@@ -16,8 +16,36 @@ return [
 		'_order'   => 40,
 
 		'sections' => [
-			'submission' => [
+			'display'    => [
+				'title'  => hivepress()->translator->get_string( 'display_noun' ),
 				'_order' => 10,
+
+				'fields' => [
+					'review_default_order' => [
+						'label'       => hivepress()->translator->get_string( 'default_sorting' ),
+						'placeholder' => hivepress()->translator->get_string( 'by_date_added' ),
+						'type'        => 'select',
+						'_order'      => 10,
+
+						'options'     => [
+							'rating' => esc_html_x( 'Rating', 'sort order', 'hivepress-reviews' ),
+						],
+					],
+
+					'reviews_per_page'     => [
+						'label'     => esc_html__( 'Reviews per Page', 'hivepress-reviews' ),
+						'type'      => 'number',
+						'min_value' => 1,
+						'default'   => 3,
+						'required'  => true,
+						'_order'    => 20,
+					],
+				],
+			],
+
+			'submission' => [
+				'title'  => hivepress()->translator->get_string( 'submission' ),
+				'_order' => 20,
 
 				'fields' => [
 					'review_allow_multiple'    => [

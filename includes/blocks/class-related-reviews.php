@@ -43,7 +43,8 @@ class Related_Reviews extends Reviews {
 	public function __construct( $args = [] ) {
 		$args = hp\merge_arrays(
 			[
-				'number' => 1000,
+				'number' => get_option( 'hp_reviews_per_page', 3 ),
+				'order'  => get_option( 'hp_review_default_order' ),
 			],
 			$args
 		);
