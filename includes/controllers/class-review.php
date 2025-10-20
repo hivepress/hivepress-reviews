@@ -10,6 +10,7 @@ namespace HivePress\Controllers;
 use HivePress\Helpers as hp;
 use HivePress\Models;
 use HivePress\Forms;
+use HivePress\Blocks;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -31,8 +32,10 @@ final class Review extends Controller {
 			[
 				'routes' => [
 					'reviews_resource'     => [
-						'path' => '/reviews',
-						'rest' => true,
+						'path'   => '/reviews',
+						'method' => 'GET',
+						'action' => [ $this, 'get_reviews' ],
+						'rest'   => true,
 					],
 
 					'review_submit_action' => [
@@ -47,6 +50,82 @@ final class Review extends Controller {
 		);
 
 		parent::__construct( $args );
+	}
+
+	/**
+	 * Gets reviews.
+	 *
+	 * @param WP_REST_Request $request API request.
+	 * @return WP_Rest_Response
+	 */
+	public function get_reviews( $request ) {
+
+		// Get listing.
+		$listing_id = absint( $request->get_param( 'listing' ) );
+
+		if ( ! $listing_id ) {
+			return hp\rest_error( 400 );
+		}
+
+		$listing = Models\Listing::query()->get_by_id( $listing_id );
+
+		if ( ! $listing || $listing->get_status() !== 'publish' ) {
+			return hp\rest_error( 404 );
+		}
+
+		// Set query.
+		$query = Models\Review::query()->filter(
+			[
+				'approved' => true,
+				'parent'   => null,
+				'listing'  => $listing->get_id(),
+			]
+		);
+
+		// Set order.
+		if ( 'rating' === get_option( 'hp_review_default_order' ) ) {
+			$query->order( [ 'rating' => 'desc' ] );
+		} else {
+			$query->order( [ 'created_date' => 'desc' ] );
+		}
+
+		// Set page.
+		$page   = absint( $request->get_param( '_page' ) );
+		$number = get_option( 'hp_reviews_per_page', 3 );
+
+		if ( $page > 1 ) {
+			$query->offset( $number * ( $page - 1 ) );
+		}
+
+		$query->limit( $number );
+
+		// Set response.
+		$response = [
+			'results' => [],
+		];
+
+		foreach ( $query->get_ids() as $review_id ) {
+			$response['results'][] = [
+				'id' => $review_id,
+			];
+		}
+
+		if ( $request->get_param( '_render' ) ) {
+
+			// Render reviews.
+			$response['html'] = ( new Blocks\Related_Reviews(
+				[
+					'wrap'    => false,
+
+					'context' => [
+						'listing'      => $listing,
+						'review_query' => $query,
+					],
+				]
+			) )->render();
+		}
+
+		return hp\rest_response( 200, $response );
 	}
 
 	/**
