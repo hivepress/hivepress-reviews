@@ -42,6 +42,13 @@ class Reviews extends Block {
 	protected $order;
 
 	/**
+	 * Add container?
+	 *
+	 * @var bool
+	 */
+	protected $wrap = true;
+
+	/**
 	 * Container attributes.
 	 *
 	 * @var array
@@ -125,6 +132,7 @@ class Reviews extends Block {
 	public function render() {
 		$output = '';
 
+		// Check number.
 		if ( ! $this->number ) {
 			return $output;
 		}
@@ -132,111 +140,144 @@ class Reviews extends Block {
 		// Get column width.
 		$column_width = hp\get_column_width( $this->columns );
 
-		if ( isset( $this->context['reviews'] ) ) {
+		// Get listing.
+		$listing = $this->get_context( 'listing' );
 
-			// Render reviews.
-			$output = wp_list_comments(
+		// Get review query.
+		$query = $this->get_context( 'review_query' );
+
+		// Get max page.
+		$max_page = 1;
+
+		if ( ! $query ) {
+
+			// Set query.
+			$query = Models\Review::query()->filter(
 				[
-					'style'             => 'div',
-					'type'              => 'hp_review',
-					'per_page'          => $this->number,
-					'reverse_top_level' => true,
-					'echo'              => false,
-
-					'callback'          => function( $comment, $args, $depth ) use ( $column_width ) {
-
-						// Get review.
-						$review = Models\Review::query()->get_by_id( $comment );
-
-						// Get class.
-						$class = 'hp-grid__item hp-col-sm-' . $column_width . ' hp-col-xs-12';
-
-						if ( $depth > 1 ) {
-							$class = 'hp-review__reply';
-						}
-
-						// Render review.
-						echo '<div class="' . esc_attr( $class ) . '">' . ( new Template(
-							[
-								'template' => 'review_view_block',
-
-								'context'  => [
-									'review'  => $review,
-									'listing' => $this->get_context( 'listing' ),
-								],
-							]
-						) )->render();
-					},
+					'approved' => true,
+					'parent'   => null,
 				]
 			);
-		} else {
 
-			// Get review query.
-			$query = $this->get_context( 'review_query' );
+			// Set order.
+			if ( 'rating' === $this->order ) {
+				$query->order( [ 'rating' => 'desc' ] );
+			} else {
+				$query->order( [ 'created_date' => 'desc' ] );
+			}
 
-			// Get IDs.
-			$review_ids = [];
+			if ( isset( $this->context['reviews'] ) ) {
 
-			if ( ! $query ) {
+				// Set listing.
+				$query->filter( [ 'listing' => $listing->get_id() ] );
+
+				// Set max page.
+				$max_page = ceil( $query->get_count() / $this->number );
+			} else {
+				$query->filter( [ 'listing__not_in' => [ 0 ] ] );
+			}
+
+			$query->limit( $this->number );
+		}
+
+		// Get review IDs.
+		$review_ids = [];
+
+		if ( ! isset( $this->context['reviews'] ) ) {
+			$review_ids = hivepress()->cache->get_cache( array_merge( $query->get_args(), [ 'fields' => 'ids' ] ), 'models/review' );
+
+			if ( is_array( $review_ids ) ) {
+
+				// Set query.
 				$query = Models\Review::query()->filter(
 					[
-						'approved'        => true,
-						'parent'          => null,
-						'listing__not_in' => [ 0 ],
+						'approved' => true,
+						'id__in'   => $review_ids,
 					]
-				)->limit( $this->number );
-
-				// Set order.
-				if ( 'rating' === $this->order ) {
-					$query->order( [ 'rating' => 'desc' ] );
-				} else {
-					$query->order( [ 'created_date' => 'desc' ] );
-				}
-
-				// Get cached IDs.
-				$review_ids = hivepress()->cache->get_cache( array_merge( $query->get_args(), [ 'fields' => 'ids' ] ), 'models/review' );
-
-				if ( is_array( $review_ids ) ) {
-					$query = Models\Review::query()->filter(
-						[
-							'approved' => true,
-							'id__in'   => $review_ids,
-						]
-					)->order( 'id__in' )
-					->limit( count( $review_ids ) );
-				}
-			}
-
-			// Query reviews.
-			$reviews = $query->get();
-
-			// Cache IDs.
-			if ( is_null( $review_ids ) && $reviews->count() <= 1000 ) {
-				hivepress()->cache->set_cache( array_merge( $query->get_args(), [ 'fields' => 'ids' ] ), 'models/review', $reviews->get_ids() );
-			}
-
-			// Render reviews.
-			foreach ( $reviews as $review ) {
-				$output .= '<div class="hp-grid__item hp-col-sm-' . esc_attr( $column_width ) . ' hp-col-xs-12">';
-
-				$output .= ( new Template(
-					[
-						'template' => 'review_view_block',
-
-						'context'  => [
-							'review'  => $review,
-							'listing' => $this->get_context( 'listing' ),
-						],
-					]
-				) )->render();
-
-				$output .= '</div>';
+				)->order( 'id__in' )
+				->limit( count( $review_ids ) );
 			}
 		}
 
-		// Add wrapper.
-		if ( $output ) {
-			$output = '<div ' . hp\html_attributes( $this->attributes ) . '><div class="hp-row">' . $output . '</div></div>';
+		// Get reviews.
+		$reviews = [];
+
+		foreach ( $query->get() as $review ) {
+			$reviews[] = $review;
+
+			if ( isset( $this->context['reviews'] ) ) {
+				$reply = Models\Review::query()->filter(
+					[
+						'approved' => true,
+						'parent'   => $review->get_id(),
+					]
+				)->get_first();
+
+				if ( $reply ) {
+					$reviews[] = $reply;
+				}
+			}
+		}
+
+		// Cache review IDs.
+		if ( is_null( $review_ids ) && $query->count() <= 1000 ) {
+			hivepress()->cache->set_cache( array_merge( $query->get_args(), [ 'fields' => 'ids' ] ), 'models/review', $query->get_ids() );
+		}
+
+		// Render reviews.
+		foreach ( $reviews as $review ) {
+
+			// Get class.
+			$class = 'hp-grid__item hp-col-sm-' . $column_width . ' hp-col-xs-12';
+
+			if ( $review->get_parent__id() ) {
+				$class = 'hp-review__reply';
+			}
+
+			$output .= '<div class="' . esc_attr( $class ) . '">';
+
+			// Render review.
+			$output .= ( new Template(
+				[
+					'template' => 'review_view_block',
+
+					'context'  => [
+						'review'  => $review,
+						'listing' => $listing,
+					],
+				]
+			) )->render();
+
+			$output .= '</div>';
+		}
+
+		if ( $output && $this->wrap ) {
+
+			// Add wrapper.
+			$output = '<div ' . hp\html_attributes( $this->attributes ) . '><div class="hp-row" data-block="' . esc_attr( $this->name ) . '">' . $output . '</div>';
+
+			if ( $max_page > 1 ) {
+
+				// Add pagination.
+				$output .= '<button class="button" data-render="' . hp\esc_json(
+					wp_json_encode(
+						[
+							'block' => $this->name,
+							'type'  => 'append',
+							'pages' => $max_page,
+
+							'url'   => hivepress()->router->get_url(
+								'reviews_resource',
+								[
+									'listing' => $listing->get_id(),
+								]
+							),
+						]
+					)
+				) . '">' . esc_html( hivepress()->translator->get_string( 'load_more' ) ) . '</button>';
+			}
+
+			$output .= '</div>';
 		}
 
 		return $output;
