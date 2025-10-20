@@ -21,20 +21,31 @@ return [
 				'_order' => 10,
 
 				'fields' => [
-					'reviews_per_page' => [
+					'reviews_per_page'     => [
 						'label'     => esc_html__( 'Reviews per Page', 'hivepress-reviews' ),
 						'type'      => 'number',
-						'default'   => 3,
 						'min_value' => 1,
+						'default'   => 3,
 						'required'  => true,
 						'_order'    => 10,
+					],
+
+					'review_default_order' => [
+						'label'       => hivepress()->translator->get_string( 'default_sorting' ),
+						'placeholder' => hivepress()->translator->get_string( 'by_date_added' ),
+						'type'        => 'select',
+						'_order'      => 20,
+
+						'options'     => [
+							'rating' => esc_html_x( 'Rating', 'sort order', 'hivepress-reviews' ),
+						],
 					],
 				],
 			],
 
 			'submission' => [
 				'title'  => hivepress()->translator->get_string( 'submission' ),
-				'_order' => 10,
+				'_order' => 20,
 
 				'fields' => [
 					'review_allow_multiple'    => [
