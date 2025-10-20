@@ -227,7 +227,7 @@ class Reviews extends Block {
 		}
 
 		// Render reviews.
-		foreach ( $reviews as $review ) {
+		foreach ( $reviews as $review_index => $review ) {
 
 			// Get class.
 			$class = 'hp-grid__item hp-col-sm-' . $column_width . ' hp-col-xs-12';
@@ -250,7 +250,16 @@ class Reviews extends Block {
 				]
 			) )->render();
 
-			$output .= '</div>';
+			// Wrap review.
+			$next_review = hp\get_array_value( $reviews, $review_index + 1 );
+
+			if ( $review->get_parent__id() || ! $next_review || ! $next_review->get_parent__id() ) {
+				$output .= '</div>';
+			}
+
+			if ( $review->get_parent__id() && ( ! $next_review || ! $next_review->get_parent__id() ) ) {
+				$output .= '</div>';
+			}
 		}
 
 		if ( $output && $this->wrap ) {
