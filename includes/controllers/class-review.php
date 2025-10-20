@@ -197,7 +197,7 @@ final class Review extends Controller {
 
 		// Check listing.
 		if ( ! $listing || $listing->get_status() !== 'publish' ) {
-			return hp\rest_error( 400 );
+			return hp\rest_error( 404 );
 		}
 
 		if ( $form->get_value( 'parent' ) && $listing->get_user__id() !== $author->get_id() ) {
@@ -215,7 +215,7 @@ final class Review extends Controller {
 			'approved'             => get_option( 'hp_review_enable_moderation' ) ? 0 : 1,
 		];
 
-		if ( get_option( 'hp_review_criteria' ) ) {
+		if ( get_option( 'hp_review_criteria' ) && ! $form->get_value( 'parent' ) ) {
 
 			// Get criteria.
 			$review_args['criteria'] = [];
@@ -236,7 +236,7 @@ final class Review extends Controller {
 		// Add review.
 		$review = ( new Models\Review() )->fill( array_merge( $form->get_values(), $review_args ) );
 
-		if ( get_option( 'hp_review_allow_images' ) ) {
+		if ( get_option( 'hp_review_allow_images' ) && ! $form->get_value( 'parent' ) ) {
 
 			// Get review draft.
 			$review_draft = hivepress()->review->get_review_draft();
