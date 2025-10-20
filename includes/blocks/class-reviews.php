@@ -205,15 +205,17 @@ class Reviews extends Block {
 		foreach ( $query->get() as $review ) {
 			$reviews[] = $review;
 
-			if ( isset( $this->context['reviews'] ) ) {
-				$reply = Models\Review::query()->filter(
+			if ( isset( $this->context['reviews'] ) && get_option( 'hp_review_allow_replies' ) ) {
+				$replies = Models\Review::query()->filter(
 					[
 						'approved' => true,
 						'parent'   => $review->get_id(),
 					]
-				)->get_first();
+				)->order( [ 'created_date' => 'asc' ] )
+				->get()
+				->serialize();
 
-				if ( $reply ) {
+				foreach ( $replies as $reply ) {
 					$reviews[] = $reply;
 				}
 			}
