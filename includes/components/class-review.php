@@ -28,6 +28,9 @@ final class Review extends Component {
 	 */
 	public function __construct( $args = [] ) {
 
+		// Alter settings.
+		add_filter( 'hivepress/v1/settings', [ $this, 'alter_settings' ] );
+
 		// Add attributes.
 		add_filter( 'hivepress/v1/models/listing/attributes', [ $this, 'add_attributes' ] );
 		add_filter( 'hivepress/v1/models/vendor/attributes', [ $this, 'add_attributes' ] );
@@ -161,6 +164,20 @@ final class Review extends Component {
 		}
 
 		return $rating;
+	}
+
+	/**
+	 * Alters settings.
+	 *
+	 * @param array $settings Settings configuration.
+	 * @return array
+	 */
+	public function alter_settings( $settings ) {
+		if ( get_option( 'hp_installed_time' ) < strtotime( '2025-10-21' ) ) {
+			$settings['reviews']['sections']['display']['fields']['reviews_per_page']['default'] = 10;
+		}
+
+		return $settings;
 	}
 
 	/**
