@@ -112,9 +112,17 @@ final class Review extends Controller {
 
 		if ( $request->get_param( '_render' ) ) {
 
+			// Get columns.
+			$columns = absint( $request->get_param( '_columns' ) );
+
+			if ( $columns < 1 || $columns > 3 ) {
+				$columns = 1;
+			}
+
 			// Render reviews.
 			$response['html'] = ( new Blocks\Related_Reviews(
 				[
+					'columns' => $columns,
 					'wrap'    => false,
 
 					'context' => [
