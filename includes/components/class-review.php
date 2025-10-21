@@ -323,10 +323,10 @@ final class Review extends Component {
 			}
 		}
 
-		if ( get_option( 'hp_review_allow_images' ) ) {
+		if ( get_option( 'hp_review_allow_attachment' ) ) {
 
-			// Add images field.
-			$model['fields']['images'] = [
+			// Add attachment field.
+			$model['fields']['attachment'] = [
 				'label'     => hivepress()->translator->get_string( 'image' ),
 				'caption'   => hivepress()->translator->get_string( 'select_image' ),
 				'type'      => 'attachment_upload',
@@ -502,7 +502,7 @@ final class Review extends Component {
 	public function delete_review_drafts() {
 
 		// Check settings.
-		if ( ! get_option( 'hp_review_allow_images' ) ) {
+		if ( ! get_option( 'hp_review_allow_attachment' ) ) {
 			return;
 		}
 

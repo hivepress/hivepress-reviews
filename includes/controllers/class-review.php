@@ -236,26 +236,33 @@ final class Review extends Controller {
 		// Add review.
 		$review = ( new Models\Review() )->fill( array_merge( $form->get_values(), $review_args ) );
 
-		if ( get_option( 'hp_review_allow_images' ) && ! $form->get_value( 'parent' ) ) {
+		if ( get_option( 'hp_review_allow_attachment' ) && ! $form->get_value( 'parent' ) ) {
 
 			// Get review draft.
 			$review_draft = hivepress()->review->get_review_draft();
 
-			if ( $review_draft && $review_draft->get_images__id() ) {
+			if ( $review_draft && $review_draft->get_attachment__id() ) {
 
-				// Get images.
-				$images = $review_draft->get_images();
+				// Get attachment.
+				$attachment = $review_draft->get_attachment();
 
-				if ( $images ) {
+				if ( $attachment ) {
 
-					// Set images.
-					$review->set_images( $images->get_id() );
+					// Set attachment.
+					$review->set_attachment( $attachment->get_id() );
 				}
 			}
 		}
 
 		if ( ! $review->save() ) {
 			return hp\rest_error( 400, $review->_get_errors() );
+		}
+
+		// Set attachment.
+		if ( isset( $attachment ) ) {
+			$attachment->set_parent( $review->get_id() )->save_parent();
+
+			$review_draft->set_attachment( null )->save_attachment();
 		}
 
 		return hp\rest_response(
