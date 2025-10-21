@@ -121,19 +121,19 @@ class Review_View_Block extends Template {
 								],
 
 								'blocks'     => [
-									'review_text'    => [
+									'review_text'       => [
 										'type'   => 'part',
 										'path'   => 'review/view/review-text',
 										'_order' => 10,
 									],
 
-									'review_images'  => [
+									'review_attachment' => [
 										'type'   => 'part',
-										'path'   => 'review/view/review-images',
+										'path'   => 'review/view/review-attachment',
 										'_order' => 20,
 									],
 
-									'review_listing' => [
+									'review_listing'    => [
 										'type'   => 'part',
 										'path'   => 'review/view/review-listing',
 										'_order' => 30,

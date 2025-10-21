@@ -61,7 +61,7 @@ return [
 						'_order'  => 20,
 					],
 
-					'review_allow_images'      => [
+					'review_allow_attachment'  => [
 						'caption' => hivepress()->translator->get_string( 'allow_attaching_images' ),
 						'type'    => 'checkbox',
 						'_order'  => 30,
