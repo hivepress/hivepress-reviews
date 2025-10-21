@@ -146,9 +146,6 @@ class Reviews extends Block {
 		// Get review query.
 		$query = $this->get_context( 'review_query' );
 
-		// Get max page.
-		$max_page = 1;
-
 		if ( ! $query ) {
 
 			// Set query.
@@ -267,7 +264,7 @@ class Reviews extends Block {
 			// Add wrapper.
 			$output = '<div ' . hp\html_attributes( $this->attributes ) . '><div class="hp-row" data-block="' . esc_attr( $this->name ) . '">' . $output . '</div>';
 
-			if ( $max_page > 1 ) {
+			if ( isset( $max_page ) && $max_page > 1 ) {
 
 				// Add pagination.
 				$output .= '<button class="button" data-render="' . hp\esc_json(
