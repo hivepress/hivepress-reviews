@@ -49,16 +49,18 @@ return [
 
 				'fields' => [
 					'review_allow_multiple'    => [
-						'label'   => hivepress()->translator->get_string( 'submission' ),
-						'caption' => esc_html__( 'Allow submitting multiple reviews', 'hivepress-reviews' ),
-						'type'    => 'checkbox',
-						'_order'  => 10,
+						'label'       => hivepress()->translator->get_string( 'submission' ),
+						'caption'     => esc_html__( 'Allow submitting multiple reviews', 'hivepress-reviews' ),
+						'description' => esc_html__( 'Check this option to allow users to post more than one review for the same listing.', 'hivepress-reviews' ),
+						'type'        => 'checkbox',
+						'_order'      => 10,
 					],
 
 					'review_allow_anonymous'   => [
-						'caption' => esc_html__( 'Allow making reviews anonymous', 'hivepress-reviews' ),
-						'type'    => 'checkbox',
-						'_order'  => 20,
+						'caption'     => esc_html__( 'Allow making reviews anonymous', 'hivepress-reviews' ),
+						'description' => esc_html__( 'Check this option to allow users to hide their personal details in reviews.', 'hivepress-reviews' ),
+						'type'        => 'checkbox',
+						'_order'      => 20,
 					],
 
 					'review_allow_attachment'  => [

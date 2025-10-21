@@ -146,9 +146,6 @@ class Reviews extends Block {
 		// Get review query.
 		$query = $this->get_context( 'review_query' );
 
-		// Get max page.
-		$max_page = 1;
-
 		if ( ! $query ) {
 
 			// Set query.
@@ -265,12 +262,12 @@ class Reviews extends Block {
 		if ( $output && $this->wrap ) {
 
 			// Add wrapper.
-			$output = '<div ' . hp\html_attributes( $this->attributes ) . '><div class="hp-row" data-block="' . esc_attr( $this->name ) . '">' . $output . '</div>';
+			$output = '<div ' . hp\html_attributes( $this->attributes ) . '><div class="hp-row" data-block="' . esc_attr( $this->name ) . '">' . $output . '</div></div>';
 
-			if ( $max_page > 1 ) {
+			if ( isset( $max_page ) && $max_page > 1 ) {
 
 				// Add pagination.
-				$output .= '<button class="button" data-render="' . hp\esc_json(
+				$output .= '<div class="hp-pagination"><button class="button" data-render="' . hp\esc_json(
 					wp_json_encode(
 						[
 							'block' => $this->name,
@@ -280,15 +277,14 @@ class Reviews extends Block {
 							'url'   => hivepress()->router->get_url(
 								'reviews_resource',
 								[
-									'listing' => $listing->get_id(),
+									'listing'  => $listing->get_id(),
+									'_columns' => $this->columns,
 								]
 							),
 						]
 					)
-				) . '">' . esc_html( hivepress()->translator->get_string( 'load_more' ) ) . '</button>';
+				) . '">' . esc_html( hivepress()->translator->get_string( 'load_more' ) ) . '</button></div>';
 			}
-
-			$output .= '</div>';
 		}
 
 		return $output;
