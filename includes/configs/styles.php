@@ -16,5 +16,6 @@ return [
 		'src'     => hivepress()->get_url( 'reviews' ) . '/assets/css/frontend.min.css',
 		'version' => hivepress()->get_version( 'reviews' ),
 		'scope'   => [ 'frontend', 'editor' ],
+		'rtl'     => true,
 	],
 ];
