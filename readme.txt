@@ -2,7 +2,7 @@
 Contributors: hivepress
 Tags: hivepress, reviews, directory, listings, classifieds
 Requires at least: 5.0
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.4.0
 License: GPLv3
