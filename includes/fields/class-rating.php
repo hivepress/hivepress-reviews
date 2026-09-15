@@ -27,9 +27,10 @@ class Rating extends Number {
 	public static function init( $meta = [] ) {
 		$meta = hp\merge_arrays(
 			[
-				'label'      => null,
-				'editable'   => false,
-				'filterable' => false,
+				'label'       => null,
+				'editable'    => false,
+				'filterable'  => false,
+				'prefillable' => false,
 			],
 			$meta
 		);
